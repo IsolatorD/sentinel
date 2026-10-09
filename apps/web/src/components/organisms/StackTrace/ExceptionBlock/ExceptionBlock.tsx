@@ -43,6 +43,7 @@ export function ExceptionBlock({
 							<FrameRow
 								key={frame.index}
 								frame={frame}
+								index={i}
 								// El código del punto donde se lanzó el error viene abierto.
 								defaultOpen={i === 0}
 							/>

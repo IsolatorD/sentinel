@@ -6,10 +6,6 @@ export function Skeleton({
 	...props
 }: HTMLAttributes<HTMLDivElement>) {
 	return (
-		<div
-			aria-hidden
-			className={cn("animate-pulse rounded bg-border/70", className)}
-			{...props}
-		/>
+		<div aria-hidden className={cn("skeleton rounded", className)} {...props} />
 	);
 }

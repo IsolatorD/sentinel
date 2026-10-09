@@ -10,6 +10,7 @@ import {
 import { LevelBadge } from "@/components/molecules/LevelBadge/LevelBadge";
 import { RelativeTime } from "@/components/molecules/RelativeTime/RelativeTime";
 import { StatusBadge } from "@/components/molecules/StatusBadge/StatusBadge";
+import { staggerStyle } from "@/utils/animation/animation";
 import { cn } from "@/utils/cn/cn";
 import { formatCompact, formatRelative } from "@/utils/time/time";
 
@@ -17,14 +18,17 @@ export function IssueListItem({
 	issue,
 	orgSlug,
 	projectSlug,
+	index = 0,
 }: {
 	issue: IssueDto;
 	orgSlug: string;
 	projectSlug: string;
+	/** Posición en la lista: escalona la entrada de las filas. */
+	index?: number;
 }) {
 	const { t, i18n } = useTranslation();
 	return (
-		<li>
+		<li className="animate-fade-in-up" style={staggerStyle(index)}>
 			<Link
 				to="/$orgSlug/projects/$projectSlug/issues/$issueId"
 				params={{ orgSlug, projectSlug, issueId: issue.id }}

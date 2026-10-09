@@ -80,32 +80,34 @@ export function IssueDetailContent() {
 						}))}
 					/>
 
-					{search.tab === "activity" ? (
-						<IssueActivity
-							scope={ready}
-							issueId={issueId}
-							currentUserId={session.data?.user.id ?? ""}
-						/>
-					) : search.tab === "events" ? (
-						<IssueEventsTable
-							scope={ready}
-							issueId={issueId}
-							onView={(id) => update({ event: id, tab: "details" })}
-						/>
-					) : event ? (
-						<div className="space-y-4">
-							<EventNavigator
-								event={event}
-								events={recent.data?.items ?? []}
-								onSelect={(id) => update({ event: id })}
+					<div key={search.tab} className="animate-fade-in">
+						{search.tab === "activity" ? (
+							<IssueActivity
+								scope={ready}
+								issueId={issueId}
+								currentUserId={session.data?.user.id ?? ""}
 							/>
-							<IssueEventDetails event={event} />
-						</div>
-					) : picked.isError ? (
-						<ErrorState onRetry={() => picked.refetch()} />
-					) : (
-						<Skeleton className="h-64 w-full" />
-					)}
+						) : search.tab === "events" ? (
+							<IssueEventsTable
+								scope={ready}
+								issueId={issueId}
+								onView={(id) => update({ event: id, tab: "details" })}
+							/>
+						) : event ? (
+							<div className="space-y-4">
+								<EventNavigator
+									event={event}
+									events={recent.data?.items ?? []}
+									onSelect={(id) => update({ event: id })}
+								/>
+								<IssueEventDetails event={event} />
+							</div>
+						) : picked.isError ? (
+							<ErrorState onRetry={() => picked.refetch()} />
+						) : (
+							<Skeleton className="h-64 w-full" />
+						)}
+					</div>
 				</div>
 			)}
 		</PageTemplate>

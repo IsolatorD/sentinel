@@ -23,6 +23,7 @@ import {
 	useRemoveMember,
 	useUpdateMemberRole,
 } from "@/hooks/useOrganizations/useOrganizations";
+import { staggerStyle } from "@/utils/animation/animation";
 import { ApiError } from "@/utils/apiError/apiError";
 import { ASSIGNABLE_ROLES } from "@/utils/invitation/invitation.constants";
 import type { AssignableRole } from "@/utils/invitation/invitationInterface";
@@ -92,13 +93,14 @@ export function MembersManager({ orgId, currentUserId }: MembersManagerProps) {
 					</div>
 				) : (
 					<ul className="divide-y divide-border" data-testid="member-list">
-						{members.data.map((m) => {
+						{members.data.map((m, index) => {
 							const isMe = m.userId === currentUserId;
 							const locked = m.role.split(",").includes(LOCKED_ROLE);
 							return (
 								<li
 									key={m.id}
-									className="flex flex-wrap items-center gap-x-4 gap-y-2 px-5 py-3"
+									className="flex animate-fade-in-up flex-wrap items-center gap-x-4 gap-y-2 px-5 py-3"
+									style={staggerStyle(index)}
 									data-testid="member-row"
 								>
 									<Avatar name={m.user.name} rounded="full" />

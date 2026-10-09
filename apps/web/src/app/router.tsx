@@ -205,6 +205,10 @@ export function createAppRouter(
 		history,
 		context: { queryClient },
 		defaultPreload: "intent",
+		// Fundido entre pantallas, solo cuando cambia la ruta (no al filtrar, ordenar o paginar).
+		defaultViewTransition: {
+			types: ({ pathChanged }) => (pathChanged ? ["page"] : false),
+		},
 		scrollRestoration: true,
 	});
 }

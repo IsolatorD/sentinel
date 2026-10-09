@@ -19,6 +19,7 @@ import {
 	useUpdateRule,
 } from "@/hooks/useAlerts/useAlerts";
 import type { ReadyScope } from "@/hooks/useAlerts/useAlertsInterface";
+import { staggerStyle } from "@/utils/animation/animation";
 import { ApiError } from "@/utils/apiError/apiError";
 import { describeMinutes } from "@/utils/duration/duration";
 
@@ -95,10 +96,11 @@ export function AlertRulesManager({ scope }: { scope: ReadyScope }) {
 					/>
 				) : (
 					<ul className="divide-y divide-border" data-testid="rule-list">
-						{rules.data.map((rule) => (
+						{rules.data.map((rule, index) => (
 							<li
 								key={rule.id}
-								className="flex flex-wrap items-center gap-x-4 gap-y-2 px-5 py-3"
+								className="flex animate-fade-in-up flex-wrap items-center gap-x-4 gap-y-2 px-5 py-3"
+								style={staggerStyle(index)}
 								data-testid="rule-row"
 							>
 								<Checkbox

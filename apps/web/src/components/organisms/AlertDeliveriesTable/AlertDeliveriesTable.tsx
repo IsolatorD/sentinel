@@ -11,6 +11,7 @@ import { Pagination } from "@/components/molecules/Pagination/Pagination";
 import { RelativeTime } from "@/components/molecules/RelativeTime/RelativeTime";
 import type { AlertDeliveriesTableProps } from "@/components/organisms/AlertDeliveriesTable/AlertDeliveriesTableInterface";
 import { useAlertDeliveries } from "@/hooks/useAlerts/useAlerts";
+import { staggerStyle } from "@/utils/animation/animation";
 import { ApiError } from "@/utils/apiError/apiError";
 import { PAGE_SIZE } from "@/utils/searchParams/searchParams.constants";
 
@@ -72,10 +73,11 @@ export function AlertDeliveriesTable({
 							</tr>
 						</thead>
 						<tbody>
-							{deliveries.data.items.map((d) => (
+							{deliveries.data.items.map((d, index) => (
 								<tr
 									key={d.id}
-									className="border-b border-border align-top last:border-b-0"
+									className="animate-fade-in border-b border-border align-top last:border-b-0"
+									style={staggerStyle(index)}
 									data-testid="delivery-row"
 								>
 									<td className="px-5 py-2.5 whitespace-nowrap">

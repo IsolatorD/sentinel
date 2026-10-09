@@ -12,7 +12,7 @@ export function MenuContent({
 			<Dropdown.Content
 				sideOffset={sideOffset}
 				className={cn(
-					"z-50 min-w-56 rounded-lg border border-border bg-surface p-1 text-sm text-foreground shadow-lg",
+					"z-50 min-w-56 rounded-lg border border-border bg-surface p-1 text-sm text-foreground shadow-lg data-[state=closed]:animate-fade-out data-[state=open]:animate-fade-in",
 					className,
 				)}
 				{...props}

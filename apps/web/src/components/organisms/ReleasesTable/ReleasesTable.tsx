@@ -14,6 +14,7 @@ import { RelativeTime } from "@/components/molecules/RelativeTime/RelativeTime";
 import { ReleaseFilesDialog } from "@/components/organisms/ReleaseFilesDialog/ReleaseFilesDialog";
 import { useDeleteRelease, useReleases } from "@/hooks/useReleases/useReleases";
 import { useCurrentProject } from "@/hooks/useScope/useScope";
+import { staggerStyle } from "@/utils/animation/animation";
 import { ApiError } from "@/utils/apiError/apiError";
 import { formatCompact } from "@/utils/time/time";
 
@@ -87,10 +88,11 @@ export function ReleasesTable() {
 											</td>
 										</tr>
 									))
-								: releases.data.map((r) => (
+								: releases.data.map((r, index) => (
 										<tr
 											key={r.version}
-											className="border-b border-border last:border-b-0 hover:bg-primary-soft/40"
+											className="animate-fade-in border-b border-border last:border-b-0 hover:bg-primary-soft/40"
+											style={staggerStyle(index)}
 											data-testid="release-row"
 										>
 											<td className="px-5 py-2.5 font-mono text-sm font-semibold">

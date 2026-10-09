@@ -34,12 +34,14 @@ export function InstallInstructions({ dsn }: { dsn: string }) {
 				))}
 			</div>
 			{tab === "npm" ? (
-				<div className="space-y-3">
+				<div key="npm" className="animate-fade-in space-y-3">
 					<CodeBlock title={t("settings.install.install")} code={npm.install} />
 					<CodeBlock title={t("settings.install.configure")} code={npm.code} />
 				</div>
 			) : (
-				<CodeBlock title="HTML" code={scriptTagSnippet({ dsn })} />
+				<div key="script" className="animate-fade-in">
+					<CodeBlock title="HTML" code={scriptTagSnippet({ dsn })} />
+				</div>
 			)}
 		</div>
 	);

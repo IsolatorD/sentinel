@@ -2,6 +2,8 @@ import { ChevronRight } from "lucide-react";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { CodeContext } from "@/components/molecules/CodeContext/CodeContext";
+import { Collapse } from "@/components/molecules/Collapse/Collapse";
+import { staggerStyle } from "@/utils/animation/animation";
 import { cn } from "@/utils/cn/cn";
 import { contextLines, shortLocation } from "@/utils/stacktrace/stacktrace";
 import type { DisplayFrame } from "@/utils/stacktrace/stacktraceInterface";
@@ -10,9 +12,12 @@ import type { DisplayFrame } from "@/utils/stacktrace/stacktraceInterface";
 export function FrameRow({
 	frame,
 	defaultOpen,
+	index = 0,
 }: {
 	frame: DisplayFrame;
 	defaultOpen: boolean;
+	/** Posición en la lista: escalona la entrada de los frames. */
+	index?: number;
 }) {
 	const { t } = useTranslation();
 	const code = contextLines(frame);
@@ -37,9 +42,10 @@ export function FrameRow({
 
 	return (
 		<li
+			style={staggerStyle(index, 20, 10)}
 			data-in-app={frame.in_app ? "true" : "false"}
 			className={cn(
-				"border-b border-border border-l-[3px] font-mono text-xs last:border-b-0",
+				"animate-fade-in border-b border-border border-l-[3px] font-mono text-xs last:border-b-0",
 				frame.in_app
 					? "border-l-primary bg-primary-soft/40 text-foreground"
 					: "border-l-transparent bg-subtle/40 text-muted",
@@ -67,7 +73,9 @@ export function FrameRow({
 					<span>{label}</span>
 				</div>
 			)}
-			{open && code.length > 0 && <CodeContext lines={code} />}
+			<Collapse open={open && code.length > 0}>
+				<CodeContext lines={code} />
+			</Collapse>
 		</li>
 	);
 }

@@ -34,6 +34,70 @@
 	--color-debug: #71637e;
 	--color-success: #2ba185;
 	--color-danger: #e03e52;
+
+	/* Animaciones: breves y discretas. Se desactivan con "reducir movimiento" (más abajo). */
+	--animate-fade-in: fade-in 160ms ease-out both;
+	--animate-fade-out: fade-out 120ms ease-in both;
+	--animate-fade-in-up: fade-in-up 240ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+	--animate-pop-in: pop-in 160ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+	--animate-pop-out: pop-out 120ms ease-in both;
+	--animate-slide-in-left: slide-in-left 220ms cubic-bezier(0.2, 0.8, 0.2, 1)
+		both;
+	--animate-expand: expand 220ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+
+	@keyframes fade-in {
+		from {
+			opacity: 0;
+		}
+	}
+	@keyframes fade-out {
+		to {
+			opacity: 0;
+		}
+	}
+	@keyframes fade-in-up {
+		from {
+			opacity: 0;
+			transform: translateY(6px);
+		}
+	}
+	/* El diálogo se centra con la propiedad `translate`; esta animación usa `transform` y se compone con ella. */
+	@keyframes pop-in {
+		from {
+			opacity: 0;
+			transform: scale(0.97);
+		}
+	}
+	@keyframes pop-out {
+		to {
+			opacity: 0;
+			transform: scale(0.97);
+		}
+	}
+	@keyframes slide-in-left {
+		from {
+			transform: translateX(-100%);
+		}
+	}
+	/* Despliegue de un panel: crece desde cero sin conocer su altura. */
+	@keyframes expand {
+		from {
+			grid-template-rows: 0fr;
+			opacity: 0;
+		}
+		to {
+			grid-template-rows: 1fr;
+			opacity: 1;
+		}
+	}
+	@keyframes shimmer {
+		from {
+			background-position: 200% 0;
+		}
+		to {
+			background-position: -200% 0;
+		}
+	}
 }
 
 html,
@@ -60,4 +124,53 @@ body {
 * {
 	scrollbar-width: thin;
 	scrollbar-color: var(--color-border-strong) transparent;
+}
+
+/* Skeleton con un brillo que recorre la forma (mejor que parpadear). */
+.skeleton {
+	background: linear-gradient(
+		90deg,
+		var(--color-border) 25%,
+		var(--color-subtle) 50%,
+		var(--color-border) 75%
+	);
+	background-size: 200% 100%;
+	animation: shimmer 1.6s linear infinite;
+}
+
+/* Cambio de pantalla: el navegador funde la anterior con la nueva (View Transitions). */
+::view-transition-old(root) {
+	animation: fade-out 120ms ease-in both;
+}
+::view-transition-new(root) {
+	animation: fade-in-up 220ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+
+/* Navegadores sin View Transitions: la pantalla nueva entra con un fundido. */
+@supports not (view-transition-name: none) {
+	.page-enter {
+		animation: fade-in-up 220ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+	}
+}
+
+/* Quien pide menos movimiento en su sistema no ve animaciones. */
+@media (prefers-reduced-motion: reduce) {
+	*,
+	::before,
+	::after {
+		/* biome-ignore lint/complexity/noImportantStyles: debe imponerse a cualquier animación */
+		animation-duration: 0.01ms !important;
+		/* biome-ignore lint/complexity/noImportantStyles: debe imponerse a cualquier animación */
+		animation-iteration-count: 1 !important;
+		/* biome-ignore lint/complexity/noImportantStyles: debe imponerse a cualquier animación */
+		transition-duration: 0.01ms !important;
+		/* biome-ignore lint/complexity/noImportantStyles: debe imponerse a cualquier animación */
+		scroll-behavior: auto !important;
+	}
+	::view-transition-group(*),
+	::view-transition-old(*),
+	::view-transition-new(*) {
+		/* biome-ignore lint/complexity/noImportantStyles: debe imponerse a cualquier animación */
+		animation: none !important;
+	}
 }

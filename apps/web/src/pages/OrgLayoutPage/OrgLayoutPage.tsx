@@ -1,4 +1,4 @@
-import { Navigate, Outlet } from "@tanstack/react-router";
+import { Navigate, Outlet, useRouterState } from "@tanstack/react-router";
 import { useEffect } from "react";
 import { Spinner } from "@/components/atoms/Spinner/Spinner";
 import { ErrorState } from "@/components/molecules/ErrorState/ErrorState";
@@ -13,6 +13,7 @@ import { LAST_ORG_KEY } from "@/utils/storage/storage.constants";
 /** Marco de la app para una organización: barra lateral y contenido. */
 export function OrgLayoutPage() {
 	const session = useSession();
+	const pathname = useRouterState({ select: (s) => s.location.pathname });
 	const { organization, isLoading, isError, notFound } =
 		useCurrentOrganization();
 
@@ -35,7 +36,10 @@ export function OrgLayoutPage() {
 
 	return (
 		<AppShellTemplate sidebar={<Sidebar />}>
-			<Outlet />
+			{/* Con la ruta como `key`, cada pantalla entra de cero (y anima si el navegador no hace el fundido). */}
+			<div key={pathname} className="page-enter min-h-full">
+				<Outlet />
+			</div>
 		</AppShellTemplate>
 	);
 }

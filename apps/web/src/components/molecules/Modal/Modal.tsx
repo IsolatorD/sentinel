@@ -15,8 +15,8 @@ export function Modal({
 	return (
 		<Dialog.Root open={open} onOpenChange={onOpenChange}>
 			<Dialog.Portal>
-				<Dialog.Overlay className="fixed inset-0 z-40 bg-sidebar/50 backdrop-blur-[1px]" />
-				<Dialog.Content className="fixed top-1/2 left-1/2 z-50 w-[calc(100%-2rem)] max-w-md -translate-x-1/2 -translate-y-1/2 rounded-lg border border-border bg-surface shadow-xl focus:outline-none">
+				<Dialog.Overlay className="fixed inset-0 z-40 bg-sidebar/50 backdrop-blur-[1px] data-[state=closed]:animate-fade-out data-[state=open]:animate-fade-in" />
+				<Dialog.Content className="fixed top-1/2 left-1/2 z-50 w-[calc(100%-2rem)] max-w-md -translate-x-1/2 -translate-y-1/2 rounded-lg border border-border bg-surface shadow-xl focus:outline-none data-[state=closed]:animate-pop-out data-[state=open]:animate-pop-in">
 					<div className="flex items-start justify-between gap-4 border-b border-border px-5 py-4">
 						<div>
 							<Dialog.Title className="text-base font-semibold text-foreground">

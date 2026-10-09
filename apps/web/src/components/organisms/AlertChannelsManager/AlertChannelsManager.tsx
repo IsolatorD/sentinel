@@ -22,6 +22,7 @@ import {
 } from "@/hooks/useAlerts/useAlerts";
 import type { ReadyScope } from "@/hooks/useAlerts/useAlertsInterface";
 import { usePublicConfig } from "@/hooks/usePublicConfig/usePublicConfig";
+import { staggerStyle } from "@/utils/animation/animation";
 import { ApiError } from "@/utils/apiError/apiError";
 
 export function AlertChannelsManager({ scope }: { scope: ReadyScope }) {
@@ -92,12 +93,13 @@ export function AlertChannelsManager({ scope }: { scope: ReadyScope }) {
 					/>
 				) : (
 					<ul className="divide-y divide-border" data-testid="channel-list">
-						{channels.data.map((channel) => {
+						{channels.data.map((channel, index) => {
 							const Icon = TYPE_ICONS[channel.type];
 							return (
 								<li
 									key={channel.id}
-									className="flex flex-wrap items-center gap-x-4 gap-y-2 px-5 py-3"
+									className="flex animate-fade-in-up flex-wrap items-center gap-x-4 gap-y-2 px-5 py-3"
+									style={staggerStyle(index)}
 									data-testid="channel-row"
 								>
 									<Checkbox

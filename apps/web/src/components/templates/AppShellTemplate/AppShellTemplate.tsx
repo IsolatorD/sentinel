@@ -23,10 +23,10 @@ export function AppShellTemplate({
 					<button
 						type="button"
 						aria-label={t("common.close")}
-						className="absolute inset-0 bg-black/40"
+						className="absolute inset-0 animate-fade-in bg-black/40"
 						onClick={() => setOpen(false)}
 					/>
-					<aside className="absolute inset-y-0 left-0 w-64 shadow-xl">
+					<aside className="absolute inset-y-0 left-0 w-64 animate-slide-in-left shadow-xl">
 						{sidebar}
 					</aside>
 				</div>

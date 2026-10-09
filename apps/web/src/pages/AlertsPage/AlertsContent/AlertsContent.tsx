@@ -33,17 +33,21 @@ export function AlertsContent() {
 			}
 		>
 			<p className="mb-4 text-sm text-muted">{t("alerts.subtitle")}</p>
-			{search.tab === "rules" && <AlertRulesManager scope={scope} />}
-			{search.tab === "channels" && <AlertChannelsManager scope={scope} />}
-			{search.tab === "history" && (
-				<AlertDeliveriesTable
-					scope={scope}
-					orgSlug={organization.slug}
-					projectSlug={project.slug}
-					offset={(search.page - 1) * PAGE_SIZE}
-					onOffsetChange={(offset) => update({ page: offset / PAGE_SIZE + 1 })}
-				/>
-			)}
+			<div key={search.tab} className="animate-fade-in">
+				{search.tab === "rules" && <AlertRulesManager scope={scope} />}
+				{search.tab === "channels" && <AlertChannelsManager scope={scope} />}
+				{search.tab === "history" && (
+					<AlertDeliveriesTable
+						scope={scope}
+						orgSlug={organization.slug}
+						projectSlug={project.slug}
+						offset={(search.page - 1) * PAGE_SIZE}
+						onOffsetChange={(offset) =>
+							update({ page: offset / PAGE_SIZE + 1 })
+						}
+					/>
+				)}
+			</div>
 		</PageTemplate>
 	);
 }

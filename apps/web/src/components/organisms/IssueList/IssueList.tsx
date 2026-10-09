@@ -120,9 +120,10 @@ export function IssueList() {
 					>
 						{organization &&
 							project &&
-							data.items.map((issue) => (
+							data.items.map((issue, index) => (
 								<IssueListItem
 									key={issue.id}
+									index={index}
 									issue={issue}
 									orgSlug={organization.slug}
 									projectSlug={project.slug}

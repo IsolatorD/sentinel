@@ -17,6 +17,7 @@ import {
 	useRevokeToken,
 	useTokens,
 } from "@/hooks/useTokens/useTokens";
+import { staggerStyle } from "@/utils/animation/animation";
 import { ApiError } from "@/utils/apiError/apiError";
 
 export function ApiTokensManager({ orgId }: { orgId: string }) {
@@ -93,10 +94,11 @@ export function ApiTokensManager({ orgId }: { orgId: string }) {
 					/>
 				) : (
 					<ul className="divide-y divide-border" data-testid="token-list">
-						{tokens.data.map((token) => (
+						{tokens.data.map((token, index) => (
 							<li
 								key={token.id}
-								className="flex flex-wrap items-center gap-x-4 gap-y-1 px-5 py-3"
+								className="flex animate-fade-in-up flex-wrap items-center gap-x-4 gap-y-1 px-5 py-3"
+								style={staggerStyle(index)}
 								data-testid="token-row"
 							>
 								<div className="min-w-0 flex-1">
