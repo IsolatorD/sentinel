@@ -2,6 +2,7 @@ import { Module } from "@nestjs/common";
 import { ConfigModule, ConfigService } from "@nestjs/config";
 import { APP_FILTER } from "@nestjs/core";
 import { LoggerModule } from "nestjs-pino";
+import { AlertsModule } from "./alerts/alerts.module.js";
 import { AuthModule } from "./auth/auth.module.js";
 import { AllExceptionsFilter } from "./common/all-exceptions.filter.js";
 import { buildLoggerParams } from "./common/logging.js";
@@ -42,6 +43,7 @@ import { TokensModule } from "./tokens/tokens.module.js";
 		IngestModule,
 		IssuesModule,
 		ReleasesModule,
+		AlertsModule,
 		TokensModule,
 	],
 	providers: [{ provide: APP_FILTER, useClass: AllExceptionsFilter }],

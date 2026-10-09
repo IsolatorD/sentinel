@@ -39,7 +39,7 @@ export class DrizzleEventRepository extends EventRepository {
 						.onConflictDoNothing();
 				}
 
-				const { issueId, isNew } = await this.upsertIssue(tx, input);
+				const { issueId, isNew, regressed } = await this.upsertIssue(tx, input);
 
 				const inserted = await tx
 					.insert(event)
@@ -68,12 +68,18 @@ export class DrizzleEventRepository extends EventRepository {
 					eventId: input.id,
 					issueId,
 					isNewIssue: isNew,
+					regressed,
 					duplicate: false,
 				};
 			});
 		} catch (error) {
 			if (error instanceof TransactionRollbackError) {
-				return { eventId: input.id, isNewIssue: false, duplicate: true };
+				return {
+					eventId: input.id,
+					isNewIssue: false,
+					regressed: false,
+					duplicate: true,
+				};
 			}
 			throw error;
 		}
@@ -83,7 +89,7 @@ export class DrizzleEventRepository extends EventRepository {
 	private async upsertIssue(
 		tx: Tx,
 		input: NewEvent,
-	): Promise<{ issueId: string; isNew: boolean }> {
+	): Promise<{ issueId: string; isNew: boolean; regressed: boolean }> {
 		const { analysis } = input;
 
 		const [created] = await tx
@@ -103,7 +109,7 @@ export class DrizzleEventRepository extends EventRepository {
 			})
 			.onConflictDoNothing({ target: [issue.projectId, issue.fingerprint] })
 			.returning({ id: issue.id });
-		if (created) return { issueId: created.id, isNew: true };
+		if (created) return { issueId: created.id, isNew: true, regressed: false };
 
 		// Ya existía: se bloquea la fila para decidir su nuevo estado sin carreras.
 		const [row] = await tx
@@ -158,7 +164,7 @@ export class DrizzleEventRepository extends EventRepository {
 			})
 			.where(eq(issue.id, row.id));
 
-		return { issueId: row.id, isNew: false };
+		return { issueId: row.id, isNew: false, regressed: decision.regressed };
 	}
 
 	/** Fechas de creación de las releases pedidas (para ordenar versiones que no son semver). */

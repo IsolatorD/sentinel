@@ -107,6 +107,7 @@ describe("acceso", () => {
 
 		vi.mocked(configService.getPublicConfig).mockResolvedValue({
 			authProviders: { google: true },
+			emailEnabled: true,
 		});
 		const second = renderApp("/login");
 		const google = await screen.findByRole("button", {

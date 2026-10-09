@@ -151,9 +151,10 @@ describe("configuración pública", () => {
 	it("informa qué proveedores de login hay, sin exponer secretos", async () => {
 		const res = await api().get("/api/config");
 		expect(res.status).toBe(200);
-		// El servidor de pruebas no tiene credenciales de Google.
+		// El servidor de pruebas no tiene credenciales de Google y sí un SMTP de captura.
 		expect(publicConfigSchema.parse(res.json)).toEqual({
 			authProviders: { google: false },
+			emailEnabled: true,
 		});
 		expect(res.text).not.toMatch(/secret|client/i);
 	});

@@ -1,4 +1,6 @@
 import { randomBytes } from "node:crypto";
+import { mkdirSync } from "node:fs";
+import { join } from "node:path";
 import { runMigrations } from "@sentinel/db";
 import { Redis } from "ioredis";
 import pg from "pg";
@@ -7,13 +9,16 @@ import { databaseUrl, e2eConfig } from "./support/config.js";
 import type { E2EContext } from "./support/context.js";
 import {
 	freePort,
+	logDir,
 	type ManagedProcess,
 	startApp,
 	stop,
 	waitFor,
 } from "./support/processes.js";
+import { startSmtpSink } from "./support/smtp-sink.js";
 
 const processes: ManagedProcess[] = [];
+let stopSmtp: (() => Promise<void>) | undefined;
 
 async function recreateDatabase(adminUrl: string, name: string) {
 	const admin = new pg.Client({ connectionString: adminUrl });
@@ -43,7 +48,13 @@ export default async function setup(project: TestProject) {
 	await redis.flushdb();
 	await redis.quit();
 
-	// 3. API y worker compilados, como en producción.
+	// 3. Servidor SMTP de captura (los correos de alertas se leen del archivo).
+	const smtpPort = await freePort();
+	const mailFile = join(logDir, "mail.jsonl");
+	mkdirSync(logDir, { recursive: true });
+	stopSmtp = await startSmtpSink(smtpPort, mailFile);
+
+	// 4. API y worker compilados, como en producción.
 	const port = await freePort();
 	const baseUrl = `http://localhost:${port}`;
 	const shared = {
@@ -53,6 +64,10 @@ export default async function setup(project: TestProject) {
 		REDIS_HOST: cfg.redisHost,
 		REDIS_PORT: String(cfg.redisPort),
 		REDIS_DB: String(cfg.redisDb),
+		// Los webhooks de las pruebas apuntan a servidores locales.
+		ALLOW_PRIVATE_WEBHOOKS: "true",
+		SMTP_URL: `smtp://127.0.0.1:${smtpPort}`,
+		SMTP_FROM: "Sentinel <alerts@sentinel.test>",
 	};
 	const api = startApp("api", {
 		...shared,
@@ -63,7 +78,11 @@ export default async function setup(project: TestProject) {
 		INGEST_RATE_LIMIT_PER_MINUTE: String(cfg.ingestRateLimitPerMinute),
 		ENABLE_DOCS: "true",
 	});
-	const worker = startApp("worker", shared);
+	const worker = startApp("worker", {
+		...shared,
+		WEB_ORIGIN: "http://localhost:5173",
+		NOTIFICATION_RETRY_DELAY_MS: "150",
+	});
 	processes.push(api, worker);
 
 	await waitFor(async () => (await fetch(`${baseUrl}/api/health`)).ok, {
@@ -77,11 +96,13 @@ export default async function setup(project: TestProject) {
 		databaseUrl: dbUrl,
 		redis: { host: cfg.redisHost, port: cfg.redisPort, db: cfg.redisDb },
 		ingestRateLimitPerMinute: cfg.ingestRateLimitPerMinute,
+		mailFile,
 	};
 	project.provide("e2e", context);
 
 	return async function teardown() {
 		await Promise.all(processes.map(stop));
+		await stopSmtp?.();
 		const cleanup = new Redis({
 			host: cfg.redisHost,
 			port: cfg.redisPort,

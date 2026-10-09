@@ -10,6 +10,7 @@ export {
 	desc,
 	eq,
 	exists,
+	gte,
 	ilike,
 	inArray,
 	or,

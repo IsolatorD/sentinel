@@ -22,6 +22,7 @@ export class PublicConfigController {
 			authProviders: {
 				google: Boolean(this.config.get("GOOGLE_CLIENT_ID", { infer: true })),
 			},
+			emailEnabled: Boolean(this.config.get("SMTP_URL", { infer: true })),
 		};
 	}
 }

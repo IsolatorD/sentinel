@@ -21,6 +21,8 @@ export interface SaveResult {
 	eventId: string;
 	issueId?: string;
 	isNewIssue: boolean;
+	/** El evento reabrió un issue resuelto (regresión por release). */
+	regressed: boolean;
 	/** El evento ya existía (reintento de un job): no se contó dos veces. */
 	duplicate: boolean;
 }

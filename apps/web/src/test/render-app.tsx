@@ -33,6 +33,7 @@ export function mockHappyPath() {
 	vi.mocked(authService.getSession).mockResolvedValue({ user: fx.user });
 	vi.mocked(configService.getPublicConfig).mockResolvedValue({
 		authProviders: { google: false },
+		emailEnabled: true,
 	});
 	vi.mocked(organizationsService.list).mockResolvedValue([fx.org]);
 	vi.mocked(projectsService.list).mockResolvedValue([fx.project]);

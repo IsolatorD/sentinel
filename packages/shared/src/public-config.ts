@@ -6,5 +6,7 @@ export const publicConfigSchema = z.object({
 		/** El inicio de sesión con Google está configurado en el servidor. */
 		google: z.boolean(),
 	}),
+	/** El servidor puede enviar correos (SMTP configurado): sin esto, los canales de email no entregan. */
+	emailEnabled: z.boolean(),
 });
 export type PublicConfig = z.infer<typeof publicConfigSchema>;

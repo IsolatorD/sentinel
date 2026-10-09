@@ -9,7 +9,12 @@ function setup() {
 	const repo: EventRepository = {
 		async save(event) {
 			saved.push(event);
-			return { eventId: event.id, isNewIssue: true, duplicate: false };
+			return {
+				eventId: event.id,
+				isNewIssue: true,
+				regressed: false,
+				duplicate: false,
+			};
 		},
 	};
 	return {

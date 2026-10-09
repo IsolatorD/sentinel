@@ -1,4 +1,10 @@
-import { baseEnvShape, emptyToUndefined, parseEnv } from "@sentinel/shared";
+import {
+	baseEnvShape,
+	emptyToUndefined,
+	parseEnv,
+	smtpEnvShape,
+	webhookEnvShape,
+} from "@sentinel/shared";
 import { z } from "zod";
 
 const booleanString = z.enum(["true", "false"]).transform((v) => v === "true");
@@ -6,6 +12,8 @@ const booleanString = z.enum(["true", "false"]).transform((v) => v === "true");
 const apiEnvSchema = z
 	.object({
 		...baseEnvShape,
+		...smtpEnvShape,
+		...webhookEnvShape,
 		API_PORT: z.coerce.number().int().positive().default(3000),
 		WEB_ORIGIN: z.string().url().default("http://localhost:5173"),
 		BETTER_AUTH_SECRET: z.string().min(16, "must be at least 16 characters"),

@@ -43,3 +43,27 @@ export function parseEnv<S extends z.ZodType>(
 	}
 	return result.data;
 }
+
+/** SMTP para enviar correos (alertas, invitaciones). Sin `SMTP_URL`, el envío de correo queda desactivado. */
+export const smtpEnvShape = {
+	/** p. ej. smtp://usuario:clave@smtp.ejemplo.com:587 (smtps:// para TLS implícito). */
+	SMTP_URL: emptyToUndefined(z.string().url().optional()),
+	/** Remitente: `Sentinel <alertas@ejemplo.com>`. */
+	SMTP_FROM: emptyToUndefined(
+		z.string().min(3).default("Sentinel <noreply@sentinel.local>"),
+	),
+};
+
+/** Destinos permitidos para los webhooks. La API valida al crear el canal y el worker al enviar. */
+export const webhookEnvShape = {
+	/**
+	 * Permite que los webhooks apunten a direcciones privadas o de loopback. Solo para desarrollo y
+	 * pruebas: en producción un webhook que llegue a la red interna es una vulnerabilidad (SSRF).
+	 */
+	ALLOW_PRIVATE_WEBHOOKS: emptyToUndefined(
+		z
+			.enum(["true", "false"])
+			.transform((v) => v === "true")
+			.default(false),
+	),
+};

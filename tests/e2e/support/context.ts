@@ -4,6 +4,8 @@ export interface E2EContext {
 	databaseUrl: string;
 	redis: { host: string; port: number; db: number };
 	ingestRateLimitPerMinute: number;
+	/** Archivo (JSON por línea) donde el servidor SMTP de pruebas guarda cada correo recibido. */
+	mailFile: string;
 }
 
 declare module "vitest" {
