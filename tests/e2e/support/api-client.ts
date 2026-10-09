@@ -18,6 +18,8 @@ export interface RequestOptions {
 	body?: unknown;
 	/** Cuerpo ya serializado (para probar JSON roto). */
 	rawBody?: string;
+	/** Cuerpo binario (subida de source maps). */
+	binary?: Uint8Array;
 	session?: Session;
 	headers?: Record<string, string>;
 	origin?: string | null;
@@ -69,6 +71,7 @@ export class Api {
 			method: options.method ?? (options.body !== undefined ? "POST" : "GET"),
 			headers,
 			body:
+				(options.binary as BodyInit | undefined) ??
 				options.rawBody ??
 				(options.body !== undefined ? JSON.stringify(options.body) : undefined),
 		});
@@ -100,6 +103,20 @@ export class Api {
 	) => this.request(path, { ...extra, method: "PATCH", body, session });
 	delete = (path: string, session?: Session, extra: RequestOptions = {}) =>
 		this.request(path, { ...extra, method: "DELETE", session });
+
+	/** Sube un archivo binario (`application/octet-stream`), como lo hace la CLI. */
+	putBinary = (
+		path: string,
+		binary: Uint8Array | string,
+		extra: RequestOptions = {},
+	) =>
+		this.request(path, {
+			origin: null,
+			...extra,
+			method: "PUT",
+			binary: typeof binary === "string" ? Buffer.from(binary) : binary,
+			headers: { "Content-Type": "application/octet-stream", ...extra.headers },
+		});
 
 	// ---------- Atajos ----------
 

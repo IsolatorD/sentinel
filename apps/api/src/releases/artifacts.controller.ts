@@ -59,6 +59,7 @@ export class ArtifactsController {
 	}
 
 	@Put()
+	@HttpCode(201)
 	@UseGuards(ArtifactAuthGuard)
 	@ApiBearerAuth()
 	@ApiSecurity("session")
