@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="es">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Sentinel · demo del SDK de navegador</title>
+		<style>
+			body { font-family: system-ui, sans-serif; max-width: 720px; margin: 2rem auto; padding: 0 1rem; line-height: 1.5; }
+			h1 { margin-bottom: 0; }
+			fieldset { margin: 1.5rem 0; border: 1px solid #ccc; border-radius: 8px; }
+			button { margin: 0.25rem 0.25rem 0.25rem 0; padding: 0.5rem 0.75rem; cursor: pointer; }
+			input { width: 100%; padding: 0.5rem; box-sizing: border-box; }
+			#log { background: #111; color: #9f9; padding: 1rem; border-radius: 8px; min-height: 4rem; white-space: pre-wrap; font-size: 0.85rem; }
+		</style>
+	</head>
+	<body>
+		<h1>Sentinel · demo</h1>
+		<p>Pega la DSN de tu proyecto y provoca errores para ver cómo llegan al backend.</p>
+
+		<fieldset>
+			<legend>1. Configuración</legend>
+			<input id="dsn" placeholder="https://&lt;clave&gt;@host/&lt;projectId&gt;" />
+			<button id="init" type="button">Inicializar SDK</button>
+		</fieldset>
+
+		<fieldset>
+			<legend>2. Errores no capturados (los detecta el SDK solo)</legend>
+			<button id="throw-uncaught" type="button">Excepción no capturada</button>
+			<button id="reject-error" type="button">Promesa rechazada con Error</button>
+			<button id="reject-string" type="button">Promesa rechazada con string</button>
+		</fieldset>
+
+		<fieldset>
+			<legend>3. Captura manual</legend>
+			<button id="capture-handled" type="button">captureException (con tags)</button>
+			<button id="capture-cause" type="button">Error con causa encadenada</button>
+			<button id="capture-message" type="button">captureMessage</button>
+			<button id="group-5" type="button">5 errores del mismo bug (agrupación)</button>
+		</fieldset>
+
+		<fieldset>
+			<legend>4. Contexto</legend>
+			<button id="set-user" type="button">setUser</button>
+			<button id="do-fetch" type="button">fetch (breadcrumb)</button>
+			<button id="do-nav" type="button">Navegar (pushState)</button>
+		</fieldset>
+
+		<pre id="log">Esperando…</pre>
+		<script src="/sentinel.js"></script>
+		<script src="/demo.js"></script>
+	</body>
+</html>

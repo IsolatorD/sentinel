@@ -1,0 +1,113 @@
+// Código de la demo. Se sirve como archivo externo para que los stack traces
+// tengan nombres de archivo y números de línea reales.
+const $ = (id) => document.getElementById(id);
+const log = (msg) => {
+	$("log").textContent =
+		`${new Date().toLocaleTimeString()}  ${msg}\n${$("log").textContent}`;
+};
+
+const params = new URLSearchParams(location.search);
+$("dsn").value =
+	params.get("dsn") ?? localStorage.getItem("sentinel-demo-dsn") ?? "";
+
+function computeTotal(cart) {
+	// Bug a propósito: cart.items puede ser undefined.
+	return cart.items.reduce((sum, item) => sum + item.price, 0);
+}
+
+function checkout(orderId) {
+	return computeTotal({ orderId });
+}
+
+$("init").addEventListener("click", () => {
+	const dsn = $("dsn").value.trim();
+	localStorage.setItem("sentinel-demo-dsn", dsn);
+	const client = Sentinel.init({
+		dsn,
+		release: "demo@1.0.0",
+		environment: "demo",
+		debug: true,
+		tags: { app: "browser-demo" },
+	});
+	log(
+		client.enabled
+			? "SDK inicializado"
+			: "DSN inválida: el SDK quedó desactivado",
+	);
+});
+
+$("throw-uncaught").addEventListener("click", () => {
+	setTimeout(function brokenHandler() {
+		checkout(1234);
+	}, 0);
+	log("lanzada excepción no capturada");
+});
+
+$("reject-error").addEventListener("click", () => {
+	Promise.reject(new RangeError("el pago fue rechazado"));
+	log("promesa rechazada con Error");
+});
+
+$("reject-string").addEventListener("click", () => {
+	Promise.reject("rechazo con un string");
+	log("promesa rechazada con string");
+});
+
+$("capture-handled").addEventListener("click", () => {
+	try {
+		checkout(99);
+	} catch (error) {
+		const id = Sentinel.captureException(error, {
+			tags: { feature: "checkout" },
+			extra: { orderId: 99 },
+		});
+		log(`captureException -> ${id}`);
+	}
+});
+
+$("capture-cause").addEventListener("click", () => {
+	try {
+		try {
+			throw new Error("conexión perdida con la base de datos");
+		} catch (cause) {
+			throw new Error("no se pudo guardar el pedido", { cause });
+		}
+	} catch (error) {
+		log(`captureException (con causa) -> ${Sentinel.captureException(error)}`);
+	}
+});
+
+$("capture-message").addEventListener("click", () => {
+	log(
+		`captureMessage -> ${Sentinel.captureMessage("Checkout completado", "info")}`,
+	);
+});
+
+$("group-5").addEventListener("click", () => {
+	// Mismo bug con distintos datos: el servidor debe agruparlos en un solo issue.
+	for (let orderId = 1000; orderId < 1005; orderId++) {
+		try {
+			checkout(orderId);
+		} catch (error) {
+			error.message = `${error.message} (pedido ${orderId})`;
+			Sentinel.captureException(error);
+		}
+	}
+	log("enviados 5 errores del mismo bug");
+});
+
+$("set-user").addEventListener("click", () => {
+	Sentinel.setUser({ id: "user_42", email: "ana@example.com" });
+	log("usuario configurado");
+});
+
+$("do-fetch").addEventListener("click", async () => {
+	const res = await fetch("/health?probe=1");
+	log(`fetch /health -> ${res.status}`);
+	console.log("probe terminado", { status: res.status });
+});
+
+$("do-nav").addEventListener("click", () => {
+	history.pushState({}, "", "/checkout?step=2");
+	log("navegación a /checkout");
+});

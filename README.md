@@ -21,6 +21,8 @@ pnpm dev          # api (3000), worker y web (5173)
 - `apps/api` — NestJS (HTTP)
 - `apps/worker` — NestJS standalone (BullMQ)
 - `apps/web` — React + Vite
+- `packages/sdk-browser` — SDK de navegador (`@sentinel/browser`)
+- `examples/browser-demo` — página para probar el SDK en un navegador real
 - `packages/db` — esquema Drizzle y migraciones (Postgres)
 - `packages/shared` — esquemas Zod y tipos compartidos
 
