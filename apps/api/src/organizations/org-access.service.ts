@@ -26,4 +26,14 @@ export class OrgAccessService {
 			throw new ForbiddenException("Insufficient permissions");
 		}
 	}
+
+	/** Como `assert` pero sin lanzar: ¿tiene el usuario ese nivel en la organización? */
+	async has(
+		userId: string,
+		organizationId: string,
+		level: AccessLevel,
+	): Promise<boolean> {
+		const role = await this.orgs.findMemberRole(userId, organizationId);
+		return role !== undefined && canAccess(role, level);
+	}
 }

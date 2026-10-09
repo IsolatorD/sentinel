@@ -4,6 +4,7 @@ import { OrgAccessService } from "../organizations/org-access.service.js";
 import type { OrganizationsRepository } from "../organizations/organizations.repository.js";
 import type { ProjectsService } from "../projects/projects.service.js";
 import type { ReleasesService } from "../releases/releases.service.js";
+import type { ActivityService } from "./activity/activity.service.js";
 import type {
 	EventRow,
 	IssueEventsRepository,
@@ -25,6 +26,7 @@ const issueRow = (over: Partial<IssueRow> = {}): IssueRow => ({
 	type: "TypeError",
 	level: "error",
 	status: "unresolved",
+	assigneeId: null,
 	firstRelease: null,
 	lastRelease: null,
 	resolvedRelease: null,
@@ -77,7 +79,13 @@ function setup(
 		latestVersion: vi.fn(async () => deps.latestRelease),
 		ensure: vi.fn(async () => {}),
 	};
-	const issues = { userCounts: vi.fn(async () => new Map()), ...deps.issues };
+	const issues = {
+		userCounts: vi.fn(async () => new Map()),
+		assignees: vi.fn(async () => new Map()),
+		findInProject: vi.fn(async () => issueRow()),
+		...deps.issues,
+	};
+	const activity = { record: vi.fn(async () => {}) };
 	const events = { ...deps.events };
 	return {
 		service: new IssuesService(
@@ -86,7 +94,9 @@ function setup(
 			access,
 			projects,
 			releases as unknown as ReleasesService,
+			activity as unknown as ActivityService,
 		),
+		activity,
 		releases,
 		issues,
 		events,

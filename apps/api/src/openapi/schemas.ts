@@ -1,10 +1,13 @@
 import {
+	activityDtoSchema,
+	activityListDtoSchema,
 	apiTokenListDtoSchema,
 	artifactDtoSchema,
 	artifactListDtoSchema,
 	channelDtoSchema,
 	channelListDtoSchema,
 	createChannelSchema,
+	createCommentSchema,
 	createdApiTokenDtoSchema,
 	createdChannelDtoSchema,
 	createProjectKeySchema,
@@ -41,6 +44,9 @@ import { jsonSchema } from "./zod-schema.js";
 
 // Esquemas JSON precalculados para los decoradores de Swagger.
 export const docs = {
+	activity: jsonSchema(activityDtoSchema),
+	activityList: jsonSchema(activityListDtoSchema),
+	createComment: jsonSchema(createCommentSchema, "input"),
 	channel: jsonSchema(channelDtoSchema),
 	channelList: jsonSchema(channelListDtoSchema),
 	createChannel: jsonSchema(createChannelSchema, "input"),

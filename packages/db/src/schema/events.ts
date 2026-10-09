@@ -9,6 +9,7 @@ import {
 	uniqueIndex,
 	uuid,
 } from "drizzle-orm/pg-core";
+import { user } from "./auth.js";
 import { project } from "./projects.js";
 
 // Un issue agrupa todos los eventos con el mismo fingerprint dentro de un proyecto.
@@ -25,6 +26,10 @@ export const issue = pgTable(
 		type: text("type").notNull(),
 		level: text("level").notNull().default("error"),
 		status: text("status").notNull().default("unresolved"),
+		// Miembro responsable del issue (null = sin asignar).
+		assigneeId: text("assignee_id").references(() => user.id, {
+			onDelete: "set null",
+		}),
 		eventCount: integer("event_count").notNull().default(0),
 		// Releases en las que apareció por primera vez y por última vez.
 		firstRelease: text("first_release"),
@@ -44,6 +49,7 @@ export const issue = pgTable(
 	},
 	(t) => [
 		uniqueIndex("issue_project_fingerprint_idx").on(t.projectId, t.fingerprint),
+		index("issue_project_assignee_idx").on(t.projectId, t.assigneeId),
 		index("issue_project_last_seen_idx").on(t.projectId, t.lastSeen),
 		index("issue_project_status_last_seen_idx").on(
 			t.projectId,

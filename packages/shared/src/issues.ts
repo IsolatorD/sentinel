@@ -24,6 +24,8 @@ export const listIssuesQuerySchema = paginationQuerySchema.extend({
 	environment: z.string().trim().min(1).max(256).optional(),
 	/** Solo issues con algún evento en esta release. */
 	release: z.string().trim().min(1).max(256).optional(),
+	/** `me`, `unassigned` o el id de un usuario. */
+	assignee: z.string().trim().min(1).max(64).optional(),
 	sort: z.enum(ISSUE_SORTS).default("lastSeen"),
 	order: z.enum(["asc", "desc"]).default("desc"),
 });
@@ -49,8 +51,13 @@ export type Resolution = z.infer<typeof resolutionSchema>;
 
 export const updateIssueSchema = z
 	.object({
-		status: issueStatusSchema,
+		status: issueStatusSchema.optional(),
 		resolution: resolutionSchema.optional(),
+		/** Responsable del issue; `null` lo deja sin asignar. */
+		assigneeId: z.string().min(1).max(64).nullable().optional(),
+	})
+	.refine((v) => v.status !== undefined || v.assigneeId !== undefined, {
+		message: "Nothing to update",
 	})
 	.refine((v) => v.resolution === undefined || v.status === "resolved", {
 		path: ["resolution"],
@@ -68,6 +75,14 @@ export const paginated = <T extends z.ZodType>(item: T) =>
 		offset: z.number().int(),
 	});
 
+/** Una persona tal como se muestra junto a un issue o un comentario. */
+export const userRefSchema = z.object({
+	id: z.string(),
+	name: z.string(),
+	email: z.string(),
+});
+export type UserRef = z.infer<typeof userRefSchema>;
+
 export const issueDtoSchema = z.object({
 	id: z.string().uuid(),
 	projectId: z.string().uuid(),
@@ -77,6 +92,8 @@ export const issueDtoSchema = z.object({
 	type: z.string(),
 	level: z.string(),
 	status: issueStatusSchema,
+	/** Responsable del issue (null = sin asignar). */
+	assignee: userRefSchema.nullable(),
 	/** Releases en las que apareció por primera y por última vez (null si no enviaban release). */
 	firstRelease: z.string().nullable(),
 	lastRelease: z.string().nullable(),

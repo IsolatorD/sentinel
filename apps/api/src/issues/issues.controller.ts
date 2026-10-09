@@ -81,20 +81,20 @@ export class IssuesController {
 
 	@Patch(":issueId")
 	@ApiOperation({
-		summary: "Cambia el estado de un issue (resolver, ignorar, reabrir)",
+		summary: "Cambia el estado o el responsable de un issue",
 		description:
-			"Cualquier miembro puede hacerlo. Al resolver se puede indicar `resolution`: `next_release` (se corregirá en la próxima; solo reabre un evento de una release posterior a la actual) o `{ type: 'release', release }` (la corrección va en esa release). Sin `resolution`, cualquier evento nuevo reabre el issue (una regresión).",
+			"Cualquier miembro puede hacerlo. `assigneeId` asigna el issue a un miembro de la organización (`null` lo deja sin asignar); cada cambio queda en el historial del issue. Al resolver se puede indicar `resolution`: `next_release` (se corregirá en la próxima; solo reabre un evento de una release posterior a la actual) o `{ type: 'release', release }` (la corrección va en esa release). Sin `resolution`, cualquier evento nuevo reabre el issue (una regresión).",
 	})
 	@ApiBody({ schema: docs.updateIssue })
 	@ApiOkResponse({ schema: docs.issue })
-	updateStatus(
+	update(
 		@CurrentUser() user: User,
 		@Param("orgId") orgId: string,
 		@Param("projectId", ParseUUIDPipe) projectId: string,
 		@Param("issueId", ParseUUIDPipe) issueId: string,
 		@Body(new ZodValidationPipe(updateIssueSchema)) body: UpdateIssueInput,
 	) {
-		return this.issues.updateStatus(user.id, orgId, projectId, issueId, body);
+		return this.issues.update(user.id, orgId, projectId, issueId, body);
 	}
 
 	@Delete(":issueId")

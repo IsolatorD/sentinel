@@ -49,6 +49,7 @@ export const issue = (over: Partial<IssueDto> = {}): IssueDto => ({
 	type: "TypeError",
 	level: "error",
 	status: "unresolved",
+	assignee: null,
 	firstRelease: "2.3.0",
 	lastRelease: "2.4.0",
 	resolvedRelease: null,

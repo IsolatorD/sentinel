@@ -1,48 +1,55 @@
 {
-	"version": "7",
-	"dialect": "postgresql",
-	"entries": [
-		{
-			"idx": 0,
-			"version": "7",
-			"when": 1791517976249,
-			"tag": "0000_luxuriant_northstar",
-			"breakpoints": true
-		},
-		{
-			"idx": 1,
-			"version": "7",
-			"when": 1791520392206,
-			"tag": "0001_robust_wallow",
-			"breakpoints": true
-		},
-		{
-			"idx": 2,
-			"version": "7",
-			"when": 1791523389940,
-			"tag": "0002_illegal_vulcan",
-			"breakpoints": true
-		},
-		{
-			"idx": 3,
-			"version": "7",
-			"when": 1791528377459,
-			"tag": "0003_tearful_iron_fist",
-			"breakpoints": true
-		},
-		{
-			"idx": 4,
-			"version": "7",
-			"when": 1791566816400,
-			"tag": "0004_perfect_gambit",
-			"breakpoints": true
-		},
-		{
-			"idx": 5,
-			"version": "7",
-			"when": 1791578507497,
-			"tag": "0005_wakeful_doctor_spectrum",
-			"breakpoints": true
-		}
-	]
+  "version": "7",
+  "dialect": "postgresql",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "7",
+      "when": 1791517976249,
+      "tag": "0000_luxuriant_northstar",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1791520392206,
+      "tag": "0001_robust_wallow",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1791523389940,
+      "tag": "0002_illegal_vulcan",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1791528377459,
+      "tag": "0003_tearful_iron_fist",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1791566816400,
+      "tag": "0004_perfect_gambit",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1791578507497,
+      "tag": "0005_wakeful_doctor_spectrum",
+      "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1791580366844,
+      "tag": "0006_damp_plazm",
+      "breakpoints": true
+    }
+  ]
 }

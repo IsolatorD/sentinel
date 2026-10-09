@@ -11,10 +11,12 @@ import {
 	exists,
 	ilike,
 	inArray,
+	isNull,
 	issue,
 	or,
+	user,
 } from "@sentinel/db";
-import type { IssueStatus, ListIssuesQuery } from "@sentinel/shared";
+import type { IssueStatus, ListIssuesQuery, UserRef } from "@sentinel/shared";
 import { DB } from "../database/database.module.js";
 import { containsPattern } from "./domain/search.js";
 
@@ -56,6 +58,11 @@ export class IssuesRepository {
 			eq(issue.projectId, projectId),
 			query.status === "all" ? undefined : eq(issue.status, query.status),
 			query.level ? eq(issue.level, query.level) : undefined,
+			query.assignee === "unassigned"
+				? isNull(issue.assigneeId)
+				: query.assignee
+					? eq(issue.assigneeId, query.assignee)
+					: undefined,
 			pattern
 				? or(ilike(issue.title, pattern), ilike(issue.culprit, pattern))
 				: undefined,
@@ -95,6 +102,32 @@ export class IssuesRepository {
 			.where(inArray(event.issueId, issueIds))
 			.groupBy(event.issueId);
 		return new Map(rows.map((r) => [r.issueId, r.users]));
+	}
+
+	/** Datos de las personas asignadas, para mostrar su nombre junto al issue. */
+	async assignees(
+		userIds: Array<string | null>,
+	): Promise<Map<string, UserRef>> {
+		const ids = [...new Set(userIds.filter((id): id is string => Boolean(id)))];
+		if (ids.length === 0) return new Map();
+		const rows = await this.db
+			.select({ id: user.id, name: user.name, email: user.email })
+			.from(user)
+			.where(inArray(user.id, ids));
+		return new Map(rows.map((r) => [r.id, r]));
+	}
+
+	async setAssignee(
+		projectId: string,
+		issueId: string,
+		assigneeId: string | null,
+	): Promise<IssueRow | undefined> {
+		const [row] = await this.db
+			.update(issue)
+			.set({ assigneeId })
+			.where(and(eq(issue.id, issueId), eq(issue.projectId, projectId)))
+			.returning();
+		return row;
 	}
 
 	async findInProject(

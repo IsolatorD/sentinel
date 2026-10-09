@@ -13,6 +13,7 @@ export {
 	gte,
 	ilike,
 	inArray,
+	isNull,
 	or,
 	sql,
 	TransactionRollbackError,
