@@ -1,7 +1,7 @@
 import { useTranslation } from "react-i18next";
 import { ReleasesTable } from "@/components/organisms/ReleasesTable";
 import { PageTemplate } from "@/components/templates/PageTemplate";
-import { useCurrentProject } from "@/hooks/use-scope";
+import { useCurrentProject } from "@/hooks/useScope/useScope";
 import { ProjectGate } from "./ProjectGate";
 
 export function ReleasesPage() {

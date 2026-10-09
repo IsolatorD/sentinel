@@ -7,7 +7,7 @@ import {
 	Outlet,
 	redirect,
 } from "@tanstack/react-router";
-import { sessionQueryOptions } from "@/hooks/use-session";
+import { sessionQueryOptions } from "@/hooks/useSession/useSession.constants";
 import { HomePage } from "@/pages/HomePage";
 import { IssueDetailPage } from "@/pages/IssueDetailPage";
 import { IssuesPage } from "@/pages/IssuesPage";

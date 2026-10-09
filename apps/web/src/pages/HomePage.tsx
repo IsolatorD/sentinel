@@ -1,7 +1,7 @@
 import { useNavigate } from "@tanstack/react-router";
 import { useEffect } from "react";
 import { Spinner } from "@/components/atoms/Spinner";
-import { useOrganizations } from "@/hooks/use-organizations";
+import { useOrganizations } from "@/hooks/useOrganizations/useOrganizations";
 import { readStorage } from "@/utils/storage/storage";
 import { LAST_ORG_KEY } from "@/utils/storage/storage.constants";
 

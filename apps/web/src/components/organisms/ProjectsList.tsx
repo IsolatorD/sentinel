@@ -8,8 +8,8 @@ import { Skeleton } from "@/components/atoms/Skeleton";
 import { EmptyState } from "@/components/molecules/EmptyState";
 import { ErrorState } from "@/components/molecules/ErrorState";
 import { ProjectCard } from "@/components/molecules/ProjectCard";
-import { useProjects } from "@/hooks/use-projects";
-import { useCurrentOrganization } from "@/hooks/use-scope";
+import { useProjects } from "@/hooks/useProjects/useProjects";
+import { useCurrentOrganization } from "@/hooks/useScope/useScope";
 import { CreateProjectDialog } from "./CreateProjectDialog";
 
 export function ProjectsList() {

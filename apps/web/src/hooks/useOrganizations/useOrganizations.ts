@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { queryKeys } from "@/hooks/queryKeys/queryKeys";
 import { organizationsService } from "@/services/organizationsService/organizationsService";
-import { queryKeys } from "./query-keys";
 
 export function useOrganizations() {
 	return useQuery({

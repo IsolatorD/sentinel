@@ -22,8 +22,11 @@ import {
 	MenuTrigger,
 } from "@/components/molecules/Menu";
 import { SidebarLink } from "@/components/molecules/SidebarLink";
-import { useCurrentOrganization, useCurrentProject } from "@/hooks/use-scope";
-import { useSession, useSignOut } from "@/hooks/use-session";
+import {
+	useCurrentOrganization,
+	useCurrentProject,
+} from "@/hooks/useScope/useScope";
+import { useSession, useSignOut } from "@/hooks/useSession/useSession";
 import { writeStorage } from "@/utils/storage/storage";
 import { LAST_ORG_KEY } from "@/utils/storage/storage.constants";
 

@@ -6,7 +6,7 @@ import { Input } from "@/components/atoms/Input";
 import { Select } from "@/components/atoms/Select";
 import { Alert } from "@/components/molecules/Alert";
 import { FormField } from "@/components/molecules/FormField";
-import { useCreateProject } from "@/hooks/use-projects";
+import { useCreateProject } from "@/hooks/useProjects/useProjects";
 
 export interface CreateProjectFormProps {
 	orgId: string;

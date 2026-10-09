@@ -1,11 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { queryKeys } from "@/hooks/queryKeys/queryKeys";
+import type { Scope } from "@/hooks/useReleases/useReleasesInterface";
 import { releasesService } from "@/services/releasesService/releasesService";
-import { queryKeys } from "./query-keys";
-
-interface Scope {
-	orgId: string | undefined;
-	projectId: string | undefined;
-}
 
 export function useReleases(scope: Scope) {
 	const { orgId, projectId } = scope;

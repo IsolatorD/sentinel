@@ -1,7 +1,7 @@
 import { useTranslation } from "react-i18next";
 import { ApiTokensManager } from "@/components/organisms/ApiTokensManager";
 import { PageTemplate } from "@/components/templates/PageTemplate";
-import { useCurrentOrganization } from "@/hooks/use-scope";
+import { useCurrentOrganization } from "@/hooks/useScope/useScope";
 
 export function TokensPage() {
 	const { t } = useTranslation();

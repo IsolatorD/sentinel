@@ -7,8 +7,8 @@ import { Input } from "@/components/atoms/Input";
 import { Alert } from "@/components/molecules/Alert";
 import { FormField } from "@/components/molecules/FormField";
 import { GoogleButton } from "@/components/molecules/GoogleButton";
-import { usePublicConfig } from "@/hooks/use-public-config";
-import { useGoogleSignIn, useSignUp } from "@/hooks/use-session";
+import { usePublicConfig } from "@/hooks/usePublicConfig/usePublicConfig";
+import { useGoogleSignIn, useSignUp } from "@/hooks/useSession/useSession";
 import { ApiError } from "@/utils/apiError/apiError";
 
 const schema = z.object({

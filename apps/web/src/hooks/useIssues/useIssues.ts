@@ -5,19 +5,9 @@ import {
 	useQuery,
 	useQueryClient,
 } from "@tanstack/react-query";
+import { queryKeys } from "@/hooks/queryKeys/queryKeys";
+import type { ReadyScope, Scope } from "@/hooks/useIssues/useIssuesInterface";
 import { issuesService } from "@/services/issuesService/issuesService";
-import { queryKeys } from "./query-keys";
-
-interface Scope {
-	orgId: string | undefined;
-	projectId: string | undefined;
-}
-
-/** Alcance ya resuelto (organización y proyecto conocidos). */
-export interface ReadyScope {
-	orgId: string;
-	projectId: string;
-}
 
 export function useIssues(scope: Scope, query: Partial<ListIssuesQuery>) {
 	const { orgId, projectId } = scope;

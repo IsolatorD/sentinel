@@ -13,11 +13,11 @@ import { ResolveButton } from "@/components/molecules/ResolveButton";
 import { StatBlock } from "@/components/molecules/StatBlock";
 import { StatusBadge } from "@/components/molecules/StatusBadge";
 import {
-	type ReadyScope,
 	useDeleteIssue,
 	useUpdateIssueStatus,
-} from "@/hooks/use-issues";
-import { useReleases } from "@/hooks/use-releases";
+} from "@/hooks/useIssues/useIssues";
+import type { ReadyScope } from "@/hooks/useIssues/useIssuesInterface";
+import { useReleases } from "@/hooks/useReleases/useReleases";
 import { formatCompact } from "@/utils/time/time";
 
 export interface IssueHeaderProps {

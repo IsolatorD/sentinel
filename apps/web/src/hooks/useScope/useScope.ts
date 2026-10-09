@@ -1,6 +1,6 @@
 import { useParams } from "@tanstack/react-router";
-import { useOrganizations } from "./use-organizations";
-import { useProjects } from "./use-projects";
+import { useOrganizations } from "@/hooks/useOrganizations/useOrganizations";
+import { useProjects } from "@/hooks/useProjects/useProjects";
 
 /** Organización de la URL (`/$orgSlug/...`), resuelta contra las organizaciones del usuario. */
 export function useCurrentOrganization() {

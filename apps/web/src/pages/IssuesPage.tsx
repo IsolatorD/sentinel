@@ -2,7 +2,7 @@ import { useTranslation } from "react-i18next";
 import { IssueFilters } from "@/components/organisms/IssueFilters";
 import { IssueList } from "@/components/organisms/IssueList";
 import { PageTemplate } from "@/components/templates/PageTemplate";
-import { useCurrentProject } from "@/hooks/use-scope";
+import { useCurrentProject } from "@/hooks/useScope/useScope";
 import { ProjectGate } from "./ProjectGate";
 
 export function IssuesPage() {

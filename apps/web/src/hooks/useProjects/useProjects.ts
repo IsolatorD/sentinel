@@ -5,8 +5,8 @@ import type {
 	UpdateProjectKeyInput,
 } from "@sentinel/shared";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { queryKeys } from "@/hooks/queryKeys/queryKeys";
 import { projectsService } from "@/services/projectsService/projectsService";
-import { queryKeys } from "./query-keys";
 
 export function useProjects(orgId: string | undefined) {
 	return useQuery({

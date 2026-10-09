@@ -9,7 +9,11 @@ import { Alert } from "@/components/molecules/Alert";
 import { CopyButton } from "@/components/molecules/CopyButton";
 import { Modal } from "@/components/molecules/Modal";
 import { Section } from "@/components/molecules/Section";
-import { useCreateKey, useDeleteKey, useUpdateKey } from "@/hooks/use-projects";
+import {
+	useCreateKey,
+	useDeleteKey,
+	useUpdateKey,
+} from "@/hooks/useProjects/useProjects";
 import { ApiError } from "@/utils/apiError/apiError";
 
 function KeyRow({

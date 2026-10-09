@@ -12,7 +12,11 @@ import { EmptyState } from "@/components/molecules/EmptyState";
 import { ErrorState } from "@/components/molecules/ErrorState";
 import { Modal } from "@/components/molecules/Modal";
 import { RelativeTime } from "@/components/molecules/RelativeTime";
-import { useCreateToken, useRevokeToken, useTokens } from "@/hooks/use-tokens";
+import {
+	useCreateToken,
+	useRevokeToken,
+	useTokens,
+} from "@/hooks/useTokens/useTokens";
 import { ApiError } from "@/utils/apiError/apiError";
 
 export function ApiTokensManager({ orgId }: { orgId: string }) {

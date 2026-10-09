@@ -6,8 +6,11 @@ import { Alert } from "@/components/molecules/Alert";
 import { CodeBlock } from "@/components/molecules/CodeBlock";
 import { Modal } from "@/components/molecules/Modal";
 import { RelativeTime } from "@/components/molecules/RelativeTime";
-import { useArtifacts, useDeleteArtifact } from "@/hooks/use-releases";
-import { useCurrentProject } from "@/hooks/use-scope";
+import {
+	useArtifacts,
+	useDeleteArtifact,
+} from "@/hooks/useReleases/useReleases";
+import { useCurrentProject } from "@/hooks/useScope/useScope";
 import { ApiError } from "@/utils/apiError/apiError";
 import { sourceMapsUploadSnippet } from "@/utils/cliSnippets/cliSnippets";
 import { formatBytes } from "@/utils/format/format";

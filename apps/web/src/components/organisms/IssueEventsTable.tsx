@@ -5,7 +5,8 @@ import { Skeleton } from "@/components/atoms/Skeleton";
 import { ErrorState } from "@/components/molecules/ErrorState";
 import { Pagination } from "@/components/molecules/Pagination";
 import { RelativeTime } from "@/components/molecules/RelativeTime";
-import { type ReadyScope, useIssueEvents } from "@/hooks/use-issues";
+import { useIssueEvents } from "@/hooks/useIssues/useIssues";
+import type { ReadyScope } from "@/hooks/useIssues/useIssuesInterface";
 
 const PAGE = 20;
 

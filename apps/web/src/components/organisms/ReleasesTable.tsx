@@ -12,8 +12,8 @@ import { ErrorState } from "@/components/molecules/ErrorState";
 import { Modal } from "@/components/molecules/Modal";
 import { RelativeTime } from "@/components/molecules/RelativeTime";
 import { ReleaseFilesDialog } from "@/components/organisms/ReleaseFilesDialog";
-import { useDeleteRelease, useReleases } from "@/hooks/use-releases";
-import { useCurrentProject } from "@/hooks/use-scope";
+import { useDeleteRelease, useReleases } from "@/hooks/useReleases/useReleases";
+import { useCurrentProject } from "@/hooks/useScope/useScope";
 import { ApiError } from "@/utils/apiError/apiError";
 import { formatCompact } from "@/utils/time/time";
 

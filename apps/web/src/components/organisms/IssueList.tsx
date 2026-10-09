@@ -11,9 +11,9 @@ import {
 	IssueListItem,
 } from "@/components/molecules/IssueListItem";
 import { Pagination } from "@/components/molecules/Pagination";
-import { useIssues } from "@/hooks/use-issues";
-import { useCurrentProject } from "@/hooks/use-scope";
-import { useIssuesSearch } from "@/hooks/use-search-params";
+import { useIssues } from "@/hooks/useIssues/useIssues";
+import { useCurrentProject } from "@/hooks/useScope/useScope";
+import { useIssuesSearch } from "@/hooks/useSearchParams/useSearchParams";
 import { cn } from "@/utils/cn/cn";
 import { PAGE_SIZE } from "@/utils/searchParams/searchParams.constants";
 

@@ -7,7 +7,7 @@ import { Select } from "@/components/atoms/Select";
 import { Alert } from "@/components/molecules/Alert";
 import { FormField } from "@/components/molecules/FormField";
 import { Section } from "@/components/molecules/Section";
-import { useUpdateProject } from "@/hooks/use-projects";
+import { useUpdateProject } from "@/hooks/useProjects/useProjects";
 import { ApiError } from "@/utils/apiError/apiError";
 
 export function ProjectGeneralForm({

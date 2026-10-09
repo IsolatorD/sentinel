@@ -4,7 +4,7 @@ import { Button } from "@/components/atoms/Button";
 import { Input } from "@/components/atoms/Input";
 import { Alert } from "@/components/molecules/Alert";
 import { FormField } from "@/components/molecules/FormField";
-import { useCreateOrganization } from "@/hooks/use-organizations";
+import { useCreateOrganization } from "@/hooks/useOrganizations/useOrganizations";
 import type { Organization } from "@/utils/organization/organizationInterface";
 import { uniqueSlug } from "@/utils/slug/slug";
 

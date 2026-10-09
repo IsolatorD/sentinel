@@ -8,7 +8,7 @@ import { Input } from "@/components/atoms/Input";
 import { Alert } from "@/components/molecules/Alert";
 import { FormField } from "@/components/molecules/FormField";
 import { Modal } from "@/components/molecules/Modal";
-import { useDeleteProject } from "@/hooks/use-projects";
+import { useDeleteProject } from "@/hooks/useProjects/useProjects";
 import { ApiError } from "@/utils/apiError/apiError";
 
 export function DeleteProjectSection({

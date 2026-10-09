@@ -5,9 +5,9 @@ import { useTranslation } from "react-i18next";
 import { Button } from "@/components/atoms/Button";
 import { Select } from "@/components/atoms/Select";
 import { SearchInput } from "@/components/molecules/SearchInput";
-import { useEnvironments, useReleases } from "@/hooks/use-releases";
-import { useCurrentProject } from "@/hooks/use-scope";
-import { useIssuesSearch } from "@/hooks/use-search-params";
+import { useEnvironments, useReleases } from "@/hooks/useReleases/useReleases";
+import { useCurrentProject } from "@/hooks/useScope/useScope";
+import { useIssuesSearch } from "@/hooks/useSearchParams/useSearchParams";
 import { cn } from "@/utils/cn/cn";
 
 const TABS = [...ISSUE_STATUSES, "all"] as const;

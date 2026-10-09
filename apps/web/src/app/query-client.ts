@@ -1,5 +1,5 @@
 import { QueryCache, QueryClient } from "@tanstack/react-query";
-import { queryKeys } from "@/hooks/query-keys";
+import { queryKeys } from "@/hooks/queryKeys/queryKeys";
 import { ApiError } from "@/utils/apiError/apiError";
 
 export function createQueryClient(

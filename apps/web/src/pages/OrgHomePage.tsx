@@ -1,8 +1,8 @@
 import { useNavigate } from "@tanstack/react-router";
 import { useEffect } from "react";
 import { Spinner } from "@/components/atoms/Spinner";
-import { useProjects } from "@/hooks/use-projects";
-import { useCurrentOrganization } from "@/hooks/use-scope";
+import { useProjects } from "@/hooks/useProjects/useProjects";
+import { useCurrentOrganization } from "@/hooks/useScope/useScope";
 
 /** Dentro de una organización: al primer proyecto si lo hay; si no, al listado de proyectos. */
 export function OrgHomePage() {

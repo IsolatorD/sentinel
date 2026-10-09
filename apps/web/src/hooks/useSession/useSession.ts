@@ -1,19 +1,6 @@
-import {
-	queryOptions,
-	useMutation,
-	useQuery,
-	useQueryClient,
-} from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { sessionQueryOptions } from "@/hooks/useSession/useSession.constants";
 import { authService } from "@/services/authService/authService";
-import { queryKeys } from "./query-keys";
-
-/** Opciones de la consulta de sesión; el router las usa para decidir el acceso a cada ruta. */
-export const sessionQueryOptions = queryOptions({
-	queryKey: queryKeys.session,
-	queryFn: () => authService.getSession(),
-	staleTime: 60_000,
-	retry: false,
-});
 
 /** Sesión actual: `null` si no hay usuario autenticado. */
 export function useSession() {

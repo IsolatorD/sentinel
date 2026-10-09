@@ -8,9 +8,13 @@ import { IssueEventDetails } from "@/components/organisms/IssueEventDetails";
 import { IssueEventsTable } from "@/components/organisms/IssueEventsTable";
 import { IssueHeader } from "@/components/organisms/IssueHeader";
 import { PageTemplate } from "@/components/templates/PageTemplate";
-import { useIssue, useIssueEvent, useIssueEvents } from "@/hooks/use-issues";
-import { useCurrentProject } from "@/hooks/use-scope";
-import { useIssueSearch } from "@/hooks/use-search-params";
+import {
+	useIssue,
+	useIssueEvent,
+	useIssueEvents,
+} from "@/hooks/useIssues/useIssues";
+import { useCurrentProject } from "@/hooks/useScope/useScope";
+import { useIssueSearch } from "@/hooks/useSearchParams/useSearchParams";
 import { ApiError } from "@/utils/apiError/apiError";
 import { cn } from "@/utils/cn/cn";
 import { NotFoundPage } from "./NotFoundPage";

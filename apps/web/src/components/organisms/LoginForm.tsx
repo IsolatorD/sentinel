@@ -7,8 +7,12 @@ import { Input } from "@/components/atoms/Input";
 import { Alert } from "@/components/molecules/Alert";
 import { FormField } from "@/components/molecules/FormField";
 import { GoogleButton } from "@/components/molecules/GoogleButton";
-import { usePublicConfig } from "@/hooks/use-public-config";
-import { useGoogleSignIn, useSession, useSignIn } from "@/hooks/use-session";
+import { usePublicConfig } from "@/hooks/usePublicConfig/usePublicConfig";
+import {
+	useGoogleSignIn,
+	useSession,
+	useSignIn,
+} from "@/hooks/useSession/useSession";
 import { ApiError } from "@/utils/apiError/apiError";
 
 const credentialsSchema = z.object({

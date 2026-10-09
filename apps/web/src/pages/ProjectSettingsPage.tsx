@@ -6,8 +6,8 @@ import { InstallInstructions } from "@/components/organisms/InstallInstructions"
 import { ProjectGeneralForm } from "@/components/organisms/ProjectGeneralForm";
 import { ProjectKeysManager } from "@/components/organisms/ProjectKeysManager";
 import { PageTemplate } from "@/components/templates/PageTemplate";
-import { useProject } from "@/hooks/use-projects";
-import { useCurrentProject } from "@/hooks/use-scope";
+import { useProject } from "@/hooks/useProjects/useProjects";
+import { useCurrentProject } from "@/hooks/useScope/useScope";
 import { ProjectGate } from "./ProjectGate";
 
 function Content() {
