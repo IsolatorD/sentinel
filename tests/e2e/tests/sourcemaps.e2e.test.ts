@@ -1,3 +1,9 @@
+import { execFile } from "node:child_process";
+import { mkdir, mkdtemp, writeFile } from "node:fs/promises";
+import { tmpdir } from "node:os";
+import { dirname, join, resolve } from "node:path";
+import { fileURLToPath } from "node:url";
+import { promisify } from "node:util";
 import {
 	apiTokenListDtoSchema,
 	artifactDtoSchema,
@@ -6,7 +12,7 @@ import {
 	releaseListDtoSchema,
 } from "@sentinel/shared";
 import { transformSync } from "esbuild";
-import { describe, expect, it } from "vitest";
+import { describe, expect, inject, it } from "vitest";
 import { eventually } from "../support/eventually.js";
 import { createTenant, type Tenant } from "../support/factories.js";
 
@@ -431,5 +437,98 @@ describe("simbolización de punta a punta", () => {
 			expect((await frameOf(a)).issue).toBeDefined(),
 		);
 		expect((await frameOf(a)).frame.symbolicated).toBeUndefined();
+	});
+});
+
+describe("CLI (sentinel-cli sourcemaps upload)", () => {
+	const exec = promisify(execFile);
+	const bin = resolve(
+		dirname(fileURLToPath(import.meta.url)),
+		"../../../packages/cli/dist/bin.js",
+	);
+	const baseUrl = () => inject("e2e").baseUrl;
+
+	const cli = async (
+		t: Tenant,
+		token: string,
+		dir: string,
+		extra: string[] = [],
+	) => {
+		try {
+			const { stdout } = await exec(
+				process.execPath,
+				[bin, "sourcemaps", "upload", dir, ...extra],
+				{
+					env: {
+						PATH: process.env.PATH,
+						SENTINEL_URL: baseUrl(),
+						SENTINEL_AUTH_TOKEN: token,
+						SENTINEL_ORG: t.orgId,
+						SENTINEL_PROJECT: t.projectId,
+						SENTINEL_RELEASE: "3.0.0",
+					},
+				},
+			);
+			return { code: 0, stdout };
+		} catch (error) {
+			const e = error as { code: number; stdout: string; stderr: string };
+			return { code: e.code, stdout: `${e.stdout}${e.stderr}` };
+		}
+	};
+
+	it("sube un build real y los eventos nuevos llegan simbolizados", async () => {
+		const t = await createTenant();
+		const { token } = await createToken(t);
+		const built = build();
+		const dir = await mkdtemp(join(tmpdir(), "e2e-dist-"));
+		await mkdir(join(dir, "assets"), { recursive: true });
+		await writeFile(join(dir, "assets/app.js.map"), built.map);
+
+		const result = await cli(t, token, dir);
+		expect(result.code).toBe(0);
+		expect(result.stdout).toContain("~/assets/app.js");
+
+		const list = artifactListDtoSchema.parse(
+			(await t.client.get(artifactsPath(t, "3.0.0"), t.owner)).json,
+		);
+		expect(list.map((a) => a.name)).toEqual(["~/assets/app.js"]);
+
+		await t.client.ingest(t.projectId, t.key, {
+			level: "error",
+			release: "3.0.0",
+			exception: {
+				values: [
+					{
+						type: "Error",
+						value: "sin items",
+						stacktrace: {
+							frames: [
+								{
+									filename: "https://app.example.com/assets/app.js",
+									function: "r",
+									lineno: built.lineno,
+									colno: built.colno,
+								},
+							],
+						},
+					},
+				],
+			},
+		});
+		await eventually(async () => {
+			const { items } = (
+				await t.client.get(`${t.projectPath}/issues?status=all`, t.owner)
+			).json;
+			expect(items[0].culprit).toContain("computeTotal");
+		});
+	});
+
+	it("con un token inválido termina con código 1", async () => {
+		const t = await createTenant();
+		const dir = await mkdtemp(join(tmpdir(), "e2e-dist-"));
+		await writeFile(join(dir, "a.js.map"), build().map);
+		const result = await cli(t, "snt_".padEnd(52, "0"), dir);
+		expect(result.code).toBe(1);
+		expect(result.stdout).toContain("401");
 	});
 });

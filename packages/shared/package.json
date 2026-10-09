@@ -9,11 +9,15 @@
 		".": {
 			"types": "./dist/index.d.ts",
 			"default": "./dist/index.js"
+		},
+		"./source-maps": {
+			"types": "./dist/source-maps.d.ts",
+			"default": "./dist/source-maps.js"
 		}
 	},
 	"scripts": {
-		"build": "tsup src/index.ts --format esm --dts --clean",
-		"dev": "tsup src/index.ts --format esm --dts --watch",
+		"build": "tsup src/index.ts src/source-maps.ts --format esm --dts --clean",
+		"dev": "tsup src/index.ts src/source-maps.ts --format esm --dts --watch",
 		"typecheck": "tsc --noEmit",
 		"test": "vitest run"
 	},

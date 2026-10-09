@@ -1,0 +1,26 @@
+{
+	"name": "@sentinel/cli",
+	"version": "0.1.0",
+	"description": "Sentinel command line: uploads source maps from your CI.",
+	"private": true,
+	"type": "module",
+	"bin": {
+		"sentinel-cli": "./dist/bin.js"
+	},
+	"files": [
+		"dist"
+	],
+	"scripts": {
+		"build": "rm -rf dist && tsup",
+		"dev": "tsup --watch",
+		"typecheck": "tsc --noEmit",
+		"test": "vitest run"
+	},
+	"devDependencies": {
+		"@sentinel/shared": "workspace:*",
+		"@types/node": "^26.6.4",
+		"tsup": "^8.5.1",
+		"typescript": "~5.9.3",
+		"vitest": "^5.0.3"
+	}
+}
