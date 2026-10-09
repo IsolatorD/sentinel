@@ -100,7 +100,7 @@ Parámetros del listado: `status` (`unresolved` por defecto, `resolved`, `ignore
 
 | Comando | Qué ejecuta | Necesita |
 |---|---|---|
-| `pnpm test` | Tests unitarios (reglas puras, servicios con repositorios falsos, SDK en jsdom) | nada |
+| `pnpm test` | Tests unitarios y de interfaz (reglas puras, servicios con repositorios falsos, SDK y frontend en jsdom) | nada |
 | `pnpm test:e2e` | Pruebas de integración en `tests/e2e` | `pnpm infra:up` (Postgres y Redis) |
 
 Las pruebas de integración compilan y **arrancan la API y el worker reales** (`dist/`), y los ejercitan por HTTP contra Postgres y Redis reales: autenticación, permisos por rol, aislamiento entre organizaciones, ingesta, agrupación, idempotencia, rate limiting, CORS, la API de issues y el SDK de navegador.
@@ -108,3 +108,20 @@ Las pruebas de integración compilan y **arrancan la API y el worker reales** (`
 Son independientes de tu entorno de desarrollo: usan su propia base de datos (`sentinel_e2e`, que se recrea y se borra en cada corrida), el índice 15 de Redis y un puerto libre, así que se pueden correr con `pnpm dev` encendido. Si algo falla, los logs de la API y el worker quedan en `tests/e2e/.logs`. Variables opcionales: `E2E_POSTGRES_URL`, `E2E_REDIS_HOST`, `E2E_REDIS_PORT`, `E2E_REDIS_DB`.
 
 En el CI corren como un job aparte con servicios de Postgres y Redis.
+
+## Frontend (`apps/web`)
+
+Interfaz web inspirada en Sentry: barra lateral violeta, listado de issues con filtros, y el detalle de cada error con su stack trace, breadcrumbs, tags y contexto. Español e inglés (se detecta el idioma del navegador y se cambia desde el menú de usuario).
+
+```bash
+pnpm dev                 # web en http://localhost:5173 (proxy de /api al backend)
+pnpm seed:demo           # puebla una organización de demostración con 72 eventos
+```
+
+La semilla crea el usuario `demo@sentinel.dev` (contraseña `demo-password-123`, solo para desarrollo local). Variables opcionales del servidor de desarrollo: `VITE_API_TARGET` (por defecto `http://localhost:3000`) y `VITE_PORT`.
+
+**Pantallas:** acceso y registro (email y Google si está configurado), onboarding guiado (organización → proyecto → instalación del SDK con la DSN), proyectos, issues, detalle de un issue (con navegación entre eventos) y configuración del proyecto (claves DSN, instalación, zona de peligro).
+
+**Arquitectura** (atómica, ver `PLAN.md` §2.2): `components/{atoms,molecules,organisms,templates}`, `pages/`, `services/` (única capa que llama a la API, validando con los esquemas de `shared`) y `hooks/` (TanStack Query sobre los services). Ningún componente ni página importa un service; un test lo verifica en cada ejecución. El estado de la pantalla (filtros, página, pestaña, evento elegido) vive en la URL.
+
+Rutas: `/login`, `/register`, `/onboarding`, `/:org/projects`, `/:org/projects/:proyecto/issues`, `/:org/projects/:proyecto/issues/:issue`, `/:org/projects/:proyecto/settings`.

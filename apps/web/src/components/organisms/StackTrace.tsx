@@ -1,0 +1,102 @@
+import type { ExceptionValue } from "@sentinel/shared";
+import { useState } from "react";
+import { useTranslation } from "react-i18next";
+import { Button } from "@/components/atoms/Button";
+import { cn } from "@/lib/cn";
+import { framesForDisplay, shortLocation } from "@/lib/stacktrace";
+
+function ExceptionBlock({
+	value,
+	cause,
+}: {
+	value: ExceptionValue;
+	cause?: boolean;
+}) {
+	const { t } = useTranslation();
+	const [showAll, setShowAll] = useState(false);
+	const frames = value.stacktrace?.frames ?? [];
+	const { frames: shown, hidden } = framesForDisplay(frames, showAll);
+
+	return (
+		<div className={cn(cause && "mt-5")} data-testid="exception-block">
+			{cause && (
+				<div className="mb-1 text-[11px] font-medium tracking-wide text-faint uppercase">
+					{t("issue.stackTrace.causedBy")}
+				</div>
+			)}
+			<div className="mb-2">
+				<span className="font-mono text-sm font-semibold text-foreground">
+					{value.type}
+				</span>
+				{value.value && (
+					<span className="font-mono text-sm text-muted">: {value.value}</span>
+				)}
+			</div>
+
+			{frames.length === 0 ? (
+				<p className="text-sm text-muted">{t("issue.stackTrace.noStack")}</p>
+			) : (
+				<>
+					<ol className="overflow-hidden rounded-md border border-border">
+						{shown.map((frame) => (
+							<li
+								key={frame.index}
+								data-in-app={frame.in_app ? "true" : "false"}
+								className={cn(
+									"flex flex-wrap items-baseline gap-x-2 border-b border-border border-l-[3px] px-3 py-1.5 font-mono text-xs last:border-b-0",
+									frame.in_app
+										? "border-l-primary bg-primary-soft/40 text-foreground"
+										: "border-l-transparent bg-subtle/40 text-muted",
+								)}
+							>
+								<span title={frame.filename} className="font-semibold">
+									{shortLocation(frame)}
+								</span>{" "}
+								{frame.function && (
+									<span>
+										<span className="text-faint">in </span>
+										<span className={frame.in_app ? "text-primary" : ""}>
+											{frame.function}
+										</span>
+									</span>
+								)}
+							</li>
+						))}
+					</ol>
+					{(hidden > 0 || showAll) && frames.some((f) => f.in_app) && (
+						<Button
+							size="sm"
+							variant="ghost"
+							className="mt-2"
+							onClick={() => setShowAll((v) => !v)}
+						>
+							{showAll
+								? t("issue.stackTrace.inAppOnly")
+								: t("issue.stackTrace.showAll", { count: hidden })}
+						</Button>
+					)}
+				</>
+			)}
+		</div>
+	);
+}
+
+/**
+ * `exceptions` llega con la causa más profunda primero y la excepción principal al final.
+ * En pantalla se muestra primero la principal y después sus causas.
+ */
+export function StackTrace({ exceptions }: { exceptions: ExceptionValue[] }) {
+	const ordered = [...exceptions].reverse();
+	return (
+		<div>
+			{ordered.map((value, i) => (
+				<ExceptionBlock
+					// biome-ignore lint/suspicious/noArrayIndexKey: lista inmutable derivada del evento; las excepciones no tienen id propio
+					key={`${value.type}-${i}`}
+					value={value}
+					cause={i > 0}
+				/>
+			))}
+		</div>
+	);
+}

@@ -72,7 +72,7 @@ Reglas:
 - **Ningún componente llama a un service directamente.** Los componentes solo usan hooks; los hooks son los únicos que importan services.
 - Los atoms y molecules reciben todo por props; los organisms/pages son quienes usan hooks.
 - Los tipos y esquemas Zod vienen de `packages/shared`.
-- La UI se construye al final (después de backend y SDK). Las pantallas actuales (`App.tsx`, `AuthPage.tsx`, `auth-client.ts`) son provisionales y se reorganizarán con esta estructura.
+- Primera rebanada de UI implementada (acceso, onboarding, proyectos, issues, detalle y configuración) sobre un backend y un SDK ya completos. Un test de arquitectura (`apps/web/src/architecture.test.ts`) hace cumplir las reglas anteriores.
 
 ### 2.3 Arquitectura del backend
 
