@@ -1,47 +1,68 @@
-import { afterEach, describe, expect, it, vi } from "vitest";
+import type { AxiosAdapter, InternalAxiosRequestConfig } from "axios";
+import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import { z } from "zod";
 import { ApiError } from "@/lib/api-error";
-import { http } from "./http";
+import { apiClient, http } from "./http";
 
-const respond = (status: number, body?: unknown) =>
-	vi.spyOn(globalThis, "fetch").mockResolvedValue(
-		new Response(body === undefined ? null : JSON.stringify(body), {
+const original = apiClient.defaults.adapter;
+let requests: InternalAxiosRequestConfig[];
+
+/** Sustituye el transporte de axios: devuelve `status` y `body` sin tocar la red. */
+const respond = (status: number, body?: unknown, statusText = "") => {
+	const adapter: AxiosAdapter = async (config) => {
+		requests.push(config);
+		return {
+			data: body,
 			status,
-			headers: { "Content-Type": "application/json" },
-		}),
-	);
+			statusText,
+			headers: {},
+			config,
+		};
+	};
+	apiClient.defaults.adapter = adapter;
+};
 
-afterEach(() => vi.restoreAllMocks());
+beforeEach(() => {
+	requests = [];
+});
+afterEach(() => {
+	apiClient.defaults.adapter = original;
+});
 
 describe("http", () => {
 	it("envía cookies, serializa el cuerpo y valida la respuesta con el esquema", async () => {
-		const spy = respond(200, { id: "1" });
+		respond(200, { id: "1" });
 		const result = await http("/api/x", {
 			body: { a: 1 },
 			schema: z.object({ id: z.string() }),
 		});
 
 		expect(result).toEqual({ id: "1" });
-		const [url, init] = spy.mock.calls[0];
-		expect(url).toBe("/api/x");
-		expect(init).toMatchObject({
-			method: "POST",
-			credentials: "include",
-			body: '{"a":1}',
-			headers: { "Content-Type": "application/json" },
-		});
+		const [request] = requests;
+		expect(request.url).toBe("/api/x");
+		expect(request.method).toBe("post");
+		expect(request.withCredentials).toBe(true);
+		expect(JSON.parse(request.data)).toEqual({ a: 1 });
+		expect(request.headers.get("Content-Type")).toContain("application/json");
+	});
+
+	it("sin cuerpo usa GET", async () => {
+		respond(200, {});
+		await http("/api/x", { schema: z.object({}) });
+		expect(requests[0].method).toBe("get");
+		expect(requests[0].data).toBeUndefined();
 	});
 
 	it("arma la query ignorando valores vacíos o indefinidos", async () => {
-		const spy = respond(200, {});
+		respond(200, {});
 		await http("/api/x", {
 			query: { status: "all", q: undefined, page: 2, empty: "" },
 			schema: z.object({}),
 		});
-		expect(spy.mock.calls[0][0]).toBe("/api/x?status=all&page=2");
+		expect(requests[0].params).toEqual({ status: "all", page: 2 });
 	});
 
-	it("un 204 devuelve undefined y no intenta leer el cuerpo", async () => {
+	it("un 204 devuelve undefined", async () => {
 		respond(204);
 		await expect(http("/api/x", { method: "DELETE" })).resolves.toBeUndefined();
 	});
@@ -66,13 +87,9 @@ describe("http", () => {
 	});
 
 	it("si el error no tiene el formato esperado, igual lanza un ApiError con el estado", async () => {
-		vi.spyOn(globalThis, "fetch").mockResolvedValue(
-			new Response("<html>502</html>", {
-				status: 502,
-				statusText: "Bad Gateway",
-			}),
-		);
+		respond(502, "<html>502</html>", "Bad Gateway");
 		const error = await http("/api/x").catch((e) => e);
+		expect(error).toBeInstanceOf(ApiError);
 		expect(error).toMatchObject({ status: 502, message: "Bad Gateway" });
 	});
 
@@ -81,5 +98,12 @@ describe("http", () => {
 		await expect(
 			http("/api/x", { schema: z.object({ id: z.string() }) }),
 		).rejects.toThrow();
+	});
+
+	it("un fallo de red se propaga tal cual (no es un error de la API)", async () => {
+		apiClient.defaults.adapter = async () => {
+			throw new Error("Network Error");
+		};
+		await expect(http("/api/x")).rejects.toThrow("Network Error");
 	});
 });

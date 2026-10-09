@@ -2,11 +2,20 @@ import "@testing-library/jest-dom/vitest";
 import { cleanup } from "@testing-library/react";
 import { afterEach, beforeAll } from "vitest";
 import i18n from "@/i18n";
+import { apiClient } from "@/services/http";
 
 beforeAll(async () => {
 	// Las aserciones de los tests están en inglés, sin importar el idioma del entorno.
 	await i18n.changeLanguage("en");
 });
+
+// Ningún test sale a la red: lo que no se simula con `vi.mock` falla como una caída de red. Sin esto,
+// axios (a diferencia de `fetch` con URL relativa) llegaría a un servidor local si lo hubiera.
+apiClient.defaults.adapter = async (config) => {
+	throw new Error(
+		`Unmocked network request in a test: ${config.method} ${config.url}`,
+	);
+};
 
 afterEach(() => {
 	cleanup();

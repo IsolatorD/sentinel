@@ -1,4 +1,5 @@
 import { type ErrorResponse, errorResponseSchema } from "@sentinel/shared";
+import axios, { type AxiosResponse } from "axios";
 import type { z } from "zod";
 import { ApiError } from "@/lib/api-error";
 
@@ -11,17 +12,35 @@ interface RequestOptions<S extends z.ZodType | undefined> {
 	signal?: AbortSignal;
 }
 
-function buildPath(
-	path: string,
-	query?: RequestOptions<undefined>["query"],
-): string {
-	if (!query) return path;
-	const params = new URLSearchParams();
-	for (const [key, value] of Object.entries(query)) {
-		if (value !== undefined && value !== "") params.set(key, String(value));
-	}
-	const qs = params.toString();
-	return qs ? `${path}?${qs}` : path;
+/**
+ * Instancia compartida: cookies de sesión en cada petición y sin que axios lance por el estado HTTP
+ * (el formato de error del backend se interpreta en `http`, no en un interceptor).
+ */
+export const apiClient = axios.create({
+	withCredentials: true,
+	validateStatus: () => true,
+});
+
+/** Quita los parámetros vacíos o indefinidos para que no aparezcan en la URL. */
+function cleanQuery(query: RequestOptions<undefined>["query"]) {
+	if (!query) return undefined;
+	return Object.fromEntries(
+		Object.entries(query).filter(([, v]) => v !== undefined && v !== ""),
+	);
+}
+
+function toApiError(res: AxiosResponse): ApiError {
+	const parsed = errorResponseSchema.safeParse(res.data);
+	const body: ErrorResponse | undefined = parsed.success
+		? parsed.data
+		: undefined;
+	return new ApiError(
+		res.status,
+		body?.message ?? res.statusText ?? "Request failed",
+		body?.code,
+		body?.issues,
+		body?.requestId,
+	);
 }
 
 /** Cliente HTTP mínimo: cookies de sesión, JSON y errores tipados. */
@@ -29,33 +48,15 @@ export async function http<S extends z.ZodType | undefined = undefined>(
 	path: string,
 	options: RequestOptions<S> = {},
 ): Promise<S extends z.ZodType ? z.infer<S> : undefined> {
-	const res = await fetch(buildPath(path, options.query), {
+	const res = await apiClient.request({
+		url: path,
 		method: options.method ?? (options.body !== undefined ? "POST" : "GET"),
-		credentials: "include",
-		headers:
-			options.body !== undefined
-				? { "Content-Type": "application/json" }
-				: undefined,
-		body: options.body !== undefined ? JSON.stringify(options.body) : undefined,
+		params: cleanQuery(options.query),
+		data: options.body,
 		signal: options.signal,
 	});
 
-	if (!res.ok) {
-		let parsed: ErrorResponse | undefined;
-		try {
-			parsed = errorResponseSchema.parse(await res.json());
-		} catch {
-			parsed = undefined;
-		}
-		throw new ApiError(
-			res.status,
-			parsed?.message ?? res.statusText ?? "Request failed",
-			parsed?.code,
-			parsed?.issues,
-			parsed?.requestId,
-		);
-	}
-
+	if (res.status >= 400) throw toApiError(res);
 	if (res.status === 204 || !options.schema) return undefined as never;
-	return options.schema.parse(await res.json()) as never;
+	return options.schema.parse(res.data) as never;
 }
