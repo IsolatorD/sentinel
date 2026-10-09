@@ -101,6 +101,37 @@
 	}
 }
 
+/* Tema oscuro: solo se redefinen las variables; ningún componente conoce los colores. */
+:root[data-theme="dark"] {
+	--color-sidebar: #1b1622;
+	--color-sidebar-hover: #2a2234;
+	--color-sidebar-active: #3a2f46;
+	--color-sidebar-text: #c9c1d4;
+	--color-sidebar-muted: #8a7f99;
+
+	--color-primary: #7a6dd6;
+	--color-primary-hover: #8b7fe0;
+	--color-primary-soft: #2b2545;
+
+	--color-background: #14101a;
+	--color-surface: #1d1825;
+	--color-subtle: #251f2f;
+	--color-border: #342c40;
+	--color-border-strong: #4a3f5a;
+
+	--color-foreground: #ece8f2;
+	--color-muted: #a89cb8;
+	--color-faint: #8478a0;
+
+	--color-fatal: #bb6fd6;
+	--color-error: #f0566a;
+	--color-warning: #f0a020;
+	--color-info: #6a9bf0;
+	--color-debug: #a89cb8;
+	--color-success: #3cc0a2;
+	--color-danger: #f0566a;
+}
+
 html,
 body,
 #root {

@@ -1,13 +1,28 @@
 <!doctype html>
 <html lang="es">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Sentinel</title>
-    <meta name="description" content="Error tracking and monitoring" />
-  </head>
-  <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.tsx"></script>
-  </body>
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Sentinel</title>
+		<meta name="description" content="Error tracking and monitoring" />
+		<meta name="color-scheme" content="light dark" />
+		<script>
+			// Aplica el tema antes de pintar, para que no haya un destello claro en quien usa el oscuro.
+			try {
+				const pref = localStorage.getItem("sentinel:theme");
+				const dark =
+					pref === "dark" ||
+					(pref !== "light" &&
+						window.matchMedia("(prefers-color-scheme: dark)").matches);
+				document.documentElement.dataset.theme = dark ? "dark" : "light";
+				document.documentElement.style.colorScheme = dark ? "dark" : "light";
+			} catch {
+				// Sin almacenamiento: se queda con el tema por defecto.
+			}
+		</script>
+	</head>
+	<body>
+		<div id="root"></div>
+		<script type="module" src="/src/main.tsx"></script>
+	</body>
 </html>

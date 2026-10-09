@@ -18,6 +18,8 @@ export const es: Deep<Translations> = {
 		copied: "Copiado",
 		back: "Volver",
 		close: "Cerrar",
+		theme: "Tema",
+		themes: { system: "Sistema", light: "Claro", dark: "Oscuro" },
 		language: "Idioma",
 		menu: "Menú",
 		optional: "opcional",

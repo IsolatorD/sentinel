@@ -9,7 +9,9 @@ import { MenuItem } from "@/components/molecules/MenuItem/MenuItem";
 import { MenuLabel } from "@/components/molecules/MenuLabel/MenuLabel";
 import { MenuSeparator } from "@/components/molecules/MenuSeparator/MenuSeparator";
 import { MenuTrigger } from "@/components/molecules/MenuTrigger/MenuTrigger";
+import { ThemeSelect } from "@/components/molecules/ThemeSelect/ThemeSelect";
 import { useSession, useSignOut } from "@/hooks/useSession/useSession";
+import { useTheme } from "@/hooks/useTheme/useTheme";
 
 export function UserMenu({
 	onStartTour,
@@ -21,6 +23,7 @@ export function UserMenu({
 	const navigate = useNavigate();
 	const session = useSession();
 	const signOut = useSignOut();
+	const { theme, setTheme } = useTheme();
 	const user = session.data?.user;
 	if (!user) return null;
 
@@ -45,6 +48,10 @@ export function UserMenu({
 				<MenuLabel>{t("common.language")}</MenuLabel>
 				<div className="px-2 pb-1">
 					<LanguageSelect />
+				</div>
+				<MenuLabel>{t("common.theme")}</MenuLabel>
+				<div className="px-2 pb-1">
+					<ThemeSelect value={theme} onChange={setTheme} />
 				</div>
 				<MenuSeparator />
 				{onStartTour && (

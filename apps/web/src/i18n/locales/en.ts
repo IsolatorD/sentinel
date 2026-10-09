@@ -14,6 +14,8 @@ export const en = {
 		copied: "Copied",
 		back: "Back",
 		close: "Close",
+		theme: "Theme",
+		themes: { system: "System", light: "Light", dark: "Dark" },
 		language: "Language",
 		menu: "Menu",
 		optional: "optional",
