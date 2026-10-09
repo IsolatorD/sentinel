@@ -10,6 +10,7 @@ import {
 	TABS,
 	withCurrent,
 } from "@/components/organisms/IssueFilters/IssueFilters.constants";
+import { useMembers } from "@/hooks/useOrganizations/useOrganizations";
 import { useEnvironments, useReleases } from "@/hooks/useReleases/useReleases";
 import { useCurrentProject } from "@/hooks/useScope/useScope";
 import { useIssuesSearch } from "@/hooks/useSearchParams/useSearchParams";
@@ -18,9 +19,10 @@ import { cn } from "@/utils/cn/cn";
 export function IssueFilters() {
 	const { t } = useTranslation();
 	const { search, update } = useIssuesSearch();
-	const { scope } = useCurrentProject();
+	const { scope, organization } = useCurrentProject();
 	const environments = useEnvironments(scope);
 	const releases = useReleases(scope);
+	const members = useMembers(organization?.id);
 
 	// El texto se escribe en un estado local y se aplica a la URL con retraso. El retraso vive en
 	// el manejador de escritura (no en un efecto): así un cambio externo de la URL —limpiar filtros,
@@ -114,6 +116,23 @@ export function IssueFilters() {
 				).map((version) => (
 					<option key={version} value={version}>
 						{version}
+					</option>
+				))}
+			</Select>
+			<Select
+				aria-label={t("issues.filters.assignee")}
+				value={search.assignee ?? ""}
+				onChange={(e) =>
+					update({ assignee: e.target.value || undefined }, { resetPage: true })
+				}
+				className="w-44"
+			>
+				<option value="">{t("issues.filters.allAssignees")}</option>
+				<option value="me">{t("issues.filters.assignedToMe")}</option>
+				<option value="unassigned">{t("issues.filters.unassigned")}</option>
+				{(members.data ?? []).map((m) => (
+					<option key={m.userId} value={m.userId}>
+						{m.user.name}
 					</option>
 				))}
 			</Select>

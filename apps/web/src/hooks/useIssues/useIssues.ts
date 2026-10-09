@@ -98,6 +98,77 @@ export function useUpdateIssueStatus(scope: ReadyScope, issueId: string) {
 	});
 }
 
+export function useIssueActivity(
+	scope: Scope,
+	issueId: string | undefined,
+	page: { limit: number; offset: number },
+) {
+	const { orgId, projectId } = scope;
+	return useQuery({
+		queryKey: queryKeys.issueActivity(
+			orgId ?? "",
+			projectId ?? "",
+			issueId ?? "",
+			page,
+		),
+		queryFn: () =>
+			issuesService.listActivity(
+				orgId as string,
+				projectId as string,
+				issueId as string,
+				page,
+			),
+		enabled: Boolean(orgId && projectId && issueId),
+		placeholderData: keepPreviousData,
+	});
+}
+
+function useInvalidateActivity(scope: ReadyScope, issueId: string) {
+	const client = useQueryClient();
+	return () =>
+		client.invalidateQueries({
+			queryKey: queryKeys.issueActivity(scope.orgId, scope.projectId, issueId),
+		});
+}
+
+export function useAddComment(scope: ReadyScope, issueId: string) {
+	const invalidate = useInvalidateActivity(scope, issueId);
+	return useMutation({
+		mutationFn: (body: string) =>
+			issuesService.addComment(scope.orgId, scope.projectId, issueId, body),
+		onSuccess: invalidate,
+	});
+}
+
+export function useEditComment(scope: ReadyScope, issueId: string) {
+	const invalidate = useInvalidateActivity(scope, issueId);
+	return useMutation({
+		mutationFn: (vars: { commentId: string; body: string }) =>
+			issuesService.editComment(
+				scope.orgId,
+				scope.projectId,
+				issueId,
+				vars.commentId,
+				vars.body,
+			),
+		onSuccess: invalidate,
+	});
+}
+
+export function useDeleteComment(scope: ReadyScope, issueId: string) {
+	const invalidate = useInvalidateActivity(scope, issueId);
+	return useMutation({
+		mutationFn: (commentId: string) =>
+			issuesService.deleteComment(
+				scope.orgId,
+				scope.projectId,
+				issueId,
+				commentId,
+			),
+		onSuccess: invalidate,
+	});
+}
+
 export function useDeleteIssue(scope: ReadyScope, issueId: string) {
 	const client = useQueryClient();
 	return useMutation({

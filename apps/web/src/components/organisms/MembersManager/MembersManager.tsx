@@ -13,10 +13,7 @@ import { Modal } from "@/components/molecules/Modal/Modal";
 import { RelativeTime } from "@/components/molecules/RelativeTime/RelativeTime";
 import { Section } from "@/components/molecules/Section/Section";
 import { InviteMemberDialog } from "@/components/organisms/InviteMemberDialog/InviteMemberDialog";
-import {
-	isAdminRole,
-	LOCKED_ROLE,
-} from "@/components/organisms/MembersManager/MembersManager.constants";
+import { LOCKED_ROLE } from "@/components/organisms/MembersManager/MembersManager.constants";
 import type { MembersManagerProps } from "@/components/organisms/MembersManager/MembersManagerInterface";
 import {
 	useCancelInvitation,
@@ -30,6 +27,7 @@ import { ApiError } from "@/utils/apiError/apiError";
 import { ASSIGNABLE_ROLES } from "@/utils/invitation/invitation.constants";
 import type { AssignableRole } from "@/utils/invitation/invitationInterface";
 import type { OrgMember } from "@/utils/member/memberInterface";
+import { isAdminRole } from "@/utils/roles/roles";
 
 export function MembersManager({ orgId, currentUserId }: MembersManagerProps) {
 	const { t } = useTranslation();

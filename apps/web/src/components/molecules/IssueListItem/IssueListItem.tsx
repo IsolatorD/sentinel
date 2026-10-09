@@ -1,6 +1,7 @@
 import type { IssueDto } from "@sentinel/shared";
 import { Link } from "@tanstack/react-router";
 import { useTranslation } from "react-i18next";
+import { Avatar } from "@/components/atoms/Avatar/Avatar";
 import { Badge } from "@/components/atoms/Badge/Badge";
 import {
 	ISSUE_GRID,
@@ -54,6 +55,21 @@ export function IssueListItem({
 					</span>
 					<span className="mt-0.5 flex items-center gap-2 text-xs text-muted">
 						<LevelBadge level={issue.level} />
+						{issue.assignee && (
+							<span
+								className="inline-flex shrink-0 items-center gap-1 text-faint"
+								title={t("issues.assignedTo", { name: issue.assignee.name })}
+							>
+								<Avatar
+									name={issue.assignee.name}
+									rounded="full"
+									className="size-4 text-[8px]"
+								/>
+								<span className="sr-only">
+									{t("issues.assignedTo", { name: issue.assignee.name })}
+								</span>
+							</span>
+						)}
 						{issue.culprit && (
 							<span className="truncate font-mono">{issue.culprit}</span>
 						)}

@@ -1,9 +1,12 @@
 import {
+	activityDtoSchema,
+	activityListDtoSchema,
 	eventDetailDtoSchema,
 	eventListDtoSchema,
 	issueDetailDtoSchema,
 	issueDtoSchema,
 	issueListDtoSchema,
+	type ListActivityQuery,
 	type ListIssuesQuery,
 	type UpdateIssueInput,
 } from "@sentinel/shared";
@@ -53,5 +56,51 @@ export const issuesService = {
 	) =>
 		http(`${base(orgId, projectId)}/${issueId}/events/${eventId}`, {
 			schema: eventDetailDtoSchema,
+		}),
+
+	listActivity: (
+		orgId: string,
+		projectId: string,
+		issueId: string,
+		page: Partial<ListActivityQuery>,
+	) =>
+		http(`${base(orgId, projectId)}/${issueId}/activity`, {
+			schema: activityListDtoSchema,
+			query: page,
+		}),
+
+	addComment: (
+		orgId: string,
+		projectId: string,
+		issueId: string,
+		body: string,
+	) =>
+		http(`${base(orgId, projectId)}/${issueId}/comments`, {
+			method: "POST",
+			body: { body },
+			schema: activityDtoSchema,
+		}),
+
+	editComment: (
+		orgId: string,
+		projectId: string,
+		issueId: string,
+		commentId: string,
+		body: string,
+	) =>
+		http(`${base(orgId, projectId)}/${issueId}/comments/${commentId}`, {
+			method: "PATCH",
+			body: { body },
+			schema: activityDtoSchema,
+		}),
+
+	deleteComment: (
+		orgId: string,
+		projectId: string,
+		issueId: string,
+		commentId: string,
+	) =>
+		http(`${base(orgId, projectId)}/${issueId}/comments/${commentId}`, {
+			method: "DELETE",
 		}),
 };

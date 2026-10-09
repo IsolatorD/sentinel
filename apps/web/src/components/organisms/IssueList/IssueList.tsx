@@ -27,6 +27,7 @@ export function IssueList() {
 		q: search.q,
 		environment: search.environment,
 		release: search.release,
+		assignee: search.assignee,
 		sort: search.sort,
 		order: search.order,
 		limit: PAGE_SIZE,
@@ -38,7 +39,8 @@ export function IssueList() {
 		Boolean(search.q) ||
 		Boolean(search.level) ||
 		Boolean(search.environment) ||
-		Boolean(search.release);
+		Boolean(search.release) ||
+		Boolean(search.assignee);
 	const clearFilters = () =>
 		update(
 			{
@@ -47,6 +49,7 @@ export function IssueList() {
 				level: undefined,
 				environment: undefined,
 				release: undefined,
+				assignee: undefined,
 			},
 			{ resetPage: true },
 		);

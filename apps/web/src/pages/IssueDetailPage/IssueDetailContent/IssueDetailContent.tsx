@@ -3,7 +3,9 @@ import { ArrowLeft } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { Skeleton } from "@/components/atoms/Skeleton/Skeleton";
 import { ErrorState } from "@/components/molecules/ErrorState/ErrorState";
+import { TabBar } from "@/components/molecules/TabBar/TabBar";
 import { EventNavigator } from "@/components/organisms/EventNavigator/EventNavigator";
+import { IssueActivity } from "@/components/organisms/IssueActivity/IssueActivity";
 import { IssueEventDetails } from "@/components/organisms/IssueEventDetails/IssueEventDetails";
 import { IssueEventsTable } from "@/components/organisms/IssueEventsTable/IssueEventsTable";
 import { IssueHeader } from "@/components/organisms/IssueHeader/IssueHeader";
@@ -15,15 +17,16 @@ import {
 } from "@/hooks/useIssues/useIssues";
 import { useCurrentProject } from "@/hooks/useScope/useScope";
 import { useIssueSearch } from "@/hooks/useSearchParams/useSearchParams";
+import { useSession } from "@/hooks/useSession/useSession";
 import { NotFoundPage } from "@/pages/NotFoundPage/NotFoundPage";
 import { ApiError } from "@/utils/apiError/apiError";
-import { cn } from "@/utils/cn/cn";
 
 export function IssueDetailContent() {
 	const { t } = useTranslation();
 	const { issueId } = useParams({ strict: false }) as { issueId: string };
 	const { organization, project, scope } = useCurrentProject();
 	const { search, update } = useIssueSearch();
+	const session = useSession();
 
 	const issue = useIssue(scope, issueId);
 	const recent = useIssueEvents(scope, issueId, { limit: 50, offset: 0 });
@@ -67,27 +70,23 @@ export function IssueDetailContent() {
 						projectSlug={project.slug}
 					/>
 
-					<div role="tablist" className="flex gap-5 border-b border-border">
-						{(["details", "events"] as const).map((tab) => (
-							<button
-								key={tab}
-								type="button"
-								role="tab"
-								aria-selected={search.tab === tab}
-								onClick={() => update({ tab })}
-								className={cn(
-									"-mb-px border-b-2 px-0.5 pb-2 text-sm font-medium",
-									search.tab === tab
-										? "border-primary text-foreground"
-										: "border-transparent text-muted hover:text-foreground",
-								)}
-							>
-								{t(`issue.tabs.${tab}`)}
-							</button>
-						))}
-					</div>
+					<TabBar
+						label={t("issue.tabs.label")}
+						active={search.tab}
+						onChange={(tab) => update({ tab: tab as typeof search.tab })}
+						tabs={(["details", "events", "activity"] as const).map((id) => ({
+							id,
+							label: t(`issue.tabs.${id}`),
+						}))}
+					/>
 
-					{search.tab === "events" ? (
+					{search.tab === "activity" ? (
+						<IssueActivity
+							scope={ready}
+							issueId={issueId}
+							currentUserId={session.data?.user.id ?? ""}
+						/>
+					) : search.tab === "events" ? (
 						<IssueEventsTable
 							scope={ready}
 							issueId={issueId}

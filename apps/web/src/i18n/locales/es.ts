@@ -144,7 +144,12 @@ export const es: Deep<Translations> = {
 			allEnvironments: "Todos los entornos",
 			release: "Release",
 			allReleases: "Todas las releases",
+			assignee: "Responsable",
+			allAssignees: "Todos",
+			assignedToMe: "Asignados a mí",
+			unassigned: "Sin asignar",
 		},
+		assignedTo: "Asignado a {{name}}",
 		regression: "Regresión",
 		regressionIn: "Regresión en {{release}}",
 		sort: {
@@ -229,6 +234,12 @@ export const es: Deep<Translations> = {
 		tabs: {
 			details: "Detalles",
 			events: "Eventos",
+			activity: "Actividad",
+			label: "Secciones del issue",
+		},
+		assignee: {
+			label: "Responsable",
+			unassigned: "Sin asignar",
 		},
 		stackTrace: {
 			showCode: "Mostrar código",
@@ -365,6 +376,37 @@ export const es: Deep<Translations> = {
 			"Esta invitación se envió a un correo distinto del de tu sesión ({{email}}). Inicia sesión con la cuenta invitada para aceptarla.",
 		switchAccount: "Iniciar sesión con otra cuenta",
 		goHome: "Ir a Sentinel",
+	},
+	activity: {
+		someone: "Alguien",
+		commentLabel: "Comentario",
+		placeholder: "Escribe un comentario…",
+		shortcut: "Ctrl/⌘ + Enter para enviar",
+		comment: "Comentar",
+		edit: "Editar comentario",
+		edited: "editado",
+		delete: "Eliminar comentario",
+		empty:
+			"Todavía no hay nada. Aquí aparecerán los comentarios y los cambios de este issue.",
+		loadError: "No se pudo cargar la actividad.",
+		deleteDialog: {
+			title: "¿Eliminar este comentario?",
+			description: "No se puede deshacer.",
+		},
+		events: {
+			resolved: "{{who}} resolvió este issue",
+			resolvedInRelease:
+				"{{who}} resolvió este issue en la release {{release}}",
+			resolvedNextRelease:
+				"{{who}} resolvió este issue para la próxima release después de {{release}}",
+			reopened: "{{who}} reabrió este issue",
+			ignored: "{{who}} ignoró este issue",
+			assigned: "{{who}} asignó este issue a {{to}}",
+			assignedSelf: "{{who}} se asignó este issue",
+			unassigned: "{{who}} quitó la asignación de {{from}}",
+			reassigned: "{{who}} reasignó este issue de {{from}} a {{to}}",
+			generic: "{{who}} actualizó este issue",
+		},
 	},
 	alerts: {
 		title: "Alertas",

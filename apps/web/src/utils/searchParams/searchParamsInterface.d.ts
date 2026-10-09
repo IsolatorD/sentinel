@@ -18,6 +18,7 @@ export interface IssuesSearch {
 	level?: z.infer<typeof levelSchema>;
 	environment?: string;
 	release?: string;
+	assignee?: string;
 	sort: (typeof ISSUE_SORTS)[number];
 	order: "asc" | "desc";
 	page: number;
@@ -27,7 +28,7 @@ export type IssueSearchInput = z.infer<typeof issueSearchInputSchema>;
 
 export interface IssueSearch {
 	event?: string;
-	tab: "details" | "events";
+	tab: "details" | "events" | "activity";
 }
 
 export interface AlertsSearch {

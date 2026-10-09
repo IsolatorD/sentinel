@@ -48,6 +48,18 @@ export const queryKeys = {
 		page: object,
 	) =>
 		[...queryKeys.issues(orgId, projectId), "events", issueId, page] as const,
+	issueActivity: (
+		orgId: string,
+		projectId: string,
+		issueId: string,
+		page?: object,
+	) =>
+		[
+			...queryKeys.issues(orgId, projectId),
+			"activity",
+			issueId,
+			...(page ? [page] : []),
+		] as const,
 	issueEvent: (
 		orgId: string,
 		projectId: string,

@@ -140,7 +140,12 @@ export const en = {
 			allEnvironments: "All environments",
 			release: "Release",
 			allReleases: "All releases",
+			assignee: "Assignee",
+			allAssignees: "Everyone",
+			assignedToMe: "Assigned to me",
+			unassigned: "Unassigned",
 		},
+		assignedTo: "Assigned to {{name}}",
 		regression: "Regression",
 		regressionIn: "Regression in {{release}}",
 		sort: {
@@ -225,6 +230,12 @@ export const en = {
 		tabs: {
 			details: "Details",
 			events: "Events",
+			activity: "Activity",
+			label: "Issue sections",
+		},
+		assignee: {
+			label: "Assignee",
+			unassigned: "Unassigned",
 		},
 		stackTrace: {
 			showCode: "Show code",
@@ -358,6 +369,36 @@ export const en = {
 			"This invitation was sent to a different email address than the one you are signed in with ({{email}}). Sign in with the invited account to accept it.",
 		switchAccount: "Sign in with another account",
 		goHome: "Go to Sentinel",
+	},
+	activity: {
+		someone: "Someone",
+		commentLabel: "Comment",
+		placeholder: "Write a comment…",
+		shortcut: "Ctrl/⌘ + Enter to send",
+		comment: "Comment",
+		edit: "Edit comment",
+		edited: "edited",
+		delete: "Delete comment",
+		empty:
+			"Nothing here yet. Comments and changes to this issue will show up here.",
+		loadError: "Could not load the activity.",
+		deleteDialog: {
+			title: "Delete this comment?",
+			description: "This cannot be undone.",
+		},
+		events: {
+			resolved: "{{who}} resolved this issue",
+			resolvedInRelease: "{{who}} resolved this issue in release {{release}}",
+			resolvedNextRelease:
+				"{{who}} resolved this issue for the next release after {{release}}",
+			reopened: "{{who}} reopened this issue",
+			ignored: "{{who}} ignored this issue",
+			assigned: "{{who}} assigned this issue to {{to}}",
+			assignedSelf: "{{who}} assigned this issue to themselves",
+			unassigned: "{{who}} unassigned {{from}}",
+			reassigned: "{{who}} reassigned this issue from {{from}} to {{to}}",
+			generic: "{{who}} updated this issue",
+		},
 	},
 	alerts: {
 		title: "Alerts",

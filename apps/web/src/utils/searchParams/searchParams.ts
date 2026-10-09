@@ -20,6 +20,7 @@ export function resolveIssuesSearch(raw: unknown): IssuesSearch {
 		level: input.level,
 		environment: input.environment,
 		release: input.release,
+		assignee: input.assignee,
 		sort: input.sort ?? ISSUES_SEARCH_DEFAULTS.sort,
 		order: input.order ?? ISSUES_SEARCH_DEFAULTS.order,
 		page: input.page ?? ISSUES_SEARCH_DEFAULTS.page,

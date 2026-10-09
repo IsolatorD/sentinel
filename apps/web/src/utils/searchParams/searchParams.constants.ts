@@ -17,6 +17,8 @@ export const issuesSearchInputSchema = z.object({
 	level: levelSchema.optional().catch(undefined),
 	environment: z.string().trim().min(1).max(256).optional().catch(undefined),
 	release: z.string().trim().min(1).max(256).optional().catch(undefined),
+	/** `me`, `unassigned` o el id de un usuario. */
+	assignee: z.string().trim().min(1).max(64).optional().catch(undefined),
 	sort: z.enum(ISSUE_SORTS).optional().catch(undefined),
 	order: z.enum(["asc", "desc"]).optional().catch(undefined),
 	page: z.coerce.number().int().min(1).optional().catch(undefined),
@@ -32,7 +34,7 @@ export const ISSUES_SEARCH_DEFAULTS = {
 export const issueSearchInputSchema = z.object({
 	/** Evento seleccionado; sin él se muestra el último. */
 	event: z.string().uuid().optional().catch(undefined),
-	tab: z.enum(["details", "events"]).optional().catch(undefined),
+	tab: z.enum(["details", "events", "activity"]).optional().catch(undefined),
 });
 
 export const ALERT_TABS = ["rules", "channels", "history"] as const;

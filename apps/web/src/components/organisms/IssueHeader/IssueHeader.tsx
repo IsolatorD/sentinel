@@ -11,6 +11,7 @@ import { RelativeTime } from "@/components/molecules/RelativeTime/RelativeTime";
 import { ResolveButton } from "@/components/molecules/ResolveButton/ResolveButton";
 import { StatBlock } from "@/components/molecules/StatBlock/StatBlock";
 import { StatusBadge } from "@/components/molecules/StatusBadge/StatusBadge";
+import { IssueAssignee } from "@/components/organisms/IssueAssignee/IssueAssignee";
 import type { IssueHeaderProps } from "@/components/organisms/IssueHeader/IssueHeaderInterface";
 import {
 	useDeleteIssue,
@@ -117,6 +118,9 @@ export function IssueHeader({
 			</div>
 
 			<div className="mt-5 flex flex-wrap gap-x-10 gap-y-3 border-t border-border pt-4">
+				<StatBlock label={t("issue.assignee.label")}>
+					<IssueAssignee issue={issue} scope={scope} />
+				</StatBlock>
 				<StatBlock label={t("issue.stats.events")}>
 					{formatCompact(issue.eventCount, i18n.language)}
 				</StatBlock>
