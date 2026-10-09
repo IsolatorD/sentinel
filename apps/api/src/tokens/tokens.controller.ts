@@ -22,6 +22,7 @@ import {
 import { type CreateTokenInput, createTokenSchema } from "@sentinel/shared";
 import { AuthGuard, type AuthSession } from "../auth/auth.guard.js";
 import { CurrentUser } from "../auth/current-user.decorator.js";
+import { Notice } from "../common/notice.js";
 import { ZodValidationPipe } from "../common/zod-validation.pipe.js";
 import { docs } from "../openapi/schemas.js";
 import { TokensService } from "./tokens.service.js";
@@ -56,6 +57,7 @@ export class TokensController {
 	})
 	@ApiBody({ schema: docs.createToken })
 	@ApiCreatedResponse({ schema: docs.createdToken })
+	@Notice({ code: "NOTICE_TOKEN_CREATED" })
 	create(
 		@CurrentUser() user: User,
 		@Param("orgId") orgId: string,
@@ -68,6 +70,7 @@ export class TokensController {
 	@HttpCode(204)
 	@ApiOperation({ summary: "Revoca un token de API" })
 	@ApiNoContentResponse()
+	@Notice({ code: "NOTICE_TOKEN_REVOKED" })
 	async revoke(
 		@CurrentUser() user: User,
 		@Param("orgId") orgId: string,

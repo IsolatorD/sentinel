@@ -16,12 +16,16 @@ import {
 	organization,
 	project,
 	user,
+	userPreference,
 } from "@sentinel/db";
-import type {
-	AlertPayload,
-	AlertTrigger,
-	ChannelType,
-	EmailRecipients,
+import {
+	type AlertPayload,
+	type AlertTrigger,
+	type ChannelType,
+	DEFAULT_LOCALE,
+	type EmailRecipients,
+	isLocale,
+	type Locale,
 } from "@sentinel/shared";
 import { DB } from "../database/database.module.js";
 import type { RuleCriteria } from "./domain/rule-matching.js";
@@ -225,11 +229,11 @@ export class AlertsRepository {
 			.where(eq(alertDelivery.id, id));
 	}
 
-	/** Correos de los miembros de la organización (todos, o solo los indicados). */
-	async memberEmails(
+	/** Correo e idioma de los miembros de la organización (todos, o solo los indicados). */
+	async memberRecipients(
 		organizationId: string,
 		recipients: EmailRecipients,
-	): Promise<string[]> {
+	): Promise<Array<{ email: string; locale: Locale }>> {
 		const where =
 			recipients.mode === "members"
 				? and(
@@ -238,11 +242,18 @@ export class AlertsRepository {
 					)
 				: eq(member.organizationId, organizationId);
 		const rows = await this.db
-			.select({ email: user.email })
+			.select({ email: user.email, locale: userPreference.locale })
 			.from(member)
 			.innerJoin(user, eq(user.id, member.userId))
+			.leftJoin(userPreference, eq(userPreference.userId, user.id))
 			.where(where);
-		return [...new Set(rows.map((r) => r.email))];
+		const byEmail = new Map<string, Locale>();
+		for (const row of rows)
+			byEmail.set(
+				row.email,
+				isLocale(row.locale) ? row.locale : DEFAULT_LOCALE,
+			);
+		return [...byEmail].map(([email, locale]) => ({ email, locale }));
 	}
 }
 

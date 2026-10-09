@@ -40,7 +40,7 @@ const webhookUrl = z
 	.superRefine((value, ctx) => {
 		// Solo la forma: si el host es interno lo decide el servidor (depende de ALLOW_PRIVATE_WEBHOOKS).
 		const check = checkWebhookUrl(value, { allowPrivate: true });
-		if (!check.ok) ctx.addIssue({ code: "custom", message: check.reason });
+		if (!check.ok) ctx.addIssue({ code: "custom", message: check.code });
 	});
 
 export const emailRecipientsSchema = z.discriminatedUnion("mode", [
@@ -70,7 +70,7 @@ export const updateChannelSchema = z
 		url: webhookUrl.optional(),
 		recipients: emailRecipientsSchema.optional(),
 	})
-	.refine((v) => Object.keys(v).length > 0, "Nothing to update");
+	.refine((v) => Object.keys(v).length > 0, "NOTHING_TO_UPDATE");
 export type UpdateChannelInput = z.infer<typeof updateChannelSchema>;
 
 export const channelDtoSchema = z.object({
@@ -130,13 +130,13 @@ function frequencyRules(
 			ctx.addIssue({
 				code: "custom",
 				path: ["threshold"],
-				message: "Required for frequency rules",
+				message: "FREQUENCY_FIELD_REQUIRED",
 			});
 		if (v.windowMinutes === undefined)
 			ctx.addIssue({
 				code: "custom",
 				path: ["windowMinutes"],
-				message: "Required for frequency rules",
+				message: "FREQUENCY_FIELD_REQUIRED",
 			});
 	} else if (
 		v.trigger &&
@@ -145,7 +145,7 @@ function frequencyRules(
 		ctx.addIssue({
 			code: "custom",
 			path: ["threshold"],
-			message: "Only frequency rules take a threshold and a window",
+			message: "THRESHOLD_ONLY_FREQUENCY",
 		});
 	}
 }
@@ -178,7 +178,7 @@ export const updateRuleSchema = z
 		channelIds: ruleFields.channelIds.optional(),
 		enabled: z.boolean().optional(),
 	})
-	.refine((v) => Object.keys(v).length > 0, "Nothing to update");
+	.refine((v) => Object.keys(v).length > 0, "NOTHING_TO_UPDATE");
 export type UpdateRuleInput = z.infer<typeof updateRuleSchema>;
 
 export const ruleDtoSchema = z.object({

@@ -25,6 +25,7 @@ import {
 } from "@nestjs/swagger";
 import { AuthGuard, type AuthSession } from "../auth/auth.guard.js";
 import { CurrentUser } from "../auth/current-user.decorator.js";
+import { Notice } from "../common/notice.js";
 import { docs } from "../openapi/schemas.js";
 import {
 	ArtifactAuthGuard,
@@ -102,6 +103,7 @@ export class ArtifactsController {
 		description: "Requiere rol owner o admin.",
 	})
 	@ApiNoContentResponse()
+	@Notice({ code: "NOTICE_FILE_DELETED" })
 	async remove(
 		@CurrentUser() user: User,
 		@Param("orgId") orgId: string,

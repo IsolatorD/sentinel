@@ -159,13 +159,13 @@ export class AlertsService {
 		const config = { ...channel.config } as Record<string, unknown>;
 		if (input.url !== undefined) {
 			if (channel.type === "email")
-				throw new BadRequestException("Email channels have no URL");
+				throw new BadRequestException({ reason: "EMAIL_CHANNEL_NO_URL" });
 			this.assertUrlAllowed(input.url);
 			config.url = input.url;
 		}
 		if (input.recipients !== undefined) {
 			if (channel.type !== "email")
-				throw new BadRequestException("Only email channels have recipients");
+				throw new BadRequestException({ reason: "ONLY_EMAIL_HAS_RECIPIENTS" });
 			await this.assertMembers(orgId, input.recipients);
 			config.recipients = input.recipients;
 		}
@@ -174,7 +174,7 @@ export class AlertsService {
 			...(input.enabled !== undefined && { enabled: input.enabled }),
 			config,
 		});
-		if (!row) throw new NotFoundException("Channel not found");
+		if (!row) throw new NotFoundException({ reason: "CHANNEL_NOT_FOUND" });
 		return toChannelDto(row);
 	}
 
@@ -186,7 +186,7 @@ export class AlertsService {
 	): Promise<void> {
 		await this.authorize(userId, orgId, projectId, "admin");
 		if (!(await this.repository.deleteChannel(projectId, channelId)))
-			throw new NotFoundException("Channel not found");
+			throw new NotFoundException({ reason: "CHANNEL_NOT_FOUND" });
 	}
 
 	/** Envía un aviso de ejemplo por el canal para comprobar que llega. Queda en el historial. */
@@ -199,7 +199,7 @@ export class AlertsService {
 		await this.authorize(userId, orgId, projectId, "admin");
 		const channel = await this.requireChannel(projectId, channelId);
 		const context = await this.repository.projectContext(projectId);
-		if (!context) throw new NotFoundException("Project not found");
+		if (!context) throw new NotFoundException({ reason: "PROJECT_NOT_FOUND" });
 
 		const now = new Date().toISOString();
 		const payload: AlertPayload = {
@@ -291,7 +291,7 @@ export class AlertsService {
 	): Promise<RuleDto> {
 		await this.authorize(userId, orgId, projectId, "admin");
 		const current = await this.repository.findRule(projectId, ruleId);
-		if (!current) throw new NotFoundException("Rule not found");
+		if (!current) throw new NotFoundException({ reason: "RULE_NOT_FOUND" });
 
 		// El resultado debe seguir siendo una regla válida (p. ej. frecuencia exige umbral y ventana).
 		const trigger = input.trigger ?? (current.trigger as RuleDto["trigger"]);
@@ -303,9 +303,7 @@ export class AlertsService {
 				: input.windowMinutes;
 		if (trigger === "frequency") {
 			if (threshold === null || windowMinutes === null)
-				throw new BadRequestException(
-					"Frequency rules need a threshold and a window",
-				);
+				throw new BadRequestException({ reason: "FREQUENCY_NEEDS_THRESHOLD" });
 		}
 		if (input.channelIds)
 			await this.assertChannels(projectId, input.channelIds);
@@ -329,7 +327,7 @@ export class AlertsService {
 			},
 			input.channelIds ? [...new Set(input.channelIds)] : undefined,
 		);
-		if (!row) throw new NotFoundException("Rule not found");
+		if (!row) throw new NotFoundException({ reason: "RULE_NOT_FOUND" });
 		return toRuleDto(row);
 	}
 
@@ -341,7 +339,7 @@ export class AlertsService {
 	): Promise<void> {
 		await this.authorize(userId, orgId, projectId, "admin");
 		if (!(await this.repository.deleteRule(projectId, ruleId)))
-			throw new NotFoundException("Rule not found");
+			throw new NotFoundException({ reason: "RULE_NOT_FOUND" });
 	}
 
 	// ---------- Envíos ----------
@@ -383,16 +381,14 @@ export class AlertsService {
 		channelId: string,
 	): Promise<ChannelRow> {
 		const channel = await this.repository.findChannel(projectId, channelId);
-		if (!channel) throw new NotFoundException("Channel not found");
+		if (!channel) throw new NotFoundException({ reason: "CHANNEL_NOT_FOUND" });
 		return channel;
 	}
 
 	/** El host de un webhook no puede ser interno, salvo que el servidor lo permita expresamente. */
 	private assertUrlAllowed(url: string): void {
 		if (!this.allowPrivate && isBlockedHostname(new URL(url).hostname)) {
-			throw new BadRequestException(
-				"The URL points to a private or internal address",
-			);
+			throw new BadRequestException({ reason: "URL_NOT_ALLOWED" });
 		}
 	}
 
@@ -404,9 +400,7 @@ export class AlertsService {
 		if (parsed.mode === "all") return;
 		const found = await this.repository.memberUserIds(orgId, parsed.userIds);
 		if (parsed.userIds.some((id) => !found.has(id)))
-			throw new BadRequestException(
-				"Some recipients are not members of the organization",
-			);
+			throw new BadRequestException({ reason: "RECIPIENTS_NOT_MEMBERS" });
 	}
 
 	private async assertChannels(
@@ -418,8 +412,6 @@ export class AlertsService {
 			(await this.repository.countChannelsInProject(projectId, unique)) !==
 			unique.length
 		)
-			throw new BadRequestException(
-				"Some channels do not belong to this project",
-			);
+			throw new BadRequestException({ reason: "CHANNELS_NOT_IN_PROJECT" });
 	}
 }

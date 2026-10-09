@@ -10,6 +10,7 @@ import { AUTH } from "./auth.constants.js";
 import { AuthController } from "./auth.controller.js";
 import { AuthGuard } from "./auth.guard.js";
 import { createAuth } from "./auth.js";
+import { localeForInvitee } from "./locale-lookup.js";
 
 @Module({
 	imports: [MailModule],
@@ -41,6 +42,11 @@ import { createAuth } from "./auth.js";
 								inviterName: invite.inviterName,
 								role: invite.role,
 								url: `${webOrigin}/accept-invitation/${invite.invitationId}`,
+								locale: await localeForInvitee(db, {
+									email: invite.email,
+									inviterId: invite.inviterId,
+									acceptLanguage: invite.acceptLanguage,
+								}),
 							}),
 						}),
 					secret: config.get("BETTER_AUTH_SECRET", { infer: true }),

@@ -17,6 +17,7 @@ import {
 } from "@nestjs/swagger";
 import { AuthGuard, type AuthSession } from "../auth/auth.guard.js";
 import { CurrentUser } from "../auth/current-user.decorator.js";
+import { Notice } from "../common/notice.js";
 import { docs } from "../openapi/schemas.js";
 import { ReleasesService } from "./releases.service.js";
 
@@ -69,6 +70,7 @@ export class ReleasesController {
 			"Requiere rol owner o admin. Los eventos que la mencionan se conservan.",
 	})
 	@ApiNoContentResponse()
+	@Notice({ code: "NOTICE_RELEASE_DELETED" })
 	async remove(
 		@CurrentUser() user: User,
 		@Param("orgId") orgId: string,

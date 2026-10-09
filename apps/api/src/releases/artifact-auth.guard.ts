@@ -36,7 +36,8 @@ export class ArtifactAuthGuard implements CanActivate {
 			const organizationId = await this.tokens.authenticate(
 				header.slice(7).trim(),
 			);
-			if (!organizationId) throw new UnauthorizedException("Invalid token");
+			if (!organizationId)
+				throw new UnauthorizedException({ reason: "INVALID_TOKEN" });
 			request.actor = { kind: "token", organizationId };
 			return true;
 		}

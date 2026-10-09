@@ -26,6 +26,7 @@ import {
 	issueDetailDtoSchema,
 	issueDtoSchema,
 	issueListDtoSchema,
+	preferencesDtoSchema,
 	projectDtoSchema,
 	projectKeyDtoSchema,
 	publicConfigSchema,
@@ -35,6 +36,7 @@ import {
 	ruleListDtoSchema,
 	updateChannelSchema,
 	updateIssueSchema,
+	updatePreferencesSchema,
 	updateProjectKeySchema,
 	updateProjectSchema,
 	updateRuleSchema,
@@ -44,6 +46,8 @@ import { jsonSchema } from "./zod-schema.js";
 
 // Esquemas JSON precalculados para los decoradores de Swagger.
 export const docs = {
+	preferences: jsonSchema(preferencesDtoSchema),
+	updatePreferences: jsonSchema(updatePreferencesSchema, "input"),
 	activity: jsonSchema(activityDtoSchema),
 	activityList: jsonSchema(activityListDtoSchema),
 	createComment: jsonSchema(createCommentSchema, "input"),

@@ -42,7 +42,7 @@ export class IngestGuard implements CanActivate {
 
 		const { projectId } = request.params as { projectId: string };
 		if (!UUID.test(projectId))
-			throw new BadRequestException("Invalid project id");
+			throw new BadRequestException({ reason: "INVALID_PROJECT_ID" });
 
 		// Header para SDK normales; query para sendBeacon, que no puede enviar headers.
 		const query = request.query as { sentinel_key?: string };
@@ -63,7 +63,7 @@ export class IngestGuard implements CanActivate {
 				WINDOW_SECONDS,
 			);
 			if (!failures.allowed) this.tooMany(reply, failures.retryAfterSeconds);
-			throw new UnauthorizedException("Invalid key");
+			throw new UnauthorizedException({ reason: "INVALID_KEY" });
 		}
 
 		const result = await this.limiter.hit(
@@ -79,7 +79,7 @@ export class IngestGuard implements CanActivate {
 	private tooMany(reply: FastifyReply, retryAfterSeconds: number): never {
 		reply.header("Retry-After", String(retryAfterSeconds));
 		throw new HttpException(
-			"Rate limit exceeded",
+			{ reason: "TOO_MANY_REQUESTS" },
 			HttpStatus.TOO_MANY_REQUESTS,
 		);
 	}

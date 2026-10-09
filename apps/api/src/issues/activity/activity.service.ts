@@ -95,7 +95,7 @@ export class ActivityService {
 		await this.authorize(userId, orgId, projectId, issueId);
 		const row = await this.requireComment(issueId, commentId);
 		if (row.activity.userId !== userId)
-			throw new ForbiddenException("Only the author can edit a comment");
+			throw new ForbiddenException({ reason: "ONLY_AUTHOR_CAN_EDIT" });
 		await this.activity.updateBody(commentId, body);
 		return toDto((await this.activity.find(issueId, commentId)) as ActivityRow);
 	}
@@ -112,7 +112,7 @@ export class ActivityService {
 		const row = await this.requireComment(issueId, commentId);
 		const isAuthor = row.activity.userId === userId;
 		if (!isAuthor && !(await this.access.has(userId, orgId, "admin")))
-			throw new ForbiddenException("Insufficient permissions");
+			throw new ForbiddenException({ reason: "INSUFFICIENT_PERMISSIONS" });
 		await this.activity.delete(commentId);
 	}
 
@@ -125,7 +125,7 @@ export class ActivityService {
 		await this.access.assert(userId, orgId, "member");
 		await this.projects.ensureExists(orgId, projectId);
 		if (!(await this.issues.findInProject(projectId, issueId)))
-			throw new NotFoundException("Issue not found");
+			throw new NotFoundException({ reason: "ISSUE_NOT_FOUND" });
 	}
 
 	/** Solo los comentarios se editan o borran a mano; el resto del historial es un registro. */
@@ -135,7 +135,7 @@ export class ActivityService {
 	): Promise<ActivityRow> {
 		const row = await this.activity.find(issueId, commentId);
 		if (row?.activity.type !== "comment")
-			throw new NotFoundException("Comment not found");
+			throw new NotFoundException({ reason: "COMMENT_NOT_FOUND" });
 		return row;
 	}
 }

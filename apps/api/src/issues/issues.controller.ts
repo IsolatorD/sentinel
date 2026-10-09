@@ -29,9 +29,11 @@ import {
 } from "@sentinel/shared";
 import { AuthGuard, type AuthSession } from "../auth/auth.guard.js";
 import { CurrentUser } from "../auth/current-user.decorator.js";
+import { Notice } from "../common/notice.js";
 import { ZodValidationPipe } from "../common/zod-validation.pipe.js";
 import { docs } from "../openapi/schemas.js";
 import { ApiZodQuery } from "../openapi/zod-schema.js";
+import { issueUpdatedNotice } from "./domain/notices.js";
 import { IssuesService } from "./issues.service.js";
 
 type User = AuthSession["user"];
@@ -87,6 +89,7 @@ export class IssuesController {
 	})
 	@ApiBody({ schema: docs.updateIssue })
 	@ApiOkResponse({ schema: docs.issue })
+	@Notice(issueUpdatedNotice)
 	update(
 		@CurrentUser() user: User,
 		@Param("orgId") orgId: string,
@@ -104,6 +107,7 @@ export class IssuesController {
 		description: "Requiere rol owner o admin.",
 	})
 	@ApiNoContentResponse()
+	@Notice({ code: "NOTICE_ISSUE_DELETED" })
 	async remove(
 		@CurrentUser() user: User,
 		@Param("orgId") orgId: string,

@@ -42,7 +42,7 @@ export class ReleasesService {
 	): Promise<ReleaseDto> {
 		await this.authorize(userId, orgId, projectId, "member");
 		const row = await this.releases.find(projectId, version);
-		if (!row) throw new NotFoundException("Release not found");
+		if (!row) throw new NotFoundException({ reason: "RELEASE_NOT_FOUND" });
 		return toDto(row);
 	}
 
@@ -54,7 +54,7 @@ export class ReleasesService {
 	): Promise<void> {
 		await this.authorize(userId, orgId, projectId, "admin");
 		if (!(await this.releases.delete(projectId, version))) {
-			throw new NotFoundException("Release not found");
+			throw new NotFoundException({ reason: "RELEASE_NOT_FOUND" });
 		}
 	}
 

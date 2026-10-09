@@ -35,6 +35,7 @@ import {
 } from "@sentinel/shared";
 import { AuthGuard, type AuthSession } from "../auth/auth.guard.js";
 import { CurrentUser } from "../auth/current-user.decorator.js";
+import { Notice } from "../common/notice.js";
 import { ZodValidationPipe } from "../common/zod-validation.pipe.js";
 import { docs } from "../openapi/schemas.js";
 import { AlertsService } from "./alerts.service.js";
@@ -74,6 +75,7 @@ export class AlertsController {
 	})
 	@ApiBody({ schema: docs.createChannel })
 	@ApiCreatedResponse({ schema: docs.createdChannel })
+	@Notice({ code: "NOTICE_CHANNEL_CREATED" })
 	createChannel(
 		@CurrentUser() user: User,
 		@Param("orgId") orgId: string,
@@ -89,6 +91,7 @@ export class AlertsController {
 	})
 	@ApiBody({ schema: docs.updateChannel })
 	@ApiOkResponse({ schema: docs.channel })
+	@Notice({ code: "NOTICE_CHANNEL_UPDATED" })
 	updateChannel(
 		@CurrentUser() user: User,
 		@Param("orgId") orgId: string,
@@ -109,6 +112,7 @@ export class AlertsController {
 	@HttpCode(204)
 	@ApiOperation({ summary: "Elimina un canal" })
 	@ApiNoContentResponse()
+	@Notice({ code: "NOTICE_CHANNEL_DELETED" })
 	async deleteChannel(
 		@CurrentUser() user: User,
 		@Param("orgId") orgId: string,
@@ -126,6 +130,7 @@ export class AlertsController {
 			"Devuelve el envío en estado `pending`; su resultado aparece en el historial (`GET deliveries`).",
 	})
 	@ApiOkResponse({ schema: docs.delivery })
+	@Notice({ code: "NOTICE_CHANNEL_TEST_SENT" })
 	testChannel(
 		@CurrentUser() user: User,
 		@Param("orgId") orgId: string,
@@ -156,6 +161,7 @@ export class AlertsController {
 	})
 	@ApiBody({ schema: docs.createRule })
 	@ApiCreatedResponse({ schema: docs.rule })
+	@Notice({ code: "NOTICE_RULE_CREATED" })
 	createRule(
 		@CurrentUser() user: User,
 		@Param("orgId") orgId: string,
@@ -169,6 +175,7 @@ export class AlertsController {
 	@ApiOperation({ summary: "Edita una regla" })
 	@ApiBody({ schema: docs.updateRule })
 	@ApiOkResponse({ schema: docs.rule })
+	@Notice({ code: "NOTICE_RULE_UPDATED" })
 	updateRule(
 		@CurrentUser() user: User,
 		@Param("orgId") orgId: string,
@@ -183,6 +190,7 @@ export class AlertsController {
 	@HttpCode(204)
 	@ApiOperation({ summary: "Elimina una regla" })
 	@ApiNoContentResponse()
+	@Notice({ code: "NOTICE_RULE_DELETED" })
 	async deleteRule(
 		@CurrentUser() user: User,
 		@Param("orgId") orgId: string,

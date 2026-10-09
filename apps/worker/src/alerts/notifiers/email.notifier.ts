@@ -27,11 +27,11 @@ export class EmailNotifier extends Notifier {
 			});
 
 		// Se resuelve al enviar: quien dejó la organización deja de recibir avisos.
-		const emails = await this.repository.memberEmails(
+		const people = await this.repository.memberRecipients(
 			organizationId,
 			recipients.data,
 		);
-		if (emails.length === 0)
+		if (people.length === 0)
 			throw new DeliveryError(
 				"None of the recipients belong to the organization anymore",
 				{
@@ -39,10 +39,10 @@ export class EmailNotifier extends Notifier {
 				},
 			);
 
-		const { subject, text, html } = emailContent(payload);
-		// Un correo por persona: nadie ve las direcciones de los demás.
-		for (const to of emails)
-			await this.mailer.send({ to, subject, text, html });
+		// Un correo por persona (nadie ve las direcciones de los demás), en el idioma de cada una.
+		for (const { email, locale } of people) {
+			await this.mailer.send({ to: email, ...emailContent(payload, locale) });
+		}
 		return {};
 	}
 }

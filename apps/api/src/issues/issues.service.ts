@@ -184,7 +184,7 @@ export class IssuesService {
 				resolvedRelease,
 				resolvedInclusive,
 			});
-			if (!updated) throw new NotFoundException("Issue not found");
+			if (!updated) throw new NotFoundException({ reason: "ISSUE_NOT_FOUND" });
 			row = updated;
 			if (before.status !== input.status) {
 				await this.activity.record(issueId, userId, "status", {
@@ -207,16 +207,14 @@ export class IssuesService {
 				input.assigneeId &&
 				!(await this.access.has(input.assigneeId, orgId, "member"))
 			) {
-				throw new BadRequestException(
-					"The assignee is not a member of the organization",
-				);
+				throw new BadRequestException({ reason: "ASSIGNEE_NOT_MEMBER" });
 			}
 			const updated = await this.issues.setAssignee(
 				projectId,
 				issueId,
 				input.assigneeId,
 			);
-			if (!updated) throw new NotFoundException("Issue not found");
+			if (!updated) throw new NotFoundException({ reason: "ISSUE_NOT_FOUND" });
 			row = updated;
 			const people = await this.issues.assignees([
 				before.assigneeId,
@@ -251,7 +249,7 @@ export class IssuesService {
 	): Promise<void> {
 		await this.authorize(userId, orgId, projectId, "admin");
 		if (!(await this.issues.delete(projectId, issueId))) {
-			throw new NotFoundException("Issue not found");
+			throw new NotFoundException({ reason: "ISSUE_NOT_FOUND" });
 		}
 	}
 
@@ -283,7 +281,7 @@ export class IssuesService {
 		await this.authorize(userId, orgId, projectId, "member");
 		await this.requireIssue(projectId, issueId);
 		const row = await this.events.find(issueId, eventId);
-		if (!row) throw new NotFoundException("Event not found");
+		if (!row) throw new NotFoundException({ reason: "EVENT_NOT_FOUND" });
 		return toEventDetail(row);
 	}
 
@@ -305,7 +303,7 @@ export class IssuesService {
 		issueId: string,
 	): Promise<IssueRow> {
 		const row = await this.issues.findInProject(projectId, issueId);
-		if (!row) throw new NotFoundException("Issue not found");
+		if (!row) throw new NotFoundException({ reason: "ISSUE_NOT_FOUND" });
 		return row;
 	}
 }

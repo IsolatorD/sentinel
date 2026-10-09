@@ -192,3 +192,81 @@ describe("classifyHttpStatus", () => {
 		expect(classifyHttpStatus(302)).toBe("permanent");
 	});
 });
+
+describe("alertas en español", () => {
+	const es = (over: Partial<AlertPayload> = {}) =>
+		emailContent(payload(over), "es");
+
+	it("el asunto, el cuerpo y el pie salen en el idioma del destinatario", () => {
+		const mail = es();
+		expect(mail.subject).toBe(
+			"[Storefront] Issue nuevo: TypeError: Cannot read properties of undefined",
+		);
+		for (const part of [
+			"Proyecto: Storefront",
+			"Nivel: error",
+			"Dónde: computeTotal (cart.ts:42)",
+			"Entorno: production",
+			"Eventos: 7",
+			"Regla: Production errors",
+			"Ver el issue:",
+			"Recibes esto por la regla de alerta «Production errors» de Acme.",
+		]) {
+			expect(mail.text, part).toContain(part);
+		}
+		expect(mail.html).toContain("Ver el issue");
+	});
+
+	it("la frecuencia usa la unidad natural en singular o plural, en español", () => {
+		const f = (windowMinutes: number) =>
+			headline(
+				payload({
+					trigger: "frequency",
+					frequency: { count: 5, windowMinutes },
+				}),
+				"es",
+			);
+		expect(f(1)).toBe("5 eventos en 1 minuto");
+		expect(f(10)).toBe("5 eventos en 10 minutos");
+		expect(f(120)).toBe("5 eventos en 2 horas");
+		expect(f(1440)).toBe("5 eventos en 1 día");
+	});
+
+	it("regresión, prueba y frecuencia genérica", () => {
+		expect(
+			headline(
+				payload({
+					trigger: "regression",
+					issue: { ...payload().issue, regressedInRelease: "2.5.0" },
+				}),
+				"es",
+			),
+		).toBe("Regresión en 2.5.0");
+		expect(headline(payload({ kind: "test" }), "es")).toBe(
+			"Aviso de prueba de Sentinel",
+		);
+		expect(headline(payload({ trigger: "frequency" }), "es")).toBe(
+			"Frecuencia alta",
+		);
+	});
+
+	it("un nivel desconocido se muestra tal cual en lugar de romper", () => {
+		const mail = emailContent(
+			payload({ issue: { ...payload().issue, level: "custom" } }),
+			"es",
+		);
+		expect(mail.text).toContain("Nivel: custom");
+	});
+
+	it("el contenido controlado por la app monitoreada sigue escapado en cualquier idioma", () => {
+		const mail = emailContent(
+			payload({ issue: { ...payload().issue, title: "<script>x</script>" } }),
+			"es",
+		);
+		expect(mail.html).not.toContain("<script>");
+	});
+
+	it("el Slack sigue en inglés (no hay un idioma de destinatario)", () => {
+		expect(slackBody(payload()).text).toContain("New issue");
+	});
+});

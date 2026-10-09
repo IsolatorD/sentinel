@@ -90,7 +90,7 @@ export class ProjectsService {
 	): Promise<ProjectDto> {
 		await this.access.assert(userId, orgId, "admin");
 		const row = await this.projects.update(orgId, projectId, input);
-		if (!row) throw new NotFoundException("Project not found");
+		if (!row) throw new NotFoundException({ reason: "PROJECT_NOT_FOUND" });
 		return this.toProjectDto(row);
 	}
 
@@ -101,7 +101,7 @@ export class ProjectsService {
 	): Promise<void> {
 		await this.access.assert(userId, orgId, "admin");
 		if (!(await this.projects.delete(orgId, projectId))) {
-			throw new NotFoundException("Project not found");
+			throw new NotFoundException({ reason: "PROJECT_NOT_FOUND" });
 		}
 	}
 
@@ -133,7 +133,7 @@ export class ProjectsService {
 		await this.access.assert(userId, orgId, "admin");
 		await this.requireProject(orgId, projectId);
 		const key = await this.projects.updateKey(projectId, keyId, input);
-		if (!key) throw new NotFoundException("Key not found");
+		if (!key) throw new NotFoundException({ reason: "KEY_NOT_FOUND" });
 		return this.toKeyDto(key);
 	}
 
@@ -146,7 +146,7 @@ export class ProjectsService {
 		await this.access.assert(userId, orgId, "admin");
 		await this.requireProject(orgId, projectId);
 		if (!(await this.projects.deleteKey(projectId, keyId))) {
-			throw new NotFoundException("Key not found");
+			throw new NotFoundException({ reason: "KEY_NOT_FOUND" });
 		}
 	}
 
@@ -170,7 +170,7 @@ export class ProjectsService {
 		projectId: string,
 	): Promise<ProjectRow> {
 		const row = await this.projects.findInOrganization(orgId, projectId);
-		if (!row) throw new NotFoundException("Project not found");
+		if (!row) throw new NotFoundException({ reason: "PROJECT_NOT_FOUND" });
 		return row;
 	}
 

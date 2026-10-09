@@ -17,6 +17,9 @@ export interface AuthOptions {
 		role: string | null | undefined;
 		organizationName: string;
 		inviterName: string;
+		inviterId: string;
+		/** `Accept-Language` de la petición que invitó, si la hay. */
+		acceptLanguage?: string | null;
 	}) => Promise<void>;
 }
 
@@ -42,13 +45,15 @@ export function createAuth(opts: AuthOptions) {
 			openAPI(),
 			organization({
 				creatorRole: "owner",
-				sendInvitationEmail: async (data) => {
+				sendInvitationEmail: async (data, request) => {
 					await opts.sendInvitation?.({
 						invitationId: data.id,
 						email: data.email,
 						role: data.role,
 						organizationName: data.organization.name,
 						inviterName: data.inviter.user.name,
+						inviterId: data.inviter.user.id,
+						acceptLanguage: request?.headers.get("accept-language"),
 					});
 				},
 			}),

@@ -8,6 +8,25 @@ const base = {
 	url: "https://sentinel.example.com/accept-invitation/abc123",
 };
 
+describe("invitationEmail en español", () => {
+	it("usa el idioma del destinatario, incluido el nombre del rol", () => {
+		const mail = invitationEmail({ ...base, locale: "es" });
+		expect(mail.subject).toBe("Ana Pérez te invitó a Acme en Sentinel");
+		expect(mail.text).toContain(
+			"te invitó a unirte a Acme como miembro en Sentinel.",
+		);
+		expect(mail.text).toContain("Aceptar la invitación");
+		expect(mail.html).toContain("<strong>Acme</strong>");
+		expect(mail.html).toContain("Aceptar la invitación");
+	});
+
+	it("sin idioma usa el inglés", () => {
+		expect(invitationEmail(base).subject).toBe(
+			"Ana Pérez invited you to Acme on Sentinel",
+		);
+	});
+});
+
 describe("invitationEmail", () => {
 	it("dice quién invita, a qué organización y con qué rol, e incluye el enlace", () => {
 		const mail = invitationEmail(base);

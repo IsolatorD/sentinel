@@ -54,7 +54,7 @@ export class ArtifactsService {
 		// Un token solo vale para su propia organización; quien no la conoce no debe saber que existe.
 		if (actor.kind === "token") {
 			if (actor.organizationId !== orgId)
-				throw new NotFoundException("Organization not found");
+				throw new NotFoundException({ reason: "ORGANIZATION_NOT_FOUND" });
 		} else {
 			await this.access.assert(actor.userId, orgId, "admin");
 		}
@@ -62,29 +62,25 @@ export class ArtifactsService {
 
 		const name = rawName ? normalizeArtifactName(rawName) : null;
 		if (!name) {
-			throw new BadRequestException(
-				"Query parameter 'name' must be the minified file path, e.g. ~/assets/app.js",
-			);
+			throw new BadRequestException({ reason: "ARTIFACT_NAME_REQUIRED" });
 		}
 		if (!version.trim() || version.length > 256)
-			throw new BadRequestException("Invalid release version");
+			throw new BadRequestException({ reason: "INVALID_RELEASE_VERSION" });
 
 		if (!Buffer.isBuffer(body) || body.length === 0) {
-			throw new BadRequestException(
-				"The body must be the raw source map (Content-Type: application/octet-stream)",
-			);
+			throw new BadRequestException({ reason: "ARTIFACT_BODY_REQUIRED" });
 		}
 		if (body.length > MAX_SOURCE_MAP_BYTES)
-			throw new BadRequestException("Source map too large");
+			throw new BadRequestException({ reason: "SOURCE_MAP_TOO_LARGE" });
 
 		let parsed: unknown;
 		try {
 			parsed = JSON.parse(body.toString("utf8"));
 		} catch {
-			throw new BadRequestException("The file is not valid JSON");
+			throw new BadRequestException({ reason: "SOURCE_MAP_NOT_JSON" });
 		}
 		if (!looksLikeSourceMap(parsed))
-			throw new BadRequestException("The file is not a source map (version 3)");
+			throw new BadRequestException({ reason: "SOURCE_MAP_INVALID" });
 
 		const row = await this.releases.upsertArtifact(projectId, version, {
 			name,
@@ -105,7 +101,7 @@ export class ArtifactsService {
 		await this.access.assert(userId, orgId, "admin");
 		await this.projects.ensureExists(orgId, projectId);
 		if (!(await this.releases.deleteArtifact(projectId, version, artifactId))) {
-			throw new NotFoundException("File not found");
+			throw new NotFoundException({ reason: "FILE_NOT_FOUND" });
 		}
 	}
 }

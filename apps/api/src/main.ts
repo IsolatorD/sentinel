@@ -54,7 +54,7 @@ async function bootstrap() {
 			try {
 				done(null, JSON.parse(body as string));
 			} catch {
-				done(new BadRequestException("Invalid JSON body"), undefined);
+				done(new BadRequestException({ reason: "INVALID_JSON" }), undefined);
 			}
 		},
 	);
@@ -110,7 +110,16 @@ async function bootstrap() {
 							allowedHeaders: ["Content-Type", "X-Sentinel-Key"],
 							maxAge: 86_400,
 						}
-					: { origin: env.WEB_ORIGIN, credentials: true },
+					: {
+							origin: env.WEB_ORIGIN,
+							credentials: true,
+							// El panel lee de estas cabeceras el aviso de éxito y el id de petición.
+							exposedHeaders: [
+								"X-Sentinel-Message",
+								"X-Sentinel-Message-Code",
+								"X-Request-Id",
+							],
+						},
 			);
 		},
 	});

@@ -57,11 +57,11 @@ export const updateIssueSchema = z
 		assigneeId: z.string().min(1).max(64).nullable().optional(),
 	})
 	.refine((v) => v.status !== undefined || v.assigneeId !== undefined, {
-		message: "Nothing to update",
+		message: "NOTHING_TO_UPDATE",
 	})
 	.refine((v) => v.resolution === undefined || v.status === "resolved", {
 		path: ["resolution"],
-		message: "A resolution only applies when status is 'resolved'",
+		message: "RESOLUTION_NEEDS_RESOLVED",
 	});
 export type UpdateIssueInput = z.infer<typeof updateIssueSchema>;
 

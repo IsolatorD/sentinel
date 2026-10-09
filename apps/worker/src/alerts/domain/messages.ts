@@ -1,5 +1,12 @@
 import { createHmac } from "node:crypto";
-import { ALERT_TRIGGER_EVENT, type AlertPayload } from "@sentinel/shared";
+import {
+	ALERT_TRIGGER_EVENT,
+	type AlertPayload,
+	DEFAULT_LOCALE,
+	type Locale,
+	type MessageCode,
+	translate,
+} from "@sentinel/shared";
 
 const escapeHtml = (text: string) =>
 	text
@@ -12,73 +19,115 @@ const clip = (text: string, max: number) =>
 	text.length > max ? `${text.slice(0, max - 1)}…` : text;
 
 /** Frase corta que explica por qué llegó el aviso. */
-export function headline(payload: AlertPayload): string {
-	if (payload.kind === "test") return "Test alert from Sentinel";
+export function headline(
+	payload: AlertPayload,
+	locale: Locale = DEFAULT_LOCALE,
+): string {
+	if (payload.kind === "test") return translate(locale, "EMAIL_ALERT_TEST");
 	const { issue, frequency } = payload;
 	switch (payload.trigger) {
 		case "new_issue":
-			return "New issue";
+			return translate(locale, "EMAIL_ALERT_NEW_ISSUE");
 		case "regression":
 			return issue.regressedInRelease
-				? `Regression in ${issue.regressedInRelease}`
-				: "Regression";
+				? translate(locale, "EMAIL_ALERT_REGRESSION_IN", {
+						release: issue.regressedInRelease,
+					})
+				: translate(locale, "EMAIL_ALERT_REGRESSION");
 		case "frequency":
 			return frequency
-				? `${frequency.count} events in ${formatWindow(frequency.windowMinutes)}`
-				: "High frequency";
+				? translate(locale, "EMAIL_ALERT_FREQUENCY", {
+						count: frequency.count,
+						window: formatWindow(frequency.windowMinutes, locale),
+					})
+				: translate(locale, "EMAIL_ALERT_FREQUENCY_GENERIC");
 	}
 }
 
-function formatWindow(minutes: number): string {
-	if (minutes % 1440 === 0)
-		return `${minutes / 1440} day${minutes === 1440 ? "" : "s"}`;
-	if (minutes % 60 === 0)
-		return `${minutes / 60} hour${minutes === 60 ? "" : "s"}`;
-	return `${minutes} minute${minutes === 1 ? "" : "s"}`;
+function unit(
+	locale: Locale,
+	name: "MINUTE" | "HOUR" | "DAY",
+	count: number,
+): string {
+	const code =
+		`EMAIL_UNIT_${name}_${count === 1 ? "ONE" : "OTHER"}` as MessageCode;
+	return translate(locale, code, { count });
+}
+
+function formatWindow(minutes: number, locale: Locale): string {
+	if (minutes % 1440 === 0) return unit(locale, "DAY", minutes / 1440);
+	if (minutes % 60 === 0) return unit(locale, "HOUR", minutes / 60);
+	return unit(locale, "MINUTE", minutes);
 }
 
 /** Líneas "Etiqueta: valor" con lo más útil del issue. */
-function details(payload: AlertPayload): Array<[string, string]> {
+function details(
+	payload: AlertPayload,
+	locale: Locale,
+): Array<[string, string]> {
 	const { issue } = payload;
+	const label = (code: MessageCode) => translate(locale, code);
+	const level = `LEVEL_${issue.level.toUpperCase()}` as MessageCode;
 	const rows: Array<[string, string]> = [
-		["Project", payload.project.name],
-		["Level", issue.level],
+		[label("EMAIL_LABEL_PROJECT"), payload.project.name],
+		[
+			label("EMAIL_LABEL_LEVEL"),
+			level in MESSAGES_LEVELS ? label(level) : issue.level,
+		],
 	];
-	if (issue.culprit) rows.push(["Where", issue.culprit]);
-	if (issue.environment) rows.push(["Environment", issue.environment]);
-	if (issue.release) rows.push(["Release", issue.release]);
-	rows.push(["Events", String(issue.eventCount)]);
-	rows.push(["Rule", payload.ruleName]);
+	if (issue.culprit) rows.push([label("EMAIL_LABEL_WHERE"), issue.culprit]);
+	if (issue.environment)
+		rows.push([label("EMAIL_LABEL_ENVIRONMENT"), issue.environment]);
+	if (issue.release) rows.push([label("EMAIL_LABEL_RELEASE"), issue.release]);
+	rows.push([label("EMAIL_LABEL_EVENTS"), String(issue.eventCount)]);
+	rows.push([label("EMAIL_LABEL_RULE"), payload.ruleName]);
 	return rows;
 }
 
-export function emailContent(payload: AlertPayload): {
+const MESSAGES_LEVELS: Record<string, true> = {
+	LEVEL_FATAL: true,
+	LEVEL_ERROR: true,
+	LEVEL_WARNING: true,
+	LEVEL_INFO: true,
+	LEVEL_DEBUG: true,
+};
+
+export function emailContent(
+	payload: AlertPayload,
+	locale: Locale = DEFAULT_LOCALE,
+): {
 	subject: string;
 	text: string;
 	html: string;
 } {
 	const title = clip(payload.issue.title, 150);
-	const subject = `[${payload.project.name}] ${headline(payload)}: ${title}`;
-	const rows = details(payload);
+	const head = headline(payload, locale);
+	const subject = `[${payload.project.name}] ${head}: ${title}`;
+	const rows = details(payload, locale);
+	const view = translate(locale, "EMAIL_ALERT_VIEW");
+	const footer = translate(locale, "EMAIL_ALERT_FOOTER", {
+		rule: payload.ruleName,
+		organization: payload.organization.name,
+	});
 	const text = [
-		headline(payload),
+		head,
 		"",
 		title,
 		"",
 		...rows.map(([k, v]) => `${k}: ${v}`),
 		"",
-		`View the issue: ${payload.url}`,
+		`${view}: ${payload.url}`,
 		"",
-		`You receive this because of the alert rule "${payload.ruleName}" in ${payload.organization.name}.`,
+		footer,
 	].join("\n");
 	const html = `<div style="font-family:system-ui,sans-serif;max-width:560px;color:#2b2233">
-<p style="margin:0 0 4px;font-size:12px;letter-spacing:.04em;text-transform:uppercase;color:#6b6078">${escapeHtml(headline(payload))}</p>
+<p style="margin:0 0 4px;font-size:12px;letter-spacing:.04em;text-transform:uppercase;color:#6b6078">${escapeHtml(head)}</p>
 <h2 style="margin:0 0 16px;font-size:18px;line-height:1.3">${escapeHtml(title)}</h2>
 <table style="border-collapse:collapse;font-size:14px;margin-bottom:20px">
 ${rows.map(([k, v]) => `<tr><td style="padding:3px 16px 3px 0;color:#6b6078">${escapeHtml(k)}</td><td style="padding:3px 0">${escapeHtml(v)}</td></tr>`).join("\n")}
 </table>
-<p><a href="${escapeHtml(payload.url)}" style="display:inline-block;background:#6c5fc7;color:#fff;text-decoration:none;padding:9px 16px;border-radius:6px;font-size:14px">View the issue</a></p>
-<p style="font-size:12px;color:#8b8199">You receive this because of the alert rule “${escapeHtml(payload.ruleName)}” in ${escapeHtml(payload.organization.name)}.</p>
+<p><a href="${escapeHtml(payload.url)}" style="display:inline-block;background:#6c5fc7;color:#fff;text-decoration:none;padding:9px 16px;border-radius:6px;font-size:14px">${escapeHtml(view)}</a></p>
+<p style="font-size:12px;color:#8b8199">${escapeHtml(footer)}</p>
 </div>`;
 	return { subject, text, html };
 }
@@ -86,7 +135,7 @@ ${rows.map(([k, v]) => `<tr><td style="padding:3px 16px 3px 0;color:#6b6078">${e
 /** Mensaje para un webhook entrante de Slack (también lo aceptan Discord y Teams en modo Slack). */
 export function slackBody(payload: AlertPayload) {
 	const title = clip(payload.issue.title, 150);
-	const fields = details(payload)
+	const fields = details(payload, DEFAULT_LOCALE)
 		.filter(([k]) => k !== "Project" && k !== "Rule")
 		.map(([k, v]) => `*${k}:* ${clip(v, 200)}`)
 		.join("\n");

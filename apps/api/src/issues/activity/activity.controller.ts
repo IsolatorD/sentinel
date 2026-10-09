@@ -31,6 +31,7 @@ import {
 } from "@sentinel/shared";
 import { AuthGuard, type AuthSession } from "../../auth/auth.guard.js";
 import { CurrentUser } from "../../auth/current-user.decorator.js";
+import { Notice } from "../../common/notice.js";
 import { ZodValidationPipe } from "../../common/zod-validation.pipe.js";
 import { docs } from "../../openapi/schemas.js";
 import { ApiZodQuery } from "../../openapi/zod-schema.js";
@@ -76,6 +77,7 @@ export class ActivityController {
 	})
 	@ApiBody({ schema: docs.createComment })
 	@ApiCreatedResponse({ schema: docs.activity })
+	@Notice({ code: "NOTICE_COMMENT_ADDED" })
 	comment(
 		@CurrentUser() user: User,
 		@Param("orgId") orgId: string,
@@ -93,6 +95,7 @@ export class ActivityController {
 	})
 	@ApiBody({ schema: docs.createComment })
 	@ApiOkResponse({ schema: docs.activity })
+	@Notice({ code: "NOTICE_COMMENT_EDITED" })
 	editComment(
 		@CurrentUser() user: User,
 		@Param("orgId") orgId: string,
@@ -118,6 +121,7 @@ export class ActivityController {
 		description: "Su autor, o un owner/admin.",
 	})
 	@ApiNoContentResponse()
+	@Notice({ code: "NOTICE_COMMENT_DELETED" })
 	async deleteComment(
 		@CurrentUser() user: User,
 		@Param("orgId") orgId: string,

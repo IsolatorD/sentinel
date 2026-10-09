@@ -21,9 +21,9 @@ export class OrgAccessService {
 	): Promise<void> {
 		const role = await this.orgs.findMemberRole(userId, organizationId);
 		if (role === undefined)
-			throw new NotFoundException("Organization not found");
+			throw new NotFoundException({ reason: "ORGANIZATION_NOT_FOUND" });
 		if (!canAccess(role, level)) {
-			throw new ForbiddenException("Insufficient permissions");
+			throw new ForbiddenException({ reason: "INSUFFICIENT_PERMISSIONS" });
 		}
 	}
 

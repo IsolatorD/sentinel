@@ -32,6 +32,7 @@ import {
 } from "@sentinel/shared";
 import { AuthGuard, type AuthSession } from "../auth/auth.guard.js";
 import { CurrentUser } from "../auth/current-user.decorator.js";
+import { Notice } from "../common/notice.js";
 import { ZodValidationPipe } from "../common/zod-validation.pipe.js";
 import { docs } from "../openapi/schemas.js";
 import { ProjectsService } from "./projects.service.js";
@@ -64,6 +65,10 @@ export class ProjectsController {
 	})
 	@ApiBody({ schema: docs.createProject })
 	@ApiCreatedResponse({ schema: docs.project })
+	@Notice(({ result }) => ({
+		code: "NOTICE_PROJECT_CREATED",
+		params: { name: String((result as { name?: string }).name ?? "") },
+	}))
 	create(
 		@CurrentUser() user: User,
 		@Param("orgId") orgId: string,
@@ -90,6 +95,7 @@ export class ProjectsController {
 	})
 	@ApiBody({ schema: docs.updateProject })
 	@ApiOkResponse({ schema: docs.project })
+	@Notice({ code: "NOTICE_PROJECT_UPDATED" })
 	update(
 		@CurrentUser() user: User,
 		@Param("orgId") orgId: string,
@@ -106,6 +112,7 @@ export class ProjectsController {
 		description: "Requiere rol owner o admin.",
 	})
 	@ApiNoContentResponse()
+	@Notice({ code: "NOTICE_PROJECT_DELETED" })
 	async remove(
 		@CurrentUser() user: User,
 		@Param("orgId") orgId: string,
@@ -121,6 +128,7 @@ export class ProjectsController {
 	})
 	@ApiBody({ schema: docs.createKey })
 	@ApiCreatedResponse({ schema: docs.projectKey })
+	@Notice({ code: "NOTICE_KEY_CREATED" })
 	createKey(
 		@CurrentUser() user: User,
 		@Param("orgId") orgId: string,
@@ -139,6 +147,7 @@ export class ProjectsController {
 	})
 	@ApiBody({ schema: docs.updateKey })
 	@ApiOkResponse({ schema: docs.projectKey })
+	@Notice({ code: "NOTICE_KEY_UPDATED" })
 	updateKey(
 		@CurrentUser() user: User,
 		@Param("orgId") orgId: string,
@@ -157,6 +166,7 @@ export class ProjectsController {
 		description: "Requiere rol owner o admin.",
 	})
 	@ApiNoContentResponse()
+	@Notice({ code: "NOTICE_KEY_DELETED" })
 	async removeKey(
 		@CurrentUser() user: User,
 		@Param("orgId") orgId: string,

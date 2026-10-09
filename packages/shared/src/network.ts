@@ -110,9 +110,11 @@ export function isBlockedHostname(hostname: string): boolean {
 	return looksLikeIp ? isPrivateAddress(host) : false;
 }
 
+import type { MessageCode } from "./messages/en.js";
+
 export type WebhookUrlCheck =
 	| { ok: true; url: URL }
-	| { ok: false; reason: string };
+	| { ok: false; reason: string; code: MessageCode };
 
 /** Valida la forma de una URL de webhook (esquema, credenciales y host evidentemente interno). */
 export function checkWebhookUrl(
@@ -123,16 +125,25 @@ export function checkWebhookUrl(
 	try {
 		url = new URL(raw);
 	} catch {
-		return { ok: false, reason: "Invalid URL" };
+		return { ok: false, reason: "Invalid URL", code: "URL_INVALID" };
 	}
 	if (url.protocol !== "https:" && url.protocol !== "http:")
-		return { ok: false, reason: "The URL must start with http:// or https://" };
+		return {
+			ok: false,
+			reason: "The URL must start with http:// or https://",
+			code: "URL_SCHEME",
+		};
 	if (url.username || url.password)
-		return { ok: false, reason: "The URL must not contain credentials" };
+		return {
+			ok: false,
+			reason: "The URL must not contain credentials",
+			code: "URL_CREDENTIALS",
+		};
 	if (!allowPrivate && isBlockedHostname(url.hostname))
 		return {
 			ok: false,
 			reason: "The URL points to a private or internal address",
+			code: "URL_NOT_ALLOWED",
 		};
 	return { ok: true, url };
 }

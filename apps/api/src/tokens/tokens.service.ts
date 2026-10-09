@@ -44,7 +44,7 @@ export class TokensService {
 	async revoke(userId: string, orgId: string, tokenId: string): Promise<void> {
 		await this.access.assert(userId, orgId, "admin");
 		if (!(await this.tokens.delete(orgId, tokenId)))
-			throw new NotFoundException("Token not found");
+			throw new NotFoundException({ reason: "TOKEN_NOT_FOUND" });
 	}
 
 	/** Organización a la que pertenece el token, o undefined si no es válido. */
