@@ -137,3 +137,21 @@ Al resolver un issue se puede ligar a una release:
 - **En la release X**: la corrección va en X; un evento de X o posterior lo reabre.
 
 Un issue que se reabre solo se marca como **regresión**, con la release en la que reapareció. Las versiones se comparan como semver y, si no lo son (un hash de git, una fecha), por el orden en que se vieron. Un issue ignorado sigue ignorado. Ante la duda (evento sin release, versiones incomparables) se reabre: es preferible un aviso de más a esconder una regresión.
+
+## Source maps
+
+Los bundles de producción están minificados: sin ayuda, un stack trace apunta a `app.3f2a.js:1:48213`. Si subes los source maps del build, Sentinel traduce cada frame al código original (`src/cart/total.ts:42:17 in computeTotal`) y guarda las líneas de alrededor para verlas en el issue.
+
+1. Crea un **token de API** en `/:org/tokens` (se muestra una sola vez; en la base solo queda su hash).
+2. En el CI, **antes de desplegar**, sube los mapas con la CLI (ver `packages/cli`):
+   `sentinel-cli sourcemaps upload ./dist --release 1.4.0`. El diálogo de archivos de cada release trae este comando ya rellenado.
+3. Inicializa el SDK con la misma `release`.
+
+Detalles que conviene saber:
+
+- La traducción ocurre **en el worker, antes de agrupar**: el mismo error en dos builds distintos es un solo issue. Por eso solo se traducen los eventos que llegan *después* de subir el mapa.
+- Los archivos se identifican por su ruta sin origen (`~/assets/app.js`), así que sirven en producción, staging o un CDN. Subir el mismo archivo otra vez lo reemplaza.
+- Los mapas se guardan comprimidos (hasta 25 MB cada uno) y nunca se exponen: no hace falta publicarlos en tu servidor.
+- Si falta el mapa o no se puede resolver un frame, el evento se guarda igual con el frame original.
+
+Para verlo funcionando sin configurar nada: `pnpm seed:demo && pnpm demo:sourcemaps` minifica un pequeño checkout, sube su mapa con la CLI, envía un error ocurrido en el bundle y te dice qué abrir.
