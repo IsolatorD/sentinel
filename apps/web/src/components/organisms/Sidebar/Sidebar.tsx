@@ -5,6 +5,7 @@ import {
 	KeyRound,
 	Rocket,
 	Settings,
+	Users,
 } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { Logo } from "@/components/atoms/Logo/Logo";
@@ -85,6 +86,13 @@ export function Sidebar() {
 						activeOptions={{ exact: true }}
 					>
 						{t("nav.projects")}
+					</SidebarLink>
+					<SidebarLink
+						icon={Users}
+						to="/$orgSlug/members"
+						params={{ orgSlug: organization.slug }}
+					>
+						{t("nav.members")}
 					</SidebarLink>
 					<SidebarLink
 						icon={KeyRound}

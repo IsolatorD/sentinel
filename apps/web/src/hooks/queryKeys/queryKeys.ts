@@ -27,6 +27,8 @@ export const queryKeys = {
 			...(page ? [page] : []),
 		] as const,
 	members: (orgId: string) => ["orgs", orgId, "members"] as const,
+	invitations: (orgId: string) => ["orgs", orgId, "invitations"] as const,
+	invitation: (invitationId: string) => ["invitation", invitationId] as const,
 	tokens: (orgId: string) => ["orgs", orgId, "tokens"] as const,
 	environments: (orgId: string, projectId: string) =>
 		["orgs", orgId, "projects", projectId, "environments"] as const,

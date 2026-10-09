@@ -8,6 +8,7 @@ import { FormField } from "@/components/molecules/FormField/FormField";
 import { GoogleButton } from "@/components/molecules/GoogleButton/GoogleButton";
 import { credentialsSchema } from "@/components/organisms/LoginForm/LoginForm.constants";
 import { usePublicConfig } from "@/hooks/usePublicConfig/usePublicConfig";
+import { useRedirectTarget } from "@/hooks/useSearchParams/useSearchParams";
 import {
 	useGoogleSignIn,
 	useSession,
@@ -22,6 +23,7 @@ export function LoginForm() {
 	const google = useGoogleSignIn();
 	const config = usePublicConfig();
 	const session = useSession();
+	const redirectTo = useRedirectTarget();
 	const [fieldErrors, setFieldErrors] = useState<{
 		email?: string;
 		password?: string;
@@ -48,7 +50,9 @@ export function LoginForm() {
 			return;
 		}
 		setFieldErrors({});
-		signIn.mutate(parsed.data, { onSuccess: () => navigate({ to: "/" }) });
+		signIn.mutate(parsed.data, {
+			onSuccess: () => navigate({ href: redirectTo ?? "/" }),
+		});
 	}
 
 	const error = signIn.error;
@@ -111,7 +115,7 @@ export function LoginForm() {
 					<GoogleButton
 						label={t("auth.login.google")}
 						loading={google.isPending}
-						onClick={() => google.mutate()}
+						onClick={() => google.mutate(redirectTo)}
 					/>
 				</>
 			)}

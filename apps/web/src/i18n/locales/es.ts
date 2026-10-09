@@ -95,6 +95,7 @@ export const es: Deep<Translations> = {
 		issues: "Issues",
 		projects: "Proyectos",
 		releases: "Releases",
+		members: "Miembros",
 		alerts: "Alertas",
 		tokens: "Tokens de API",
 		settings: "Configuración",
@@ -309,6 +310,61 @@ export const es: Deep<Translations> = {
 		},
 		forbidden: "Solo los owners y admins pueden gestionar los tokens de API.",
 		loadError: "No se pudieron cargar los tokens.",
+	},
+	members: {
+		pageTitle: "Miembros",
+		title: "Personas de esta organización",
+		subtitle: "Invita a tu equipo y elige qué puede hacer cada persona.",
+		you: "Tú",
+		joined: "Se unió",
+		changeRole: "Cambiar el rol de",
+		remove: "Quitar",
+		forbidden: "Solo los owners y admins pueden gestionar los miembros.",
+		loadError: "No se pudieron cargar los miembros.",
+		roles: { owner: "Owner", admin: "Admin", member: "Miembro" },
+		removeDialog: {
+			title: "¿Quitar a {{name}}?",
+			description:
+				"Perderá el acceso a esta organización y a todos sus proyectos. Sus comentarios anteriores se conservan.",
+		},
+		invite: {
+			button: "Invitar",
+			title: "Invitar a una persona de tu equipo",
+			description:
+				"Le enviaremos por correo un enlace para unirse a esta organización.",
+			email: "Correo electrónico",
+			role: "Rol",
+			send: "Enviar invitación",
+			alreadyInvited:
+				"Esa persona ya tiene una invitación pendiente o ya es miembro.",
+		},
+		pending: {
+			title: "Invitaciones pendientes",
+			expires: "caduca",
+			resend: "Reenviar",
+			resent: "Invitación enviada de nuevo.",
+			cancel: "Cancelar la invitación a",
+			loadError: "No se pudieron cargar las invitaciones.",
+			empty: {
+				title: "No hay invitaciones pendientes",
+				description:
+					"Las invitaciones que envíes aparecerán aquí hasta que se acepten.",
+			},
+		},
+	},
+	invitation: {
+		title: "Te han invitado",
+		subtitle: "Únete a tu equipo en Sentinel.",
+		description:
+			"{{inviter}} te invitó a unirte a {{organization}} como {{role}}.",
+		accept: "Aceptar invitación",
+		decline: "Rechazar",
+		notFound: "Esta invitación no existe o ya caducó.",
+		notPending: "Esta invitación ya se usó o fue cancelada.",
+		wrongAccount:
+			"Esta invitación se envió a un correo distinto del de tu sesión ({{email}}). Inicia sesión con la cuenta invitada para aceptarla.",
+		switchAccount: "Iniciar sesión con otra cuenta",
+		goHome: "Ir a Sentinel",
 	},
 	alerts: {
 		title: "Alertas",

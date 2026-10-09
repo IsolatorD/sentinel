@@ -20,12 +20,13 @@ export const authService = {
 		unwrap(await authClient.signUp.email(input));
 	},
 
-	async signInGoogle(): Promise<void> {
+	/** `returnTo`: ruta interna a la que volver tras autenticarse con Google. */
+	async signInGoogle(returnTo?: string): Promise<void> {
 		// Redirige al proveedor; al volver, la sesión ya está activa.
 		unwrap(
 			await authClient.signIn.social({
 				provider: "google",
-				callbackURL: window.location.origin,
+				callbackURL: `${window.location.origin}${returnTo ?? ""}`,
 			}),
 		);
 	},

@@ -9,6 +9,7 @@ import { GoogleButton } from "@/components/molecules/GoogleButton/GoogleButton";
 import { schema } from "@/components/organisms/RegisterForm/RegisterForm.constants";
 import type { Errors } from "@/components/organisms/RegisterForm/RegisterFormInterface";
 import { usePublicConfig } from "@/hooks/usePublicConfig/usePublicConfig";
+import { useRedirectTarget } from "@/hooks/useSearchParams/useSearchParams";
 import { useGoogleSignIn, useSignUp } from "@/hooks/useSession/useSession";
 import { ApiError } from "@/utils/apiError/apiError";
 
@@ -18,6 +19,7 @@ export function RegisterForm() {
 	const signUp = useSignUp();
 	const google = useGoogleSignIn();
 	const config = usePublicConfig();
+	const redirectTo = useRedirectTarget();
 	const [errors, setErrors] = useState<Errors>({});
 
 	function onSubmit(event: FormEvent<HTMLFormElement>) {
@@ -45,7 +47,7 @@ export function RegisterForm() {
 		}
 		setErrors({});
 		signUp.mutate(parsed.data, {
-			onSuccess: () => navigate({ to: "/onboarding" }),
+			onSuccess: () => navigate({ href: redirectTo ?? "/onboarding" }),
 		});
 	}
 
@@ -127,7 +129,7 @@ export function RegisterForm() {
 					<GoogleButton
 						label={t("auth.login.google")}
 						loading={google.isPending}
-						onClick={() => google.mutate()}
+						onClick={() => google.mutate(redirectTo)}
 					/>
 				</>
 			)}

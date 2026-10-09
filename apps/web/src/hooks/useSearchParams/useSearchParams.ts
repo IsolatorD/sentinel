@@ -1,5 +1,6 @@
 import { useNavigate, useSearch } from "@tanstack/react-router";
 import { useCallback, useMemo } from "react";
+import { safeRedirect } from "@/utils/redirect/redirect";
 import {
 	omitDefaults,
 	resolveAlertsSearch,
@@ -72,4 +73,10 @@ export function useAlertsSearch() {
 		[navigate],
 	);
 	return { search, update };
+}
+
+/** Destino al que volver tras iniciar sesión (`?redirect=`), si es una ruta interna segura. */
+export function useRedirectTarget(): string | undefined {
+	const raw = useSearch({ strict: false }) as { redirect?: unknown };
+	return safeRedirect(raw.redirect);
 }

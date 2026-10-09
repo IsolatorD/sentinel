@@ -8,11 +8,13 @@ import {
 	redirect,
 } from "@tanstack/react-router";
 import { sessionQueryOptions } from "@/hooks/useSession/useSession.constants";
+import { AcceptInvitationPage } from "@/pages/AcceptInvitationPage/AcceptInvitationPage";
 import { AlertsPage } from "@/pages/AlertsPage/AlertsPage";
 import { HomePage } from "@/pages/HomePage/HomePage";
 import { IssueDetailPage } from "@/pages/IssueDetailPage/IssueDetailPage";
 import { IssuesPage } from "@/pages/IssuesPage/IssuesPage";
 import { LoginPage } from "@/pages/LoginPage/LoginPage";
+import { MembersPage } from "@/pages/MembersPage/MembersPage";
 import { NotFoundPage } from "@/pages/NotFoundPage/NotFoundPage";
 import { OnboardingPage } from "@/pages/OnboardingPage/OnboardingPage";
 import { OrgHomePage } from "@/pages/OrgHomePage/OrgHomePage";
@@ -22,6 +24,7 @@ import { ProjectsPage } from "@/pages/ProjectsPage/ProjectsPage";
 import { RegisterPage } from "@/pages/RegisterPage/RegisterPage";
 import { ReleasesPage } from "@/pages/ReleasesPage/ReleasesPage";
 import { TokensPage } from "@/pages/TokensPage/TokensPage";
+import { safeRedirect } from "@/utils/redirect/redirect";
 import {
 	alertsSearchInputSchema,
 	issueSearchInputSchema,
@@ -41,20 +44,33 @@ const rootRoute = createRootRouteWithContext<RouterContext>()({
 const guestRoute = createRoute({
 	getParentRoute: () => rootRoute,
 	id: "guest",
-	beforeLoad: async ({ context }) => {
-		if (await context.queryClient.ensureQueryData(sessionQueryOptions))
+	beforeLoad: async ({ context, location }) => {
+		if (await context.queryClient.ensureQueryData(sessionQueryOptions)) {
+			const target = safeRedirect(
+				(location.search as { redirect?: unknown }).redirect,
+			);
+			if (target) throw redirect({ href: target });
 			throw redirect({ to: "/" });
+		}
 	},
 	component: Outlet,
 });
 const loginRoute = createRoute({
 	getParentRoute: () => guestRoute,
 	path: "/login",
+	validateSearch: (search: Record<string, unknown>): { redirect?: string } => {
+		const redirect = safeRedirect(search.redirect);
+		return redirect ? { redirect } : {};
+	},
 	component: LoginPage,
 });
 const registerRoute = createRoute({
 	getParentRoute: () => guestRoute,
 	path: "/register",
+	validateSearch: (search: Record<string, unknown>): { redirect?: string } => {
+		const redirect = safeRedirect(search.redirect);
+		return redirect ? { redirect } : {};
+	},
 	component: RegisterPage,
 });
 
@@ -62,9 +78,13 @@ const registerRoute = createRoute({
 const authedRoute = createRoute({
 	getParentRoute: () => rootRoute,
 	id: "authed",
-	beforeLoad: async ({ context }) => {
-		if (!(await context.queryClient.ensureQueryData(sessionQueryOptions)))
-			throw redirect({ to: "/login" });
+	beforeLoad: async ({ context, location }) => {
+		if (!(await context.queryClient.ensureQueryData(sessionQueryOptions))) {
+			// Se recuerda a dónde iba (p. ej. el enlace de una invitación) para volver tras el login.
+			const back =
+				location.href === "/" ? undefined : safeRedirect(location.href);
+			throw redirect({ to: "/login", search: back ? { redirect: back } : {} });
+		}
 	},
 	component: Outlet,
 });
@@ -80,6 +100,11 @@ const onboardingRoute = createRoute({
 });
 
 // /$orgSlug/...
+const acceptInvitationRoute = createRoute({
+	getParentRoute: () => authedRoute,
+	path: "/accept-invitation/$invitationId",
+	component: AcceptInvitationPage,
+});
 const orgRoute = createRoute({
 	getParentRoute: () => authedRoute,
 	path: "/$orgSlug",
@@ -89,6 +114,11 @@ const orgIndexRoute = createRoute({
 	getParentRoute: () => orgRoute,
 	path: "/",
 	component: OrgHomePage,
+});
+const membersRoute = createRoute({
+	getParentRoute: () => orgRoute,
+	path: "members",
+	component: MembersPage,
 });
 const tokensRoute = createRoute({
 	getParentRoute: () => orgRoute,
@@ -147,8 +177,10 @@ const routeTree = rootRoute.addChildren([
 	authedRoute.addChildren([
 		homeRoute,
 		onboardingRoute,
+		acceptInvitationRoute,
 		orgRoute.addChildren([
 			orgIndexRoute,
+			membersRoute,
 			tokensRoute,
 			projectsRoute.addChildren([
 				projectsIndexRoute,

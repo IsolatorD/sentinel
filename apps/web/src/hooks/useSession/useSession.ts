@@ -36,7 +36,9 @@ export function useSignUp() {
 }
 
 export function useGoogleSignIn() {
-	return useMutation({ mutationFn: () => authService.signInGoogle() });
+	return useMutation({
+		mutationFn: (returnTo?: string) => authService.signInGoogle(returnTo),
+	});
 }
 
 export function useSignOut() {

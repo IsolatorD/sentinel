@@ -91,6 +91,7 @@ export const en = {
 		issues: "Issues",
 		projects: "Projects",
 		releases: "Releases",
+		members: "Members",
 		alerts: "Alerts",
 		tokens: "API tokens",
 		settings: "Settings",
@@ -303,6 +304,60 @@ export const en = {
 		},
 		forbidden: "Only owners and admins can manage API tokens.",
 		loadError: "Could not load the tokens.",
+	},
+	members: {
+		pageTitle: "Members",
+		title: "People in this organization",
+		subtitle: "Invite your team and choose what each person can do.",
+		you: "You",
+		joined: "Joined",
+		changeRole: "Change role of",
+		remove: "Remove",
+		forbidden: "Only owners and admins can manage members.",
+		loadError: "Could not load the members.",
+		roles: { owner: "Owner", admin: "Admin", member: "Member" },
+		removeDialog: {
+			title: "Remove {{name}}?",
+			description:
+				"They will lose access to this organization and all its projects. Their past comments are kept.",
+		},
+		invite: {
+			button: "Invite",
+			title: "Invite a teammate",
+			description: "We will email them a link to join this organization.",
+			email: "Email",
+			role: "Role",
+			send: "Send invitation",
+			alreadyInvited:
+				"That person already has a pending invitation or is already a member.",
+		},
+		pending: {
+			title: "Pending invitations",
+			expires: "expires",
+			resend: "Resend",
+			resent: "Invitation sent again.",
+			cancel: "Cancel invitation to",
+			loadError: "Could not load the invitations.",
+			empty: {
+				title: "No pending invitations",
+				description:
+					"Invitations you send show up here until they are accepted.",
+			},
+		},
+	},
+	invitation: {
+		title: "You have been invited",
+		subtitle: "Join your team on Sentinel.",
+		description:
+			"{{inviter}} invited you to join {{organization}} as {{role}}.",
+		accept: "Accept invitation",
+		decline: "Decline",
+		notFound: "This invitation does not exist or has expired.",
+		notPending: "This invitation was already used or cancelled.",
+		wrongAccount:
+			"This invitation was sent to a different email address than the one you are signed in with ({{email}}). Sign in with the invited account to accept it.",
+		switchAccount: "Sign in with another account",
+		goHome: "Go to Sentinel",
 	},
 	alerts: {
 		title: "Alerts",

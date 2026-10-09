@@ -74,13 +74,17 @@ beforeEach(() => {
 	});
 	vi.mocked(organizationsService.listMembers).mockResolvedValue([
 		{
+			id: "m1",
 			userId: "u1",
 			role: "owner",
+			createdAt: new Date(),
 			user: { name: "Ana Pérez", email: "ana@example.com" },
 		},
 		{
+			id: "m2",
 			userId: "u2",
 			role: "member",
+			createdAt: new Date(),
 			user: { name: "Luis Gómez", email: "luis@example.com" },
 		},
 	]);
