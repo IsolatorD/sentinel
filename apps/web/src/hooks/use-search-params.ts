@@ -1,13 +1,15 @@
 import { useNavigate, useSearch } from "@tanstack/react-router";
 import { useCallback, useMemo } from "react";
 import {
-	ISSUES_SEARCH_DEFAULTS,
-	type IssueSearch,
-	type IssuesSearch,
 	omitDefaults,
 	resolveIssueSearch,
 	resolveIssuesSearch,
-} from "@/lib/search-params";
+} from "@/utils/searchParams/searchParams";
+import { ISSUES_SEARCH_DEFAULTS } from "@/utils/searchParams/searchParams.constants";
+import type {
+	IssueSearch,
+	IssuesSearch,
+} from "@/utils/searchParams/searchParamsInterface";
 
 // La URL es la fuente de verdad del estado de la pantalla (filtros, página, evento elegido):
 // se puede compartir, recargar y usar con los botones atrás/adelante.

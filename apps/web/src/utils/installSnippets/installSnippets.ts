@@ -1,8 +1,4 @@
-export interface SnippetOptions {
-	dsn: string;
-	release?: string;
-	environment?: string;
-}
+import type { SnippetOptions } from "@/utils/installSnippets/installSnippetsInterface";
 
 /** Instalación con un bundler (npm). */
 export function npmSnippet({

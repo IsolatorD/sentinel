@@ -6,4 +6,3 @@ export const organizationSchema = z.object({
 	slug: z.string(),
 	logo: z.string().nullish(),
 });
-export type Organization = z.infer<typeof organizationSchema>;

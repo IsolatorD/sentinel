@@ -1,9 +1,4 @@
-export interface UploadSnippetInput {
-	apiUrl: string;
-	orgId: string;
-	projectId: string;
-	release: string;
-}
+import type { UploadSnippetInput } from "@/utils/cliSnippets/cliSnippetsInterface";
 
 /** Comando para subir los source maps de un build; el token va en una variable, nunca en el texto. */
 export function sourceMapsUploadSnippet(input: UploadSnippetInput): string {

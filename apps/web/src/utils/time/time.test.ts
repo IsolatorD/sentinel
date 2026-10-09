@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { formatCompact, formatRelative } from "./time";
+import { formatCompact, formatRelative } from "@/utils/time/time";
 
 const NOW = new Date("2026-10-09T12:00:00Z").getTime();
 const minutesAgo = (m: number) => new Date(NOW - m * 60_000);

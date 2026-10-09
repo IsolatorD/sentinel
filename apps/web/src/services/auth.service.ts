@@ -1,4 +1,4 @@
-import { ApiError } from "@/lib/api-error";
+import { ApiError } from "@/utils/apiError/apiError";
 import { authClient } from "./auth-client.js";
 
 export interface SessionUser {

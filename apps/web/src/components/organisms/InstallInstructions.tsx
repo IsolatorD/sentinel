@@ -1,8 +1,11 @@
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { CodeBlock } from "@/components/molecules/CodeBlock";
-import { cn } from "@/lib/cn";
-import { npmSnippet, scriptTagSnippet } from "@/lib/install-snippets";
+import { cn } from "@/utils/cn/cn";
+import {
+	npmSnippet,
+	scriptTagSnippet,
+} from "@/utils/installSnippets/installSnippets";
 
 export function InstallInstructions({ dsn }: { dsn: string }) {
 	const { t } = useTranslation();

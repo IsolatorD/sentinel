@@ -9,7 +9,7 @@ import { FormField } from "@/components/molecules/FormField";
 import { GoogleButton } from "@/components/molecules/GoogleButton";
 import { usePublicConfig } from "@/hooks/use-public-config";
 import { useGoogleSignIn, useSignUp } from "@/hooks/use-session";
-import { ApiError } from "@/lib/api-error";
+import { ApiError } from "@/utils/apiError/apiError";
 
 const schema = z.object({
 	name: z.string().trim().min(1),

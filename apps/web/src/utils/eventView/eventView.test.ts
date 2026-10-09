@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { eventPayload } from "@/test/fixtures";
-import { contextEntries, parseEventPayload } from "./event-view";
+import { contextEntries, parseEventPayload } from "@/utils/eventView/eventView";
 
 describe("parseEventPayload", () => {
 	it("interpreta un payload válido y conserva los datos del cliente", () => {

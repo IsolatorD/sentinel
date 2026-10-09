@@ -1,6 +1,6 @@
 import { AlertCircle, CheckCircle2, Info } from "lucide-react";
 import type { ReactNode } from "react";
-import { cn } from "@/lib/cn";
+import { cn } from "@/utils/cn/cn";
 
 const STYLES = {
 	error: { box: "border-danger/30 bg-danger/5 text-danger", Icon: AlertCircle },

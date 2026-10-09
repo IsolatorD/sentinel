@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { sourceMapsUploadSnippet } from "./cli-snippets";
+import { sourceMapsUploadSnippet } from "@/utils/cliSnippets/cliSnippets";
 
 describe("sourceMapsUploadSnippet", () => {
 	const input = {

@@ -9,7 +9,7 @@ import { Alert } from "@/components/molecules/Alert";
 import { FormField } from "@/components/molecules/FormField";
 import { Modal } from "@/components/molecules/Modal";
 import { useDeleteProject } from "@/hooks/use-projects";
-import { ApiError } from "@/lib/api-error";
+import { ApiError } from "@/utils/apiError/apiError";
 
 export function DeleteProjectSection({
 	project,

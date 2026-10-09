@@ -1,9 +1,5 @@
 import { type IngestEvent, ingestEventSchema } from "@sentinel/shared";
-
-/** El payload guardado es el evento validado más los datos del cliente que añade el servidor. */
-export type EventView = IngestEvent & {
-	_client?: { ip?: string; userAgent?: string };
-};
+import type { EventView } from "@/utils/eventView/eventViewInterface";
 
 /** Interpreta el payload de un evento. Devuelve null si no cumple el formato esperado. */
 export function parseEventPayload(

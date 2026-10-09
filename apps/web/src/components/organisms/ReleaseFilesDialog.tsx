@@ -8,9 +8,9 @@ import { Modal } from "@/components/molecules/Modal";
 import { RelativeTime } from "@/components/molecules/RelativeTime";
 import { useArtifacts, useDeleteArtifact } from "@/hooks/use-releases";
 import { useCurrentProject } from "@/hooks/use-scope";
-import { ApiError } from "@/lib/api-error";
-import { sourceMapsUploadSnippet } from "@/lib/cli-snippets";
-import { formatBytes } from "@/lib/format";
+import { ApiError } from "@/utils/apiError/apiError";
+import { sourceMapsUploadSnippet } from "@/utils/cliSnippets/cliSnippets";
+import { formatBytes } from "@/utils/format/format";
 
 /** Source maps de una release y cómo subir más con la CLI. */
 export function ReleaseFilesDialog({

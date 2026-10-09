@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { formatBytes } from "./format";
+import { formatBytes } from "@/utils/format/format";
 
 describe("formatBytes", () => {
 	it("elige la unidad adecuada", () => {

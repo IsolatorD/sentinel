@@ -1,9 +1,8 @@
 import type { StackFrame } from "@sentinel/shared";
-
-export interface DisplayFrame extends StackFrame {
-	/** Posición original en la lista del servidor (más antiguo = 0). */
-	index: number;
-}
+import type {
+	CodeLine,
+	DisplayFrame,
+} from "@/utils/stacktrace/stacktraceInterface";
 
 /**
  * El servidor guarda los frames del más antiguo al más reciente; en pantalla se muestra
@@ -34,12 +33,6 @@ export function shortLocation(frame: StackFrame): string {
 	const line = frame.lineno !== undefined ? `:${frame.lineno}` : "";
 	const col = frame.colno !== undefined ? `:${frame.colno}` : "";
 	return `${name}${line}${col}`;
-}
-
-export interface CodeLine {
-	number: number;
-	text: string;
-	highlight: boolean;
 }
 
 /** Líneas de código alrededor de la que falló, numeradas; vacío si el frame no trae contexto. */

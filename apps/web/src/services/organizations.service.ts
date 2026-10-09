@@ -1,6 +1,7 @@
 import { z } from "zod";
-import { ApiError } from "@/lib/api-error";
-import { type Organization, organizationSchema } from "@/lib/organization";
+import { ApiError } from "@/utils/apiError/apiError";
+import { organizationSchema } from "@/utils/organization/organization.constants";
+import type { Organization } from "@/utils/organization/organizationInterface";
 import { authClient } from "./auth-client.js";
 
 export const organizationsService = {

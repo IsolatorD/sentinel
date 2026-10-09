@@ -1,10 +1,10 @@
 import { describe, expect, it } from "vitest";
 import {
-	issuesSearchInputSchema,
 	omitDefaults,
 	resolveIssueSearch,
 	resolveIssuesSearch,
-} from "./search-params";
+} from "@/utils/searchParams/searchParams";
+import { issuesSearchInputSchema } from "@/utils/searchParams/searchParams.constants";
 
 describe("resolveIssuesSearch", () => {
 	it("aplica los valores por defecto cuando la URL no trae nada", () => {

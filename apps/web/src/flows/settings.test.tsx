@@ -1,9 +1,9 @@
 import { screen, waitFor, within } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { ApiError } from "@/lib/api-error";
 import { projectsService } from "@/services/projects.service";
 import * as fx from "@/test/fixtures";
 import { mockHappyPath, renderApp, SETTINGS_PATH } from "@/test/render-app";
+import { ApiError } from "@/utils/apiError/apiError";
 
 vi.mock("@/services/auth.service");
 vi.mock("@/services/config.service");

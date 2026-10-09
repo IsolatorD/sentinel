@@ -1,7 +1,7 @@
 import { type ErrorResponse, errorResponseSchema } from "@sentinel/shared";
 import axios, { type AxiosResponse } from "axios";
 import type { z } from "zod";
-import { ApiError } from "@/lib/api-error";
+import { ApiError } from "@/utils/apiError/apiError";
 
 interface RequestOptions<S extends z.ZodType | undefined> {
 	method?: "GET" | "POST" | "PATCH" | "DELETE";

@@ -3,7 +3,8 @@ import { CodeBlock } from "@/components/molecules/CodeBlock";
 import { KeyValueList } from "@/components/molecules/KeyValueList";
 import { Section } from "@/components/molecules/Section";
 import { TagPill } from "@/components/molecules/TagPill";
-import { contextEntries, type EventView } from "@/lib/event-view";
+import { contextEntries } from "@/utils/eventView/eventView";
+import type { EventView } from "@/utils/eventView/eventViewInterface";
 
 const browserText = (view: EventView) => {
 	const b = contextEntries(view.contexts, "browser");

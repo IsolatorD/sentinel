@@ -1,7 +1,7 @@
 import { Link, type LinkProps } from "@tanstack/react-router";
 import type { LucideIcon } from "lucide-react";
 import type { ReactNode } from "react";
-import { cn } from "@/lib/cn";
+import { cn } from "@/utils/cn/cn";
 
 type SidebarLinkProps = Omit<LinkProps, "children"> & {
 	icon: LucideIcon;

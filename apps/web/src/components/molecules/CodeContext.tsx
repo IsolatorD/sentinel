@@ -1,5 +1,5 @@
-import { cn } from "@/lib/cn";
-import type { CodeLine } from "@/lib/stacktrace";
+import { cn } from "@/utils/cn/cn";
+import type { CodeLine } from "@/utils/stacktrace/stacktraceInterface";
 
 /** Fragmento de código con números de línea; resalta la que falló. */
 export function CodeContext({ lines }: { lines: CodeLine[] }) {

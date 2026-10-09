@@ -10,7 +10,7 @@ import { CopyButton } from "@/components/molecules/CopyButton";
 import { Modal } from "@/components/molecules/Modal";
 import { Section } from "@/components/molecules/Section";
 import { useCreateKey, useDeleteKey, useUpdateKey } from "@/hooks/use-projects";
-import { ApiError } from "@/lib/api-error";
+import { ApiError } from "@/utils/apiError/apiError";
 
 function KeyRow({
 	keyData,

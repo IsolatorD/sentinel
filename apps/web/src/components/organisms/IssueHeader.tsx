@@ -18,7 +18,7 @@ import {
 	useUpdateIssueStatus,
 } from "@/hooks/use-issues";
 import { useReleases } from "@/hooks/use-releases";
-import { formatCompact } from "@/lib/time";
+import { formatCompact } from "@/utils/time/time";
 
 export interface IssueHeaderProps {
 	issue: IssueDetailDto;

@@ -8,7 +8,7 @@ import { SearchInput } from "@/components/molecules/SearchInput";
 import { useEnvironments, useReleases } from "@/hooks/use-releases";
 import { useCurrentProject } from "@/hooks/use-scope";
 import { useIssuesSearch } from "@/hooks/use-search-params";
-import { cn } from "@/lib/cn";
+import { cn } from "@/utils/cn/cn";
 
 const TABS = [...ISSUE_STATUSES, "all"] as const;
 const SEARCH_DELAY_MS = 300;

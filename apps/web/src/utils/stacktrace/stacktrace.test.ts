@@ -1,6 +1,10 @@
 import type { StackFrame } from "@sentinel/shared";
 import { describe, expect, it } from "vitest";
-import { contextLines, framesForDisplay, shortLocation } from "./stacktrace";
+import {
+	contextLines,
+	framesForDisplay,
+	shortLocation,
+} from "@/utils/stacktrace/stacktrace";
 
 // Orden del servidor: del más antiguo al más reciente.
 const frames: StackFrame[] = [

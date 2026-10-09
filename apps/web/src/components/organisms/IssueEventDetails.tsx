@@ -3,7 +3,7 @@ import { useTranslation } from "react-i18next";
 import { Alert } from "@/components/molecules/Alert";
 import { CodeBlock } from "@/components/molecules/CodeBlock";
 import { Section } from "@/components/molecules/Section";
-import { parseEventPayload } from "@/lib/event-view";
+import { parseEventPayload } from "@/utils/eventView/eventView";
 import { BreadcrumbList } from "./BreadcrumbList";
 import { EventContext } from "./EventContext";
 import { StackTrace } from "./StackTrace";

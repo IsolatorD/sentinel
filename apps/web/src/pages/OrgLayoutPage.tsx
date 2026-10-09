@@ -6,7 +6,8 @@ import { Sidebar } from "@/components/organisms/Sidebar";
 import { AppShellTemplate } from "@/components/templates/AppShellTemplate";
 import { useCurrentOrganization } from "@/hooks/use-scope";
 import { useSession } from "@/hooks/use-session";
-import { LAST_ORG_KEY, writeStorage } from "@/lib/storage";
+import { writeStorage } from "@/utils/storage/storage";
+import { LAST_ORG_KEY } from "@/utils/storage/storage.constants";
 import { NotFoundPage } from "./NotFoundPage";
 
 /** Marco de la app para una organización: barra lateral y contenido. */

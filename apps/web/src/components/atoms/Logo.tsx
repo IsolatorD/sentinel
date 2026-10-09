@@ -1,4 +1,4 @@
-import { cn } from "@/lib/cn";
+import { cn } from "@/utils/cn/cn";
 
 /** Marca de Sentinel: un escudo con un punto de alerta. */
 export function LogoMark({ className }: { className?: string }) {

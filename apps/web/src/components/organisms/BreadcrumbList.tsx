@@ -8,7 +8,7 @@ import {
 	Terminal,
 } from "lucide-react";
 import { useTranslation } from "react-i18next";
-import { cn } from "@/lib/cn";
+import { cn } from "@/utils/cn/cn";
 
 type Breadcrumb = NonNullable<IngestEvent["breadcrumbs"]>[number];
 

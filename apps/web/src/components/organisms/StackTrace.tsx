@@ -4,13 +4,13 @@ import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Button } from "@/components/atoms/Button";
 import { CodeContext } from "@/components/molecules/CodeContext";
-import { cn } from "@/lib/cn";
+import { cn } from "@/utils/cn/cn";
 import {
 	contextLines,
-	type DisplayFrame,
 	framesForDisplay,
 	shortLocation,
-} from "@/lib/stacktrace";
+} from "@/utils/stacktrace/stacktrace";
+import type { DisplayFrame } from "@/utils/stacktrace/stacktraceInterface";
 
 /** Un frame; si trae código (source maps), se puede abrir para verlo. */
 function FrameRow({

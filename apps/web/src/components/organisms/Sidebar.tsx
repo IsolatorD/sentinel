@@ -24,7 +24,8 @@ import {
 import { SidebarLink } from "@/components/molecules/SidebarLink";
 import { useCurrentOrganization, useCurrentProject } from "@/hooks/use-scope";
 import { useSession, useSignOut } from "@/hooks/use-session";
-import { LAST_ORG_KEY, writeStorage } from "@/lib/storage";
+import { writeStorage } from "@/utils/storage/storage";
+import { LAST_ORG_KEY } from "@/utils/storage/storage.constants";
 
 function OrgSwitcher() {
 	const { t } = useTranslation();

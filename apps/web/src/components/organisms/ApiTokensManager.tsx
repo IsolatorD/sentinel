@@ -13,7 +13,7 @@ import { ErrorState } from "@/components/molecules/ErrorState";
 import { Modal } from "@/components/molecules/Modal";
 import { RelativeTime } from "@/components/molecules/RelativeTime";
 import { useCreateToken, useRevokeToken, useTokens } from "@/hooks/use-tokens";
-import { ApiError } from "@/lib/api-error";
+import { ApiError } from "@/utils/apiError/apiError";
 
 export function ApiTokensManager({ orgId }: { orgId: string }) {
 	const { t } = useTranslation();

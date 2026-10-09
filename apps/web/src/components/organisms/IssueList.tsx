@@ -14,8 +14,8 @@ import { Pagination } from "@/components/molecules/Pagination";
 import { useIssues } from "@/hooks/use-issues";
 import { useCurrentProject } from "@/hooks/use-scope";
 import { useIssuesSearch } from "@/hooks/use-search-params";
-import { cn } from "@/lib/cn";
-import { PAGE_SIZE } from "@/lib/search-params";
+import { cn } from "@/utils/cn/cn";
+import { PAGE_SIZE } from "@/utils/searchParams/searchParams.constants";
 
 function ListSkeleton() {
 	return (

@@ -1,0 +1,30 @@
+import type {
+	ISSUE_SORTS,
+	ISSUE_STATUSES,
+	levelSchema,
+} from "@sentinel/shared";
+import type { z } from "zod";
+import type {
+	issueSearchInputSchema,
+	issuesSearchInputSchema,
+} from "@/utils/searchParams/searchParams.constants";
+
+export type IssuesSearchInput = z.infer<typeof issuesSearchInputSchema>;
+
+export interface IssuesSearch {
+	status: (typeof ISSUE_STATUSES)[number] | "all";
+	q?: string;
+	level?: z.infer<typeof levelSchema>;
+	environment?: string;
+	release?: string;
+	sort: (typeof ISSUE_SORTS)[number];
+	order: "asc" | "desc";
+	page: number;
+}
+
+export type IssueSearchInput = z.infer<typeof issueSearchInputSchema>;
+
+export interface IssueSearch {
+	event?: string;
+	tab: "details" | "events";
+}

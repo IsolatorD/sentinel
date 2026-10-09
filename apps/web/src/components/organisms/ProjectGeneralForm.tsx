@@ -8,7 +8,7 @@ import { Alert } from "@/components/molecules/Alert";
 import { FormField } from "@/components/molecules/FormField";
 import { Section } from "@/components/molecules/Section";
 import { useUpdateProject } from "@/hooks/use-projects";
-import { ApiError } from "@/lib/api-error";
+import { ApiError } from "@/utils/apiError/apiError";
 
 export function ProjectGeneralForm({
 	project,

@@ -1,5 +1,5 @@
 import { useTranslation } from "react-i18next";
-import { formatDateTime, formatRelative } from "@/lib/time";
+import { formatDateTime, formatRelative } from "@/utils/time/time";
 
 /** "hace 3 horas", con la fecha completa como tooltip. */
 export function RelativeTime({

@@ -11,8 +11,8 @@ import { PageTemplate } from "@/components/templates/PageTemplate";
 import { useIssue, useIssueEvent, useIssueEvents } from "@/hooks/use-issues";
 import { useCurrentProject } from "@/hooks/use-scope";
 import { useIssueSearch } from "@/hooks/use-search-params";
-import { ApiError } from "@/lib/api-error";
-import { cn } from "@/lib/cn";
+import { ApiError } from "@/utils/apiError/apiError";
+import { cn } from "@/utils/cn/cn";
 import { NotFoundPage } from "./NotFoundPage";
 import { ProjectGate } from "./ProjectGate";
 

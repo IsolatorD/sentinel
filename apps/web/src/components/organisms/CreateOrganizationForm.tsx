@@ -5,8 +5,8 @@ import { Input } from "@/components/atoms/Input";
 import { Alert } from "@/components/molecules/Alert";
 import { FormField } from "@/components/molecules/FormField";
 import { useCreateOrganization } from "@/hooks/use-organizations";
-import type { Organization } from "@/lib/organization";
-import { uniqueSlug } from "@/lib/slug";
+import type { Organization } from "@/utils/organization/organizationInterface";
+import { uniqueSlug } from "@/utils/slug/slug";
 
 export function CreateOrganizationForm({
 	onCreated,

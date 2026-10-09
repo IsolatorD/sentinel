@@ -14,5 +14,3 @@ export function writeStorage(key: string, value: string): void {
 		// Sin persistencia: la app sigue funcionando.
 	}
 }
-
-export const LAST_ORG_KEY = "sentinel:last-org";

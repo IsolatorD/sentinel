@@ -1,4 +1,4 @@
-import { cn } from "@/lib/cn";
+import { cn } from "@/utils/cn/cn";
 
 const PALETTE = [
 	"#6c5fc7",

@@ -9,7 +9,7 @@ import { FormField } from "@/components/molecules/FormField";
 import { GoogleButton } from "@/components/molecules/GoogleButton";
 import { usePublicConfig } from "@/hooks/use-public-config";
 import { useGoogleSignIn, useSession, useSignIn } from "@/hooks/use-session";
-import { ApiError } from "@/lib/api-error";
+import { ApiError } from "@/utils/apiError/apiError";
 
 const credentialsSchema = z.object({
 	email: z.string().trim().min(1, "required").email("email"),

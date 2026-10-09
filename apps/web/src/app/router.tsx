@@ -8,10 +8,6 @@ import {
 	redirect,
 } from "@tanstack/react-router";
 import { sessionQueryOptions } from "@/hooks/use-session";
-import {
-	issueSearchInputSchema,
-	issuesSearchInputSchema,
-} from "@/lib/search-params";
 import { HomePage } from "@/pages/HomePage";
 import { IssueDetailPage } from "@/pages/IssueDetailPage";
 import { IssuesPage } from "@/pages/IssuesPage";
@@ -25,6 +21,10 @@ import { ProjectsPage } from "@/pages/ProjectsPage";
 import { RegisterPage } from "@/pages/RegisterPage";
 import { ReleasesPage } from "@/pages/ReleasesPage";
 import { TokensPage } from "@/pages/TokensPage";
+import {
+	issueSearchInputSchema,
+	issuesSearchInputSchema,
+} from "@/utils/searchParams/searchParams.constants";
 
 export interface RouterContext {
 	queryClient: QueryClient;

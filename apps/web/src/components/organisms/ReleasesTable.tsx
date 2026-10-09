@@ -14,8 +14,8 @@ import { RelativeTime } from "@/components/molecules/RelativeTime";
 import { ReleaseFilesDialog } from "@/components/organisms/ReleaseFilesDialog";
 import { useDeleteRelease, useReleases } from "@/hooks/use-releases";
 import { useCurrentProject } from "@/hooks/use-scope";
-import { ApiError } from "@/lib/api-error";
-import { formatCompact } from "@/lib/time";
+import { ApiError } from "@/utils/apiError/apiError";
+import { formatCompact } from "@/utils/time/time";
 
 export function ReleasesTable() {
 	const { t, i18n } = useTranslation();

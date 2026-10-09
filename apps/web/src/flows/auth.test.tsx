@@ -1,6 +1,5 @@
 import { screen, waitFor } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { ApiError } from "@/lib/api-error";
 import { authService } from "@/services/auth.service";
 import { configService } from "@/services/config.service";
 import { issuesService } from "@/services/issues.service";
@@ -8,6 +7,7 @@ import { organizationsService } from "@/services/organizations.service";
 import { projectsService } from "@/services/projects.service";
 import * as fx from "@/test/fixtures";
 import { mockHappyPath, renderApp } from "@/test/render-app";
+import { ApiError } from "@/utils/apiError/apiError";
 
 vi.mock("@/services/auth.service");
 vi.mock("@/services/config.service");
