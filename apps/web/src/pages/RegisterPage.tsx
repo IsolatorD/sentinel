@@ -1,6 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import { useTranslation } from "react-i18next";
-import { RegisterForm } from "@/components/organisms/RegisterForm";
+import { RegisterForm } from "@/components/organisms/RegisterForm/RegisterForm";
 import { AuthTemplate } from "@/components/templates/AuthTemplate";
 
 export function RegisterPage() {

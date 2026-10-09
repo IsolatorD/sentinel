@@ -1,6 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import { useTranslation } from "react-i18next";
-import { LoginForm } from "@/components/organisms/LoginForm";
+import { LoginForm } from "@/components/organisms/LoginForm/LoginForm";
 import { AuthTemplate } from "@/components/templates/AuthTemplate";
 
 export function LoginPage() {

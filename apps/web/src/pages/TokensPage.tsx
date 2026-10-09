@@ -1,5 +1,5 @@
 import { useTranslation } from "react-i18next";
-import { ApiTokensManager } from "@/components/organisms/ApiTokensManager";
+import { ApiTokensManager } from "@/components/organisms/ApiTokensManager/ApiTokensManager";
 import { PageTemplate } from "@/components/templates/PageTemplate";
 import { useCurrentOrganization } from "@/hooks/useScope/useScope";
 

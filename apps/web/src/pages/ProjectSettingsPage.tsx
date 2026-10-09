@@ -1,10 +1,10 @@
 import { useTranslation } from "react-i18next";
 import { Skeleton } from "@/components/atoms/Skeleton/Skeleton";
 import { Section } from "@/components/molecules/Section/Section";
-import { DeleteProjectSection } from "@/components/organisms/DeleteProjectSection";
-import { InstallInstructions } from "@/components/organisms/InstallInstructions";
-import { ProjectGeneralForm } from "@/components/organisms/ProjectGeneralForm";
-import { ProjectKeysManager } from "@/components/organisms/ProjectKeysManager";
+import { DeleteProjectSection } from "@/components/organisms/DeleteProjectSection/DeleteProjectSection";
+import { InstallInstructions } from "@/components/organisms/InstallInstructions/InstallInstructions";
+import { ProjectGeneralForm } from "@/components/organisms/ProjectGeneralForm/ProjectGeneralForm";
+import { ProjectKeysManager } from "@/components/organisms/ProjectKeysManager/ProjectKeysManager";
 import { PageTemplate } from "@/components/templates/PageTemplate";
 import { useProject } from "@/hooks/useProjects/useProjects";
 import { useCurrentProject } from "@/hooks/useScope/useScope";

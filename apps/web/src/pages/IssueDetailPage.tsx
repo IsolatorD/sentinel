@@ -3,10 +3,10 @@ import { ArrowLeft } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { Skeleton } from "@/components/atoms/Skeleton/Skeleton";
 import { ErrorState } from "@/components/molecules/ErrorState/ErrorState";
-import { EventNavigator } from "@/components/organisms/EventNavigator";
-import { IssueEventDetails } from "@/components/organisms/IssueEventDetails";
-import { IssueEventsTable } from "@/components/organisms/IssueEventsTable";
-import { IssueHeader } from "@/components/organisms/IssueHeader";
+import { EventNavigator } from "@/components/organisms/EventNavigator/EventNavigator";
+import { IssueEventDetails } from "@/components/organisms/IssueEventDetails/IssueEventDetails";
+import { IssueEventsTable } from "@/components/organisms/IssueEventsTable/IssueEventsTable";
+import { IssueHeader } from "@/components/organisms/IssueHeader/IssueHeader";
 import { PageTemplate } from "@/components/templates/PageTemplate";
 import {
 	useIssue,

@@ -1,5 +1,5 @@
 import { useTranslation } from "react-i18next";
-import { OnboardingFlow } from "@/components/organisms/OnboardingFlow";
+import { OnboardingFlow } from "@/components/organisms/OnboardingFlow/OnboardingFlow";
 import { AuthTemplate } from "@/components/templates/AuthTemplate";
 
 export function OnboardingPage() {
