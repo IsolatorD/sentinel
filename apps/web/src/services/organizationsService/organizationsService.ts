@@ -1,6 +1,8 @@
 import { z } from "zod";
 import { authClient } from "@/services/authClient/authClient";
 import { ApiError } from "@/utils/apiError/apiError";
+import { membersResponseSchema } from "@/utils/member/member.constants";
+import type { OrgMember } from "@/utils/member/memberInterface";
 import { organizationSchema } from "@/utils/organization/organization.constants";
 import type { Organization } from "@/utils/organization/organizationInterface";
 
@@ -25,5 +27,18 @@ export const organizationsService = {
 				error.code,
 			);
 		return organizationSchema.parse(data);
+	},
+
+	async listMembers(organizationId: string): Promise<OrgMember[]> {
+		const { data, error } = await authClient.organization.listMembers({
+			query: { organizationId },
+		});
+		if (error)
+			throw new ApiError(
+				error.status,
+				error.message ?? "Request failed",
+				error.code,
+			);
+		return membersResponseSchema.parse(data).members;
 	},
 };

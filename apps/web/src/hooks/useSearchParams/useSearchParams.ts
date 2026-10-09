@@ -2,11 +2,16 @@ import { useNavigate, useSearch } from "@tanstack/react-router";
 import { useCallback, useMemo } from "react";
 import {
 	omitDefaults,
+	resolveAlertsSearch,
 	resolveIssueSearch,
 	resolveIssuesSearch,
 } from "@/utils/searchParams/searchParams";
-import { ISSUES_SEARCH_DEFAULTS } from "@/utils/searchParams/searchParams.constants";
+import {
+	ALERTS_SEARCH_DEFAULTS,
+	ISSUES_SEARCH_DEFAULTS,
+} from "@/utils/searchParams/searchParams.constants";
 import type {
+	AlertsSearch,
 	IssueSearch,
 	IssuesSearch,
 } from "@/utils/searchParams/searchParamsInterface";
@@ -45,6 +50,23 @@ export function useIssueSearch() {
 				to: ".",
 				search: (prev: Record<string, unknown>) =>
 					omitDefaults({ ...prev, ...patch }, { tab: "details" }),
+				replace: true,
+			}),
+		[navigate],
+	);
+	return { search, update };
+}
+
+export function useAlertsSearch() {
+	const raw = useSearch({ strict: false });
+	const navigate = useNavigate();
+	const search = useMemo(() => resolveAlertsSearch(raw), [raw]);
+	const update = useCallback(
+		(patch: Partial<AlertsSearch>) =>
+			navigate({
+				to: ".",
+				search: (prev: Record<string, unknown>) =>
+					omitDefaults({ ...prev, ...patch }, ALERTS_SEARCH_DEFAULTS),
 				replace: true,
 			}),
 		[navigate],

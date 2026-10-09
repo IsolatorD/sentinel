@@ -1,9 +1,12 @@
 import {
+	ALERTS_SEARCH_DEFAULTS,
+	alertsSearchInputSchema,
 	ISSUES_SEARCH_DEFAULTS,
 	issueSearchInputSchema,
 	issuesSearchInputSchema,
 } from "@/utils/searchParams/searchParams.constants";
 import type {
+	AlertsSearch,
 	IssueSearch,
 	IssuesSearch,
 } from "@/utils/searchParams/searchParamsInterface";
@@ -26,6 +29,14 @@ export function resolveIssuesSearch(raw: unknown): IssuesSearch {
 export function resolveIssueSearch(raw: unknown): IssueSearch {
 	const input = issueSearchInputSchema.parse(raw ?? {});
 	return { event: input.event, tab: input.tab ?? "details" };
+}
+
+export function resolveAlertsSearch(raw: unknown): AlertsSearch {
+	const input = alertsSearchInputSchema.parse(raw ?? {});
+	return {
+		tab: input.tab ?? ALERTS_SEARCH_DEFAULTS.tab,
+		page: input.page ?? ALERTS_SEARCH_DEFAULTS.page,
+	};
 }
 
 /** Quita de la URL lo que vale lo mismo que el valor por defecto, para mantenerla corta. */

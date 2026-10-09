@@ -95,6 +95,7 @@ export const es: Deep<Translations> = {
 		issues: "Issues",
 		projects: "Proyectos",
 		releases: "Releases",
+		alerts: "Alertas",
 		tokens: "Tokens de API",
 		settings: "Configuración",
 		signOut: "Cerrar sesión",
@@ -308,6 +309,139 @@ export const es: Deep<Translations> = {
 		},
 		forbidden: "Solo los owners y admins pueden gestionar los tokens de API.",
 		loadError: "No se pudieron cargar los tokens.",
+	},
+	alerts: {
+		title: "Alertas",
+		subtitle:
+			"Recibe un aviso cuando algo requiera atención: un issue nuevo, una regresión o un pico de errores.",
+		forbidden: "Solo los owners y admins pueden gestionar las alertas.",
+		tabs: { rules: "Reglas", channels: "Canales", history: "Historial" },
+		duration: {
+			minutes_one: "{{count}} minuto",
+			minutes_other: "{{count}} minutos",
+			hours_one: "{{count}} hora",
+			hours_other: "{{count}} horas",
+			days_one: "{{count}} día",
+			days_other: "{{count}} días",
+		},
+		rules: {
+			create: "Crear regla",
+			edit: "Editar regla",
+			delete: "Eliminar regla",
+			toggle: "Activar o desactivar",
+			disabled: "Desactivada",
+			notifies: "Avisa a:",
+			levelFrom: "{{level}} o más grave",
+			needChannel:
+				"Crea primero un canal: una regla necesita un lugar al que enviar sus avisos.",
+			loadError: "No se pudieron cargar las reglas.",
+			empty: {
+				title: "Todavía no hay reglas de alerta",
+				description:
+					"Crea una regla para recibir un aviso cuando algo requiera atención.",
+			},
+			triggers: {
+				new_issue: "Aparece un issue nuevo",
+				regression: "Un issue resuelto vuelve a ocurrir",
+				frequency: "Un issue ocurre demasiado seguido",
+			},
+			summary: {
+				new_issue: "Cuando aparece un issue nuevo",
+				regression: "Cuando un issue resuelto vuelve a ocurrir",
+				frequency: "Cuando un issue tiene {{count}} eventos en {{window}}",
+			},
+			dialog: {
+				createTitle: "Crear regla de alerta",
+				editTitle: "Editar regla de alerta",
+				name: "Nombre",
+				trigger: "Avísame cuando",
+				threshold: "Eventos",
+				window: "En",
+				thresholdInvalid: "Indica un número entero entre 1 y 100000.",
+				environment: "Entorno",
+				environmentHint: "Opcional. Vacío significa todos.",
+				minLevel: "Nivel mínimo",
+				anyLevel: "Cualquier nivel",
+				cooldown: "Espera entre avisos",
+				cooldownHint:
+					"Tiempo mínimo entre dos avisos de esta regla para el mismo issue.",
+				noCooldown: "Sin espera",
+				channels: "Enviar a",
+				channelsRequired: "Elige al menos un canal.",
+				enabled: "Regla activada",
+			},
+			deleteDialog: {
+				title: "¿Eliminar la regla {{name}}?",
+				description:
+					"Dejará de enviar avisos. Los avisos anteriores se conservan en el historial.",
+			},
+		},
+		channels: {
+			create: "Crear canal",
+			delete: "Eliminar canal",
+			toggle: "Activar o desactivar",
+			test: "Enviar prueba",
+			testSent: "Prueba enviada. Mira el resultado en la pestaña Historial.",
+			emailDisabled:
+				"Este servidor no tiene correo configurado, así que los canales de email no pueden entregar. Pide al administrador que configure SMTP_URL.",
+			nMembers_one: "{{count}} miembro",
+			nMembers_other: "{{count}} miembros",
+			loadError: "No se pudieron cargar los canales.",
+			types: { email: "Email", webhook: "Webhook", slack: "Slack" },
+			empty: {
+				title: "Todavía no hay canales",
+				description:
+					"Un canal es el lugar al que se envían los avisos: un email, un webhook o Slack.",
+			},
+			dialog: {
+				title: "Crear canal",
+				type: "Tipo",
+				name: "Nombre",
+				url: "URL",
+				urlHint: {
+					webhook: "Sentinel envía un POST JSON firmado a esta URL.",
+					slack:
+						"La URL de un webhook entrante de Slack (también sirve para Discord y Teams en modo Slack).",
+				},
+				urlInvalid:
+					"Indica una URL http:// o https:// válida, sin credenciales.",
+				recipients: "Destinatarios",
+				allMembers: "Todos los miembros de la organización",
+				selectedMembers: "Solo algunos miembros",
+				recipientsRequired: "Elige al menos un miembro.",
+			},
+			secretDialog: {
+				title: "Secreto de firma",
+				description:
+					"Cópialo ahora. Se usa para firmar cada petición y no podrás volver a verlo.",
+				verify:
+					'Cada petición lleva X-Sentinel-Signature: sha256=HMAC-SHA256(secreto, "<timestamp>.<cuerpo>"), con el timestamp en X-Sentinel-Timestamp.',
+				done: "Listo",
+			},
+			deleteDialog: {
+				title: "¿Eliminar el canal {{name}}?",
+				description:
+					"Las reglas que lo usan dejarán de avisarle. Los avisos anteriores se conservan en el historial.",
+			},
+		},
+		history: {
+			loadError: "No se pudo cargar el historial.",
+			test: "Aviso de prueba",
+			attempts_one: "{{count}} intento",
+			attempts_other: "{{count}} intentos",
+			columns: {
+				when: "Cuándo",
+				status: "Estado",
+				channel: "Canal",
+				alert: "Alerta",
+			},
+			status: { pending: "Pendiente", sent: "Enviado", failed: "Fallido" },
+			empty: {
+				title: "Todavía no se ha enviado ninguna alerta",
+				description:
+					"Las alertas y las pruebas aparecerán aquí, con su resultado.",
+			},
+		},
 	},
 	releases: {
 		title: "Releases",

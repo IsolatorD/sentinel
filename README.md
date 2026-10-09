@@ -180,3 +180,60 @@ Es una red de seguridad, no un sustituto de no enviar datos sensibles: el SDK ya
 ## SDK de React
 
 `packages/sdk-react` (`@sentinel/react`) añade un `ErrorBoundary` que envía los errores de render con la pila de componentes, `withErrorBoundary` y `reactRootOptions()` para los handlers de React 19 (`onUncaughtError`, `onCaughtError`, `onRecoverableError`). Cada error se envía una sola vez aunque llegue por varios caminos. Ver su [README](packages/sdk-react/README.md).
+
+## Alertas
+
+Cada proyecto tiene una página **Alertas** con tres pestañas: **Reglas** (cuándo avisar), **Canales** (adónde) e **Historial** (qué se envió y con qué resultado).
+
+**Reglas** — avisan por uno o varios canales:
+- *Issue nuevo* y *Regresión* (un issue resuelto reaparece en una release posterior, ver más arriba).
+- *Frecuencia*: un mismo issue acumula N eventos dentro de una ventana (de 1 minuto a 1 día). Es lo que detecta los picos.
+- Filtros opcionales por **entorno** y **nivel mínimo**, y una **espera** entre avisos (1 hora por defecto) para no recibir el mismo issue una y otra vez.
+
+**Canales**:
+- **Email**: a todos los miembros de la organización o solo a algunos. Se envía un correo por persona. Necesita `SMTP_URL`; en desarrollo `pnpm infra:up` levanta **Mailpit** (buzón de pruebas en http://localhost:8025) y basta con `SMTP_URL=smtp://localhost:1025`.
+- **Webhook**: un POST JSON firmado a tu URL.
+- **Slack**: el formato de los webhooks entrantes de Slack (también lo aceptan Discord, con `/slack` al final de su URL, y Teams).
+
+Cada canal tiene un botón **Enviar prueba**. Los avisos se entregan en segundo plano (otra cola del worker): si el destino falla se reintenta con espera creciente (5 intentos); un `4xx` no se reintenta porque no se arreglaría solo. Todo queda en el historial.
+
+### Webhook
+
+```json
+{
+  "event": "issue.new",
+  "delivery_id": "6b0f…",
+  "timestamp": "2026-10-09T12:00:00.000Z",
+  "rule": { "name": "Errores nuevos", "trigger": "new_issue" },
+  "organization": { "id": "…", "name": "Acme", "slug": "acme" },
+  "project": { "id": "…", "name": "Storefront", "slug": "storefront" },
+  "issue": { "id": "…", "title": "TypeError: …", "culprit": "computeTotal (cart.ts:42)", "level": "error",
+             "eventCount": 1, "environment": "production", "release": "2.4.0", "regressedInRelease": null, "…": "…" },
+  "url": "https://tu-panel/acme/projects/storefront/issues/…"
+}
+```
+
+`event` es `issue.new`, `issue.regression`, `issue.frequency` (que añade `frequency: { count, windowMinutes }`) o `alert.test`. Los cambios futuros solo añadirán campos.
+
+**Verifica la firma** para saber que la petición viene de Sentinel. Al crear el canal se muestra una sola vez su secreto (`whsec_…`):
+
+```js
+import { createHmac, timingSafeEqual } from "node:crypto";
+
+function isValid(req, rawBody, secret) {
+  const timestamp = req.headers["x-sentinel-timestamp"];
+  if (Math.abs(Date.now() / 1000 - Number(timestamp)) > 300) return false; // rechaza reenvíos antiguos
+  const expected = `sha256=${createHmac("sha256", secret).update(`${timestamp}.${rawBody}`).digest("hex")}`;
+  const received = String(req.headers["x-sentinel-signature"]);
+  return received.length === expected.length && timingSafeEqual(Buffer.from(received), Buffer.from(expected));
+}
+```
+
+Otras cabeceras: `X-Sentinel-Event`, `X-Sentinel-Delivery` (id del envío, útil para deduplicar si se reintenta).
+
+### Seguridad
+
+- Un webhook es una URL que **el servidor visita por orden de un usuario**: sin cuidado, se podría apuntar a la red interna o a los metadatos de la nube (SSRF). Se rechazan `localhost`, IPs privadas y de enlace local, credenciales en la URL y esquemas que no sean http(s); se comprueba al crear el canal y de nuevo al conectar (resolviendo el DNS, contra el rebinding), sin seguir redirecciones y con un tiempo máximo.
+- Solo en desarrollo, `ALLOW_PRIVATE_WEBHOOKS=true` permite destinos locales (los e2e lo usan).
+- Las URLs de Slack/webhook se guardan completas pero la API solo las devuelve enmascaradas. Gestionar canales y reglas requiere rol owner o admin; cualquier miembro puede verlas.
+- Los avisos están en inglés por ahora (el servidor no conoce el idioma de cada destinatario).

@@ -91,6 +91,7 @@ export const en = {
 		issues: "Issues",
 		projects: "Projects",
 		releases: "Releases",
+		alerts: "Alerts",
 		tokens: "API tokens",
 		settings: "Settings",
 		signOut: "Sign out",
@@ -302,6 +303,138 @@ export const en = {
 		},
 		forbidden: "Only owners and admins can manage API tokens.",
 		loadError: "Could not load the tokens.",
+	},
+	alerts: {
+		title: "Alerts",
+		subtitle:
+			"Get notified when something needs attention: a new issue, a regression or a spike of errors.",
+		forbidden: "Only owners and admins can manage alerts.",
+		tabs: { rules: "Rules", channels: "Channels", history: "History" },
+		duration: {
+			minutes_one: "{{count}} minute",
+			minutes_other: "{{count}} minutes",
+			hours_one: "{{count}} hour",
+			hours_other: "{{count}} hours",
+			days_one: "{{count}} day",
+			days_other: "{{count}} days",
+		},
+		rules: {
+			create: "Create rule",
+			edit: "Edit rule",
+			delete: "Delete rule",
+			toggle: "Enable or disable",
+			disabled: "Disabled",
+			notifies: "Notifies:",
+			levelFrom: "{{level}} or worse",
+			needChannel:
+				"Create a channel first: a rule needs somewhere to send its alerts.",
+			loadError: "Could not load the rules.",
+			empty: {
+				title: "No alert rules yet",
+				description:
+					"Create a rule to be notified when something needs attention.",
+			},
+			triggers: {
+				new_issue: "A new issue appears",
+				regression: "An issue comes back after being resolved",
+				frequency: "An issue happens too often",
+			},
+			summary: {
+				new_issue: "When a new issue appears",
+				regression: "When a resolved issue comes back",
+				frequency: "When an issue has {{count}} events in {{window}}",
+			},
+			dialog: {
+				createTitle: "Create alert rule",
+				editTitle: "Edit alert rule",
+				name: "Name",
+				trigger: "Alert me when",
+				threshold: "Events",
+				window: "Within",
+				thresholdInvalid: "Enter a whole number between 1 and 100000.",
+				environment: "Environment",
+				environmentHint: "Optional. Empty means all.",
+				minLevel: "Minimum level",
+				anyLevel: "Any level",
+				cooldown: "Wait between alerts",
+				cooldownHint:
+					"Minimum time between two alerts of this rule for the same issue.",
+				noCooldown: "No wait",
+				channels: "Send to",
+				channelsRequired: "Choose at least one channel.",
+				enabled: "Rule enabled",
+			},
+			deleteDialog: {
+				title: "Delete rule {{name}}?",
+				description:
+					"It will stop sending alerts. Past alerts stay in the history.",
+			},
+		},
+		channels: {
+			create: "Create channel",
+			delete: "Delete channel",
+			toggle: "Enable or disable",
+			test: "Send test",
+			testSent: "Test sent. Check the result in the History tab.",
+			emailDisabled:
+				"This server has no email configured, so email channels cannot deliver. Ask the administrator to set SMTP_URL.",
+			nMembers_one: "{{count}} member",
+			nMembers_other: "{{count}} members",
+			loadError: "Could not load the channels.",
+			types: { email: "Email", webhook: "Webhook", slack: "Slack" },
+			empty: {
+				title: "No channels yet",
+				description:
+					"A channel is where alerts are sent: an email, a webhook or Slack.",
+			},
+			dialog: {
+				title: "Create channel",
+				type: "Type",
+				name: "Name",
+				url: "URL",
+				urlHint: {
+					webhook: "Sentinel sends a signed JSON POST to this URL.",
+					slack:
+						"An incoming webhook URL from Slack (it also works with Discord and Teams in Slack mode).",
+				},
+				urlInvalid:
+					"Enter a valid http:// or https:// URL, without credentials.",
+				recipients: "Recipients",
+				allMembers: "All members of the organization",
+				selectedMembers: "Only some members",
+				recipientsRequired: "Choose at least one member.",
+			},
+			secretDialog: {
+				title: "Signing secret",
+				description:
+					"Copy it now. It is used to sign every request and you will not be able to see it again.",
+				verify:
+					'Each request carries X-Sentinel-Signature: sha256=HMAC-SHA256(secret, "<timestamp>.<body>"), with the timestamp in X-Sentinel-Timestamp.',
+				done: "Done",
+			},
+			deleteDialog: {
+				title: "Delete channel {{name}}?",
+				description:
+					"Rules that use it will stop notifying it. Past alerts stay in the history.",
+			},
+		},
+		history: {
+			loadError: "Could not load the history.",
+			test: "Test alert",
+			attempts_one: "{{count}} attempt",
+			attempts_other: "{{count}} attempts",
+			columns: {
+				when: "When",
+				status: "Status",
+				channel: "Channel",
+				alert: "Alert",
+			},
+			status: { pending: "Pending", sent: "Sent", failed: "Failed" },
+			empty: {
+				title: "No alerts sent yet",
+				description: "Alerts and tests will show up here, with their result.",
+			},
+		},
 	},
 	releases: {
 		title: "Releases",

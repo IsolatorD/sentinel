@@ -8,6 +8,7 @@ import {
 	redirect,
 } from "@tanstack/react-router";
 import { sessionQueryOptions } from "@/hooks/useSession/useSession.constants";
+import { AlertsPage } from "@/pages/AlertsPage/AlertsPage";
 import { HomePage } from "@/pages/HomePage/HomePage";
 import { IssueDetailPage } from "@/pages/IssueDetailPage/IssueDetailPage";
 import { IssuesPage } from "@/pages/IssuesPage/IssuesPage";
@@ -22,6 +23,7 @@ import { RegisterPage } from "@/pages/RegisterPage/RegisterPage";
 import { ReleasesPage } from "@/pages/ReleasesPage/ReleasesPage";
 import { TokensPage } from "@/pages/TokensPage/TokensPage";
 import {
+	alertsSearchInputSchema,
 	issueSearchInputSchema,
 	issuesSearchInputSchema,
 } from "@/utils/searchParams/searchParams.constants";
@@ -127,6 +129,13 @@ const releasesRoute = createRoute({
 	path: "releases",
 	component: ReleasesPage,
 });
+const alertsRoute = createRoute({
+	getParentRoute: () => projectRoute,
+	path: "alerts",
+	validateSearch: (search: Record<string, unknown>) =>
+		alertsSearchInputSchema.parse(search),
+	component: AlertsPage,
+});
 const settingsRoute = createRoute({
 	getParentRoute: () => projectRoute,
 	path: "settings",
@@ -147,6 +156,7 @@ const routeTree = rootRoute.addChildren([
 					issuesRoute,
 					issueRoute,
 					releasesRoute,
+					alertsRoute,
 					settingsRoute,
 				]),
 			]),

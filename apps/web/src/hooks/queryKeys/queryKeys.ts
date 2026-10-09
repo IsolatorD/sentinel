@@ -12,6 +12,21 @@ export const queryKeys = {
 		["orgs", orgId, "projects", projectId, "releases"] as const,
 	artifacts: (orgId: string, projectId: string, version: string) =>
 		[...queryKeys.releases(orgId, projectId), version, "artifacts"] as const,
+	alertChannels: (orgId: string, projectId: string) =>
+		["orgs", orgId, "projects", projectId, "alerts", "channels"] as const,
+	alertRules: (orgId: string, projectId: string) =>
+		["orgs", orgId, "projects", projectId, "alerts", "rules"] as const,
+	alertDeliveries: (orgId: string, projectId: string, page?: object) =>
+		[
+			"orgs",
+			orgId,
+			"projects",
+			projectId,
+			"alerts",
+			"deliveries",
+			...(page ? [page] : []),
+		] as const,
+	members: (orgId: string) => ["orgs", orgId, "members"] as const,
 	tokens: (orgId: string) => ["orgs", orgId, "tokens"] as const,
 	environments: (orgId: string, projectId: string) =>
 		["orgs", orgId, "projects", projectId, "environments"] as const,

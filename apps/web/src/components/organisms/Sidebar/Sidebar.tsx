@@ -1,4 +1,11 @@
-import { Bug, FolderKanban, KeyRound, Rocket, Settings } from "lucide-react";
+import {
+	Bell,
+	Bug,
+	FolderKanban,
+	KeyRound,
+	Rocket,
+	Settings,
+} from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { Logo } from "@/components/atoms/Logo/Logo";
 import { SidebarLink } from "@/components/molecules/SidebarLink/SidebarLink";
@@ -47,6 +54,16 @@ export function Sidebar() {
 								}}
 							>
 								{t("nav.releases")}
+							</SidebarLink>
+							<SidebarLink
+								icon={Bell}
+								to="/$orgSlug/projects/$projectSlug/alerts"
+								params={{
+									orgSlug: organization.slug,
+									projectSlug: project.slug,
+								}}
+							>
+								{t("nav.alerts")}
 							</SidebarLink>
 							<SidebarLink
 								icon={Settings}

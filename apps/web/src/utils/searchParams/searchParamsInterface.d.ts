@@ -5,6 +5,7 @@ import type {
 } from "@sentinel/shared";
 import type { z } from "zod";
 import type {
+	ALERT_TABS,
 	issueSearchInputSchema,
 	issuesSearchInputSchema,
 } from "@/utils/searchParams/searchParams.constants";
@@ -27,4 +28,9 @@ export type IssueSearchInput = z.infer<typeof issueSearchInputSchema>;
 export interface IssueSearch {
 	event?: string;
 	tab: "details" | "events";
+}
+
+export interface AlertsSearch {
+	tab: (typeof ALERT_TABS)[number];
+	page: number;
 }

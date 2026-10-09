@@ -19,3 +19,13 @@ export function useCreateOrganization() {
 			client.invalidateQueries({ queryKey: queryKeys.organizations }),
 	});
 }
+
+/** Miembros de la organización (para elegir destinatarios de un aviso, asignar, etc.). */
+export function useMembers(orgId: string | undefined) {
+	return useQuery({
+		queryKey: queryKeys.members(orgId ?? ""),
+		queryFn: () => organizationsService.listMembers(orgId as string),
+		enabled: Boolean(orgId),
+		staleTime: 60_000,
+	});
+}

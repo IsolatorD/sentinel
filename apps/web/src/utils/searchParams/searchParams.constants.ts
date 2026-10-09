@@ -34,3 +34,12 @@ export const issueSearchInputSchema = z.object({
 	event: z.string().uuid().optional().catch(undefined),
 	tab: z.enum(["details", "events"]).optional().catch(undefined),
 });
+
+export const ALERT_TABS = ["rules", "channels", "history"] as const;
+
+export const alertsSearchInputSchema = z.object({
+	tab: z.enum(ALERT_TABS).optional().catch(undefined),
+	page: z.coerce.number().int().min(1).optional().catch(undefined),
+});
+
+export const ALERTS_SEARCH_DEFAULTS = { tab: "rules", page: 1 } as const;
