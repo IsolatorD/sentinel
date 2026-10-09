@@ -129,6 +129,23 @@ Source maps + CLI, releases y environments, detección de regresiones, búsqueda
 **Fase 3 — Alertas y colaboración**
 Reglas de alerta (nuevo issue, regresión, umbral de frecuencia), canales email + webhook, asignación, comentarios, invitaciones por email, tokens de API.
 
+**Fase 3.5 — Experiencia de uso y pulido** (antes de la Fase 4, ordenada por dificultad y dependencias)
+
+*Bloque A — rápidos y sin dependencias*
+1. **Animaciones**: transiciones entre pantallas (View Transitions con alternativa en CSS), despliegue de tablas y paneles, skeletons con brillo, diálogos y menús. Respetan `prefers-reduced-motion`.
+2. **Tutoriales guiados** para usuarios nuevos con driver.js; se recuerda quién ya los vio.
+3. **Modo oscuro**: claro / oscuro / sistema, con la preferencia guardada.
+
+*Bloque B — idioma y mensajes (lo más transversal)*
+4. **Idioma del usuario**: se guarda en su perfil; la API lo resuelve por petición (preferencia > `Accept-Language` > por defecto). Los errores del backend salen ya traducidos desde un catálogo en `shared` indexado por código (el frontend conserva un texto de respaldo por código). Los correos (invitaciones, alertas) se envían en el idioma de **cada destinatario**.
+5. **Avisos con sonner** (issue resuelto, proyecto creado...): el texto lo manda el backend en una cabecera de respuesta, sin cambiar la forma de los datos; el frontend tiene un respaldo. Límite: los endpoints de Better Auth (organizaciones, invitaciones) no los controlamos, así que sus avisos usan el texto del frontend.
+
+*Bloque C — se apoya en el B*
+6. **Verificación de cuenta por correo**: obligatoria para registros con email y contraseña cuando hay SMTP (Google ya llega verificado), con reenvío del correo.
+7. **Gráficos de tendencia** por issue y por proyecto (agregación de eventos por intervalo en la API).
+
+*Pendientes sueltos*: avisar por correo al asignar un issue, tests unitarios por archivo (cuando se indique), módulo de integraciones (Slack, Jira...).
+
 **Fase 4 — Performance / tracing**
 Transacciones y spans en el SDK, tabla de transacciones, percentiles (p50/p95), vista de cascada de spans, Web Vitals.
 
