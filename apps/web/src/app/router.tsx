@@ -24,6 +24,7 @@ import { ProjectSettingsPage } from "@/pages/ProjectSettingsPage";
 import { ProjectsPage } from "@/pages/ProjectsPage";
 import { RegisterPage } from "@/pages/RegisterPage";
 import { ReleasesPage } from "@/pages/ReleasesPage";
+import { TokensPage } from "@/pages/TokensPage";
 
 export interface RouterContext {
 	queryClient: QueryClient;
@@ -87,6 +88,11 @@ const orgIndexRoute = createRoute({
 	path: "/",
 	component: OrgHomePage,
 });
+const tokensRoute = createRoute({
+	getParentRoute: () => orgRoute,
+	path: "tokens",
+	component: TokensPage,
+});
 const projectsRoute = createRoute({
 	getParentRoute: () => orgRoute,
 	path: "projects",
@@ -134,6 +140,7 @@ const routeTree = rootRoute.addChildren([
 		onboardingRoute,
 		orgRoute.addChildren([
 			orgIndexRoute,
+			tokensRoute,
 			projectsRoute.addChildren([
 				projectsIndexRoute,
 				projectRoute.addChildren([

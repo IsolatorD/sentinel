@@ -1,6 +1,15 @@
 /** Tamaño máximo de un source map subido (sin comprimir). */
 export const MAX_SOURCE_MAP_BYTES = 25 * 1024 * 1024;
 
+/** Caracteres de control (0-31) o barra invertida: no tienen sentido en la ruta de un archivo web. */
+function hasControlOrBackslash(text: string): boolean {
+	for (let i = 0; i < text.length; i++) {
+		const code = text.charCodeAt(i);
+		if (code <= 0x1f || code === 0x5c) return true;
+	}
+	return false;
+}
+
 /**
  * Nombre canónico de un archivo minificado: la ruta con "~" en lugar del origen, sin query ni hash.
  *   https://app.example.com/assets/app.3f2a.js?v=2  ->  ~/assets/app.3f2a.js
@@ -27,7 +36,7 @@ export function normalizeArtifactName(input: string): string | null {
 	// Sin saltos de directorio ni caracteres raros: el nombre se usa como clave, no como ruta de archivo.
 	if (path.split("/").some((segment) => segment === ".." || segment === "."))
 		return null;
-	if (path.length > 500 || /[\u0000-\u001f\\]/.test(path)) return null;
+	if (path.length > 500 || hasControlOrBackslash(path)) return null;
 	return `~${path}`;
 }
 

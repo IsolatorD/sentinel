@@ -11,6 +11,7 @@ import { EmptyState } from "@/components/molecules/EmptyState";
 import { ErrorState } from "@/components/molecules/ErrorState";
 import { Modal } from "@/components/molecules/Modal";
 import { RelativeTime } from "@/components/molecules/RelativeTime";
+import { ReleaseFilesDialog } from "@/components/organisms/ReleaseFilesDialog";
 import { useDeleteRelease, useReleases } from "@/hooks/use-releases";
 import { useCurrentProject } from "@/hooks/use-scope";
 import { ApiError } from "@/lib/api-error";
@@ -25,6 +26,7 @@ export function ReleasesTable() {
 		projectId: scope.projectId ?? "",
 	});
 	const [toDelete, setToDelete] = useState<ReleaseDto>();
+	const [filesOf, setFilesOf] = useState<string>();
 
 	if (!organization || !project) return null;
 	if (releases.isError)
@@ -117,8 +119,15 @@ export function ReleasesTable() {
 													0
 												)}
 											</td>
-											<td className="px-3 py-2.5 text-right tabular-nums text-muted">
-												{r.artifactCount}
+											<td className="px-3 py-2.5 text-right tabular-nums">
+												<button
+													type="button"
+													aria-label={`${t("releases.files.open")} ${r.version}`}
+													onClick={() => setFilesOf(r.version)}
+													className="rounded px-1.5 py-0.5 font-medium text-primary hover:bg-primary-soft hover:underline"
+												>
+													{r.artifactCount}
+												</button>
 											</td>
 											<td className="px-5 py-2.5 text-right">
 												<Button
@@ -136,6 +145,10 @@ export function ReleasesTable() {
 					</table>
 				)}
 			</Card>
+			<ReleaseFilesDialog
+				version={filesOf}
+				onClose={() => setFilesOf(undefined)}
+			/>
 			<Modal
 				open={Boolean(toDelete)}
 				onOpenChange={(open) => !open && setToDelete(undefined)}

@@ -1,4 +1,5 @@
 import {
+	artifactListDtoSchema,
 	environmentListDtoSchema,
 	releaseDtoSchema,
 	releaseListDtoSchema,
@@ -7,6 +8,9 @@ import { http } from "./http.js";
 
 const base = (orgId: string, projectId: string) =>
 	`/api/organizations/${orgId}/projects/${projectId}`;
+
+const releasePath = (orgId: string, projectId: string, version: string) =>
+	`${base(orgId, projectId)}/releases/${encodeURIComponent(version)}`;
 
 export const releasesService = {
 	list: (orgId: string, projectId: string) =>
@@ -21,6 +25,21 @@ export const releasesService = {
 
 	remove: (orgId: string, projectId: string, version: string) =>
 		http(`${base(orgId, projectId)}/releases/${encodeURIComponent(version)}`, {
+			method: "DELETE",
+		}),
+
+	artifacts: (orgId: string, projectId: string, version: string) =>
+		http(`${releasePath(orgId, projectId, version)}/artifacts`, {
+			schema: artifactListDtoSchema,
+		}),
+
+	removeArtifact: (
+		orgId: string,
+		projectId: string,
+		version: string,
+		artifactId: string,
+	) =>
+		http(`${releasePath(orgId, projectId, version)}/artifacts/${artifactId}`, {
 			method: "DELETE",
 		}),
 

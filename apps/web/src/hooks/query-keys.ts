@@ -10,6 +10,9 @@ export const queryKeys = {
 		["orgs", orgId, "projects", projectId] as const,
 	releases: (orgId: string, projectId: string) =>
 		["orgs", orgId, "projects", projectId, "releases"] as const,
+	artifacts: (orgId: string, projectId: string, version: string) =>
+		[...queryKeys.releases(orgId, projectId), version, "artifacts"] as const,
+	tokens: (orgId: string) => ["orgs", orgId, "tokens"] as const,
 	environments: (orgId: string, projectId: string) =>
 		["orgs", orgId, "projects", projectId, "environments"] as const,
 	issues: (orgId: string, projectId: string) =>

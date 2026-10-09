@@ -42,3 +42,39 @@ export function useDeleteRelease(
 			}),
 	});
 }
+
+/** Archivos (source maps) subidos para una release; solo se piden cuando hay una versión elegida. */
+export function useArtifacts(scope: Scope, version: string | undefined) {
+	const { orgId, projectId } = scope;
+	return useQuery({
+		queryKey: queryKeys.artifacts(orgId ?? "", projectId ?? "", version ?? ""),
+		queryFn: () =>
+			releasesService.artifacts(
+				orgId as string,
+				projectId as string,
+				version as string,
+			),
+		enabled: Boolean(orgId && projectId && version),
+	});
+}
+
+export function useDeleteArtifact(
+	scope: Required<{ orgId: string; projectId: string }>,
+	version: string,
+) {
+	const client = useQueryClient();
+	return useMutation({
+		mutationFn: (artifactId: string) =>
+			releasesService.removeArtifact(
+				scope.orgId,
+				scope.projectId,
+				version,
+				artifactId,
+			),
+		// También cambia el contador de archivos de la tabla de releases.
+		onSuccess: () =>
+			client.invalidateQueries({
+				queryKey: queryKeys.releases(scope.orgId, scope.projectId),
+			}),
+	});
+}

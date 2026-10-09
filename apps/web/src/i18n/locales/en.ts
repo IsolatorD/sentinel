@@ -91,6 +91,7 @@ export const en = {
 		issues: "Issues",
 		projects: "Projects",
 		releases: "Releases",
+		tokens: "API tokens",
 		settings: "Settings",
 		signOut: "Sign out",
 		switchOrganization: "Switch organization",
@@ -224,6 +225,8 @@ export const en = {
 			events: "Events",
 		},
 		stackTrace: {
+			showCode: "Show code",
+			hideCode: "Hide code",
 			title: "Stack trace",
 			showAll: "Show {{count}} more frames",
 			inAppOnly: "Show only your code",
@@ -272,6 +275,34 @@ export const en = {
 		notFoundHint: "It may have been deleted, or it belongs to another project.",
 		loadError: "Could not load the issue.",
 	},
+	tokens: {
+		title: "API tokens",
+		subtitle:
+			"Tokens let your CI upload source maps to Sentinel. They belong to the organization and never expire until you revoke them.",
+		name: "Token name",
+		namePlaceholder: "e.g. GitHub Actions",
+		create: "Create token",
+		createdAt: "Created",
+		lastUsed: "Last used",
+		neverUsed: "Never used",
+		revoke: "Revoke",
+		empty: {
+			title: "No API tokens yet",
+			description: "Create one to upload source maps from your CI.",
+		},
+		createdDialog: {
+			title: "Your new token",
+			description:
+				"Copy it now and store it as a secret in your CI. You won't be able to see it again.",
+			done: "Done",
+		},
+		revokeDialog: {
+			title: "Revoke {{name}}?",
+			description: "Anything using this token will stop working immediately.",
+		},
+		forbidden: "Only owners and admins can manage API tokens.",
+		loadError: "Could not load the tokens.",
+	},
 	releases: {
 		title: "Releases",
 		subtitle:
@@ -282,6 +313,19 @@ export const en = {
 			events: "Events",
 			newIssues: "New issues",
 			files: "Files",
+		},
+		files: {
+			open: "Files of release",
+			title: "Files of release {{version}}",
+			description:
+				"Source maps let Sentinel show your original code instead of the minified bundle.",
+			empty:
+				"No files uploaded for this release yet. Upload them before deploying, because only events that arrive afterwards are translated.",
+			upload: "Upload them from your CI with the CLI:",
+			cli: "Terminal",
+			delete: "Delete",
+			forbidden: "Only owners and admins can delete files.",
+			loadError: "Could not load the files.",
 		},
 		viewIssues: "View issues",
 		empty: {

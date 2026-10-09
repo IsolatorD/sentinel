@@ -3,6 +3,7 @@ import {
 	Bug,
 	ChevronsUpDown,
 	FolderKanban,
+	KeyRound,
 	LogOut,
 	Plus,
 	Rocket,
@@ -231,6 +232,13 @@ export function Sidebar() {
 						activeOptions={{ exact: true }}
 					>
 						{t("nav.projects")}
+					</SidebarLink>
+					<SidebarLink
+						icon={KeyRound}
+						to="/$orgSlug/tokens"
+						params={{ orgSlug: organization.slug }}
+					>
+						{t("nav.tokens")}
 					</SidebarLink>
 				</nav>
 			)}

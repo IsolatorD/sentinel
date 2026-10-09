@@ -95,6 +95,7 @@ export const es: Deep<Translations> = {
 		issues: "Issues",
 		projects: "Proyectos",
 		releases: "Releases",
+		tokens: "Tokens de API",
 		settings: "Configuración",
 		signOut: "Cerrar sesión",
 		switchOrganization: "Cambiar de organización",
@@ -228,6 +229,8 @@ export const es: Deep<Translations> = {
 			events: "Eventos",
 		},
 		stackTrace: {
+			showCode: "Mostrar código",
+			hideCode: "Ocultar código",
 			title: "Stack trace",
 			showAll: "Mostrar {{count}} frames más",
 			inAppOnly: "Mostrar solo tu código",
@@ -277,6 +280,35 @@ export const es: Deep<Translations> = {
 		notFoundHint: "Puede haberse eliminado o pertenecer a otro proyecto.",
 		loadError: "No se pudo cargar el issue.",
 	},
+	tokens: {
+		title: "Tokens de API",
+		subtitle:
+			"Los tokens permiten que tu CI suba source maps a Sentinel. Pertenecen a la organización y no caducan hasta que los revoques.",
+		name: "Nombre del token",
+		namePlaceholder: "p. ej. GitHub Actions",
+		create: "Crear token",
+		createdAt: "Creado",
+		lastUsed: "Último uso",
+		neverUsed: "Sin usar",
+		revoke: "Revocar",
+		empty: {
+			title: "Todavía no hay tokens de API",
+			description: "Crea uno para subir source maps desde tu CI.",
+		},
+		createdDialog: {
+			title: "Tu nuevo token",
+			description:
+				"Cópialo ahora y guárdalo como secreto en tu CI. No podrás volver a verlo.",
+			done: "Listo",
+		},
+		revokeDialog: {
+			title: "¿Revocar {{name}}?",
+			description:
+				"Todo lo que use este token dejará de funcionar de inmediato.",
+		},
+		forbidden: "Solo los owners y admins pueden gestionar los tokens de API.",
+		loadError: "No se pudieron cargar los tokens.",
+	},
 	releases: {
 		title: "Releases",
 		subtitle:
@@ -287,6 +319,19 @@ export const es: Deep<Translations> = {
 			events: "Eventos",
 			newIssues: "Issues nuevos",
 			files: "Archivos",
+		},
+		files: {
+			open: "Archivos de la release",
+			title: "Archivos de la release {{version}}",
+			description:
+				"Los source maps permiten que Sentinel muestre tu código original en lugar del bundle minificado.",
+			empty:
+				"Todavía no hay archivos para esta release. Súbelos antes de desplegar: solo se traducen los eventos que llegan después.",
+			upload: "Súbelos desde tu CI con la CLI:",
+			cli: "Terminal",
+			delete: "Eliminar",
+			forbidden: "Solo los owners y admins pueden eliminar archivos.",
+			loadError: "No se pudieron cargar los archivos.",
 		},
 		viewIssues: "Ver issues",
 		empty: {
