@@ -1,11 +1,11 @@
 import {
 	eventDetailDtoSchema,
 	eventListDtoSchema,
-	type IssueStatus,
 	issueDetailDtoSchema,
 	issueDtoSchema,
 	issueListDtoSchema,
 	type ListIssuesQuery,
+	type UpdateIssueInput,
 } from "@sentinel/shared";
 import { http } from "./http.js";
 
@@ -25,11 +25,11 @@ export const issuesService = {
 		orgId: string,
 		projectId: string,
 		issueId: string,
-		status: IssueStatus,
+		input: UpdateIssueInput,
 	) =>
 		http(`${base(orgId, projectId)}/${issueId}`, {
 			method: "PATCH",
-			body: { status },
+			body: input,
 			schema: issueDtoSchema,
 		}),
 

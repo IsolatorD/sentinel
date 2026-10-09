@@ -50,6 +50,8 @@ export function IssueList() {
 		status: search.status,
 		level: search.level,
 		q: search.q,
+		environment: search.environment,
+		release: search.release,
 		sort: search.sort,
 		order: search.order,
 		limit: PAGE_SIZE,
@@ -59,10 +61,18 @@ export function IssueList() {
 	const hasFilters =
 		search.status !== "unresolved" ||
 		Boolean(search.q) ||
-		Boolean(search.level);
+		Boolean(search.level) ||
+		Boolean(search.environment) ||
+		Boolean(search.release);
 	const clearFilters = () =>
 		update(
-			{ status: "unresolved", q: undefined, level: undefined },
+			{
+				status: "unresolved",
+				q: undefined,
+				level: undefined,
+				environment: undefined,
+				release: undefined,
+			},
 			{ resetPage: true },
 		);
 	const data = issues.data;

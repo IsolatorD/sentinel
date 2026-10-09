@@ -23,6 +23,7 @@ import { OrgLayoutPage } from "@/pages/OrgLayoutPage";
 import { ProjectSettingsPage } from "@/pages/ProjectSettingsPage";
 import { ProjectsPage } from "@/pages/ProjectsPage";
 import { RegisterPage } from "@/pages/RegisterPage";
+import { ReleasesPage } from "@/pages/ReleasesPage";
 
 export interface RouterContext {
 	queryClient: QueryClient;
@@ -115,6 +116,11 @@ const issueRoute = createRoute({
 		issueSearchInputSchema.parse(search),
 	component: IssueDetailPage,
 });
+const releasesRoute = createRoute({
+	getParentRoute: () => projectRoute,
+	path: "releases",
+	component: ReleasesPage,
+});
 const settingsRoute = createRoute({
 	getParentRoute: () => projectRoute,
 	path: "settings",
@@ -130,7 +136,12 @@ const routeTree = rootRoute.addChildren([
 			orgIndexRoute,
 			projectsRoute.addChildren([
 				projectsIndexRoute,
-				projectRoute.addChildren([issuesRoute, issueRoute, settingsRoute]),
+				projectRoute.addChildren([
+					issuesRoute,
+					issueRoute,
+					releasesRoute,
+					settingsRoute,
+				]),
 			]),
 		]),
 	]),

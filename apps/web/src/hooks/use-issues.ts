@@ -1,4 +1,4 @@
-import type { IssueStatus, ListIssuesQuery } from "@sentinel/shared";
+import type { ListIssuesQuery, UpdateIssueInput } from "@sentinel/shared";
 import {
 	keepPreviousData,
 	useMutation,
@@ -98,8 +98,8 @@ export function useIssueEvent(
 export function useUpdateIssueStatus(scope: ReadyScope, issueId: string) {
 	const client = useQueryClient();
 	return useMutation({
-		mutationFn: (status: IssueStatus) =>
-			issuesService.updateStatus(scope.orgId, scope.projectId, issueId, status),
+		mutationFn: (input: UpdateIssueInput) =>
+			issuesService.updateStatus(scope.orgId, scope.projectId, issueId, input),
 		onSuccess: () =>
 			// Cambia el estado: afecta al detalle y a todas las listas filtradas.
 			client.invalidateQueries({

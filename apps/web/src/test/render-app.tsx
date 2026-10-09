@@ -42,7 +42,7 @@ export function mockHappyPath() {
 	vi.mocked(issuesService.listEvents).mockResolvedValue(fx.eventList());
 	vi.mocked(issuesService.getEvent).mockResolvedValue(fx.event());
 	vi.mocked(issuesService.updateStatus).mockImplementation(
-		async (_o, _p, _i, status) => fx.issue({ status }),
+		async (_o, _p, _i, input) => fx.issue({ status: input.status }),
 	);
 }
 

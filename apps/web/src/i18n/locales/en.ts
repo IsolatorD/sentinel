@@ -90,6 +90,7 @@ export const en = {
 	nav: {
 		issues: "Issues",
 		projects: "Projects",
+		releases: "Releases",
 		settings: "Settings",
 		signOut: "Sign out",
 		switchOrganization: "Switch organization",
@@ -131,6 +132,14 @@ export const en = {
 			all: "All",
 		},
 		searchPlaceholder: "Search by title or culprit…",
+		filters: {
+			environment: "Environment",
+			allEnvironments: "All environments",
+			release: "Release",
+			allReleases: "All releases",
+		},
+		regression: "Regression",
+		regressionIn: "Regression in {{release}}",
 		sort: {
 			label: "Sort by",
 			asc: "Ascending",
@@ -182,6 +191,9 @@ export const en = {
 			resolve: "Resolve",
 			ignore: "Ignore",
 			reopen: "Reopen",
+			resolveNextRelease: "In the next release",
+			resolveInRelease: "In {{release}}",
+			resolveOptions: "More ways to resolve",
 			delete: "Delete",
 		},
 		deleteDialog: {
@@ -194,6 +206,18 @@ export const en = {
 			users: "Users",
 			firstSeen: "First seen",
 			lastSeen: "Last seen",
+			firstRelease: "First release",
+			lastRelease: "Last release",
+		},
+		resolution: {
+			next: "Resolved in the next release (after {{release}})",
+			inRelease: "Resolved in {{release}}",
+		},
+		regression: {
+			title: "Regression",
+			description: "This issue was resolved and happened again.",
+			descriptionIn:
+				"This issue was resolved and happened again in {{release}}.",
 		},
 		tabs: {
 			details: "Details",
@@ -247,6 +271,32 @@ export const en = {
 		notFound: "Issue not found",
 		notFoundHint: "It may have been deleted, or it belongs to another project.",
 		loadError: "Could not load the issue.",
+	},
+	releases: {
+		title: "Releases",
+		subtitle:
+			"Every version of your app that has reported events. They are registered automatically.",
+		columns: {
+			version: "Version",
+			created: "First seen",
+			events: "Events",
+			newIssues: "New issues",
+			files: "Files",
+		},
+		viewIssues: "View issues",
+		empty: {
+			title: "No releases yet",
+			description:
+				"Set a release when you initialize the SDK and it will show up here with its first event.",
+		},
+		delete: "Delete",
+		deleteDialog: {
+			title: "Delete release {{version}}?",
+			description:
+				"The release is removed from this list. Its events are kept.",
+		},
+		forbidden: "Only owners and admins can delete releases.",
+		loadError: "Could not load the releases.",
 	},
 	settings: {
 		title: "Project settings",

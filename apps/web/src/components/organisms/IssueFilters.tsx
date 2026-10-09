@@ -5,15 +5,29 @@ import { useTranslation } from "react-i18next";
 import { Button } from "@/components/atoms/Button";
 import { Select } from "@/components/atoms/Select";
 import { SearchInput } from "@/components/molecules/SearchInput";
+import { useEnvironments, useReleases } from "@/hooks/use-releases";
+import { useCurrentProject } from "@/hooks/use-scope";
 import { useIssuesSearch } from "@/hooks/use-search-params";
 import { cn } from "@/lib/cn";
 
 const TABS = [...ISSUE_STATUSES, "all"] as const;
 const SEARCH_DELAY_MS = 300;
 
+/** Lista de opciones que siempre incluye el valor seleccionado, aunque no esté entre los conocidos. */
+function withCurrent(
+	options: string[] | undefined,
+	current: string | undefined,
+): string[] {
+	const list = options ?? [];
+	return current && !list.includes(current) ? [current, ...list] : list;
+}
+
 export function IssueFilters() {
 	const { t } = useTranslation();
 	const { search, update } = useIssuesSearch();
+	const { scope } = useCurrentProject();
+	const environments = useEnvironments(scope);
+	const releases = useReleases(scope);
 
 	// El texto se escribe en un estado local y se aplica a la URL con retraso. El retraso vive en
 	// el manejador de escritura (no en un efecto): así un cambio externo de la URL —limpiar filtros,
@@ -73,6 +87,43 @@ export function IssueFilters() {
 				clearLabel={t("common.close")}
 				className="min-w-56 flex-1 sm:max-w-sm"
 			/>
+			{/* Si el filtro de la URL ya no existe en las listas (p. ej. release borrada), se conserva como opción. */}
+			<Select
+				aria-label={t("issues.filters.environment")}
+				value={search.environment ?? ""}
+				onChange={(e) =>
+					update(
+						{ environment: e.target.value || undefined },
+						{ resetPage: true },
+					)
+				}
+				className="w-44"
+			>
+				<option value="">{t("issues.filters.allEnvironments")}</option>
+				{withCurrent(environments.data, search.environment).map((env) => (
+					<option key={env} value={env}>
+						{env}
+					</option>
+				))}
+			</Select>
+			<Select
+				aria-label={t("issues.filters.release")}
+				value={search.release ?? ""}
+				onChange={(e) =>
+					update({ release: e.target.value || undefined }, { resetPage: true })
+				}
+				className="w-44"
+			>
+				<option value="">{t("issues.filters.allReleases")}</option>
+				{withCurrent(
+					releases.data?.map((r) => r.version),
+					search.release,
+				).map((version) => (
+					<option key={version} value={version}>
+						{version}
+					</option>
+				))}
+			</Select>
 			<div className="ml-auto flex items-center gap-2">
 				<Select
 					aria-label={t("issues.sort.label")}

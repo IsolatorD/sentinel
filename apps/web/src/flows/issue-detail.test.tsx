@@ -95,6 +95,9 @@ describe("detalle de un issue", () => {
 	it("muestra el contexto del evento y sus tags", async () => {
 		renderApp(ISSUE_PATH);
 		await screen.findByTestId("breadcrumbs");
+		const context = screen
+			.getByRole("heading", { name: "Context" })
+			.closest("div")?.parentElement as HTMLElement;
 		for (const text of [
 			"2.4.0",
 			"production",
@@ -104,7 +107,7 @@ describe("detalle de un issue", () => {
 			"macOS",
 			"https://shop.acme.dev/cart",
 		]) {
-			expect(screen.getByText(text)).toBeInTheDocument();
+			expect(within(context).getByText(text)).toBeInTheDocument();
 		}
 		expect(screen.getByText("feature")).toBeInTheDocument();
 		expect(screen.getByText("checkout")).toBeInTheDocument();
@@ -158,7 +161,7 @@ describe("acciones", () => {
 			"org-1",
 			fx.PROJECT_ID,
 			fx.ISSUE_ID,
-			"resolved",
+			{ status: "resolved" },
 		);
 		expect(
 			await screen.findByRole("button", { name: "Reopen" }),
@@ -176,7 +179,7 @@ describe("acciones", () => {
 			"org-1",
 			fx.PROJECT_ID,
 			fx.ISSUE_ID,
-			"ignored",
+			{ status: "ignored" },
 		);
 
 		await user.click(await screen.findByRole("button", { name: "Reopen" }));
@@ -184,7 +187,7 @@ describe("acciones", () => {
 			"org-1",
 			fx.PROJECT_ID,
 			fx.ISSUE_ID,
-			"unresolved",
+			{ status: "unresolved" },
 		);
 	});
 

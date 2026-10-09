@@ -125,3 +125,15 @@ La semilla crea el usuario `demo@sentinel.dev` (contraseña `demo-password-123`,
 **Arquitectura** (atómica, ver `PLAN.md` §2.2): `components/{atoms,molecules,organisms,templates}`, `pages/`, `services/` (única capa que llama a la API, validando con los esquemas de `shared`) y `hooks/` (TanStack Query sobre los services). Ningún componente ni página importa un service; un test lo verifica en cada ejecución. El estado de la pantalla (filtros, página, pestaña, evento elegido) vive en la URL.
 
 Rutas: `/login`, `/register`, `/onboarding`, `/:org/projects`, `/:org/projects/:proyecto/issues`, `/:org/projects/:proyecto/issues/:issue`, `/:org/projects/:proyecto/settings`.
+
+## Releases y regresiones
+
+Las releases (versiones de tu app) se registran solas al llegar el primer evento con `release`. En la página **Releases** de cada proyecto se ve cuántos eventos y cuántos issues nuevos trajo cada una, y el listado de issues se puede filtrar por **entorno** y por **release**.
+
+Al resolver un issue se puede ligar a una release:
+
+- **Resolver** (sin más): cualquier evento nuevo lo reabre.
+- **En la próxima release**: solo lo reabre un evento de una release posterior a la última conocida. Los eventos de versiones viejas que siguen en circulación se cuentan, pero no lo reabren.
+- **En la release X**: la corrección va en X; un evento de X o posterior lo reabre.
+
+Un issue que se reabre solo se marca como **regresión**, con la release en la que reapareció. Las versiones se comparan como semver y, si no lo son (un hash de git, una fecha), por el orden en que se vieron. Un issue ignorado sigue ignorado. Ante la duda (evento sin release, versiones incomparables) se reabre: es preferible un aviso de más a esconder una regresión.

@@ -94,6 +94,7 @@ export const es: Deep<Translations> = {
 	nav: {
 		issues: "Issues",
 		projects: "Proyectos",
+		releases: "Releases",
 		settings: "Configuración",
 		signOut: "Cerrar sesión",
 		switchOrganization: "Cambiar de organización",
@@ -135,6 +136,14 @@ export const es: Deep<Translations> = {
 			all: "Todos",
 		},
 		searchPlaceholder: "Buscar por título o culprit…",
+		filters: {
+			environment: "Entorno",
+			allEnvironments: "Todos los entornos",
+			release: "Release",
+			allReleases: "Todas las releases",
+		},
+		regression: "Regresión",
+		regressionIn: "Regresión en {{release}}",
 		sort: {
 			label: "Ordenar por",
 			asc: "Ascendente",
@@ -186,6 +195,9 @@ export const es: Deep<Translations> = {
 			resolve: "Resolver",
 			ignore: "Ignorar",
 			reopen: "Reabrir",
+			resolveNextRelease: "En la próxima release",
+			resolveInRelease: "En {{release}}",
+			resolveOptions: "Más formas de resolver",
 			delete: "Eliminar",
 		},
 		deleteDialog: {
@@ -198,6 +210,18 @@ export const es: Deep<Translations> = {
 			users: "Usuarios",
 			firstSeen: "Primera vez",
 			lastSeen: "Última vez",
+			firstRelease: "Primera release",
+			lastRelease: "Última release",
+		},
+		resolution: {
+			next: "Resuelto en la próxima release (después de {{release}})",
+			inRelease: "Resuelto en {{release}}",
+		},
+		regression: {
+			title: "Regresión",
+			description: "Este issue estaba resuelto y volvió a ocurrir.",
+			descriptionIn:
+				"Este issue estaba resuelto y volvió a ocurrir en {{release}}.",
 		},
 		tabs: {
 			details: "Detalles",
@@ -252,6 +276,32 @@ export const es: Deep<Translations> = {
 		notFound: "Issue no encontrado",
 		notFoundHint: "Puede haberse eliminado o pertenecer a otro proyecto.",
 		loadError: "No se pudo cargar el issue.",
+	},
+	releases: {
+		title: "Releases",
+		subtitle:
+			"Cada versión de tu app que ha reportado eventos. Se registran automáticamente.",
+		columns: {
+			version: "Versión",
+			created: "Vista por primera vez",
+			events: "Eventos",
+			newIssues: "Issues nuevos",
+			files: "Archivos",
+		},
+		viewIssues: "Ver issues",
+		empty: {
+			title: "Todavía no hay releases",
+			description:
+				"Indica una release al inicializar el SDK y aparecerá aquí con su primer evento.",
+		},
+		delete: "Eliminar",
+		deleteDialog: {
+			title: "¿Eliminar la release {{version}}?",
+			description:
+				"La release se quita de esta lista. Sus eventos se conservan.",
+		},
+		forbidden: "Solo los owners y admins pueden eliminar releases.",
+		loadError: "No se pudieron cargar las releases.",
 	},
 	settings: {
 		title: "Configuración del proyecto",

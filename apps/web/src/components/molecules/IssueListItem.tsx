@@ -1,6 +1,7 @@
 import type { IssueDto } from "@sentinel/shared";
 import { Link } from "@tanstack/react-router";
 import { useTranslation } from "react-i18next";
+import { Badge } from "@/components/atoms/Badge";
 import { cn } from "@/lib/cn";
 import { formatCompact, formatRelative } from "@/lib/time";
 import { LevelBadge } from "./LevelBadge";
@@ -54,6 +55,9 @@ export function IssueListItem({
 						</span>
 						{issue.status !== "unresolved" && (
 							<StatusBadge status={issue.status} />
+						)}
+						{issue.status === "unresolved" && issue.regressedAt && (
+							<Badge tone="warning">{t("issues.regression")}</Badge>
 						)}
 					</span>
 					<span className="mt-0.5 flex items-center gap-2 text-xs text-muted">

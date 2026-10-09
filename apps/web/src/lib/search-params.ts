@@ -15,6 +15,8 @@ export const issuesSearchInputSchema = z.object({
 		.catch(undefined),
 	q: z.string().trim().min(1).max(200).optional().catch(undefined),
 	level: levelSchema.optional().catch(undefined),
+	environment: z.string().trim().min(1).max(256).optional().catch(undefined),
+	release: z.string().trim().min(1).max(256).optional().catch(undefined),
 	sort: z.enum(ISSUE_SORTS).optional().catch(undefined),
 	order: z.enum(["asc", "desc"]).optional().catch(undefined),
 	page: z.coerce.number().int().min(1).optional().catch(undefined),
@@ -25,6 +27,8 @@ export interface IssuesSearch {
 	status: (typeof ISSUE_STATUSES)[number] | "all";
 	q?: string;
 	level?: z.infer<typeof levelSchema>;
+	environment?: string;
+	release?: string;
 	sort: (typeof ISSUE_SORTS)[number];
 	order: "asc" | "desc";
 	page: number;
@@ -44,6 +48,8 @@ export function resolveIssuesSearch(raw: unknown): IssuesSearch {
 		status: input.status ?? ISSUES_SEARCH_DEFAULTS.status,
 		q: input.q,
 		level: input.level,
+		environment: input.environment,
+		release: input.release,
 		sort: input.sort ?? ISSUES_SEARCH_DEFAULTS.sort,
 		order: input.order ?? ISSUES_SEARCH_DEFAULTS.order,
 		page: input.page ?? ISSUES_SEARCH_DEFAULTS.page,

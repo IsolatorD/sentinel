@@ -5,6 +5,7 @@ import {
 	FolderKanban,
 	LogOut,
 	Plus,
+	Rocket,
 	Settings,
 } from "lucide-react";
 import { useTranslation } from "react-i18next";
@@ -199,6 +200,16 @@ export function Sidebar() {
 								activeOptions={{ exact: false }}
 							>
 								{t("nav.issues")}
+							</SidebarLink>
+							<SidebarLink
+								icon={Rocket}
+								to="/$orgSlug/projects/$projectSlug/releases"
+								params={{
+									orgSlug: organization.slug,
+									projectSlug: project.slug,
+								}}
+							>
+								{t("nav.releases")}
 							</SidebarLink>
 							<SidebarLink
 								icon={Settings}
