@@ -1,6 +1,8 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { sessionQueryOptions } from "@/hooks/useSession/useSession.constants";
+import i18n from "@/i18n";
 import { authService } from "@/services/authService/authService";
+import { notify } from "@/utils/notice/notice";
 
 /** Sesión actual: `null` si no hay usuario autenticado. */
 export function useSession() {
@@ -29,9 +31,26 @@ export function useSignIn() {
 export function useSignUp() {
 	const refreshSession = useRefreshSession();
 	return useMutation({
-		mutationFn: (input: { name: string; email: string; password: string }) =>
-			authService.signUpEmail(input),
-		onSuccess: refreshSession,
+		mutationFn: (vars: {
+			name: string;
+			email: string;
+			password: string;
+			callbackURL?: string;
+		}) => {
+			const { callbackURL, ...input } = vars;
+			return authService.signUpEmail(input, callbackURL);
+		},
+		// Con la cuenta pendiente de verificar no hay sesión que leer.
+		onSuccess: (result) =>
+			result.needsVerification ? undefined : refreshSession(),
+	});
+}
+
+export function useResendVerification() {
+	return useMutation({
+		mutationFn: (vars: { email: string; callbackURL: string }) =>
+			authService.sendVerificationEmail(vars.email, vars.callbackURL),
+		onSuccess: () => notify(i18n.t("notices.verificationSent")),
 	});
 }
 

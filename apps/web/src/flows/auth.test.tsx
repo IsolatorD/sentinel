@@ -108,6 +108,7 @@ describe("acceso", () => {
 		vi.mocked(configService.getPublicConfig).mockResolvedValue({
 			authProviders: { google: true },
 			emailEnabled: true,
+			emailVerification: false,
 		});
 		const second = renderApp("/login");
 		const google = await screen.findByRole("button", {
@@ -150,7 +151,9 @@ describe("registro", () => {
 		vi.mocked(authService.getSession)
 			.mockResolvedValueOnce(null)
 			.mockResolvedValue({ user: fx.user });
-		vi.mocked(authService.signUpEmail).mockResolvedValue(undefined);
+		vi.mocked(authService.signUpEmail).mockResolvedValue({
+			needsVerification: false,
+		});
 		vi.mocked(organizationsService.list).mockResolvedValue([]);
 		const { user, router } = renderApp("/register");
 

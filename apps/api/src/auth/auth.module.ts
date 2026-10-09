@@ -4,13 +4,14 @@ import type { Database } from "@sentinel/db";
 import type { ApiEnv } from "../config/env.js";
 import { DB } from "../database/database.module.js";
 import { invitationEmail } from "../mail/domain/invitation-email.js";
+import { verificationEmail } from "../mail/domain/verification-email.js";
 import { MailModule } from "../mail/mail.module.js";
 import { MailQueueService } from "../mail/mail-queue.service.js";
 import { AUTH } from "./auth.constants.js";
 import { AuthController } from "./auth.controller.js";
 import { AuthGuard } from "./auth.guard.js";
 import { createAuth } from "./auth.js";
-import { localeForInvitee } from "./locale-lookup.js";
+import { localeForEmail, localeForInvitee } from "./locale-lookup.js";
 
 @Module({
 	imports: [MailModule],
@@ -32,8 +33,25 @@ import { localeForInvitee } from "./locale-lookup.js";
 				const webOrigin = config
 					.get("WEB_ORIGIN", { infer: true })
 					.replace(/\/$/, "");
+				// Sin SMTP nadie podría recibir el enlace: exigir la verificación dejaría a todos fuera.
+				const requireEmailVerification =
+					Boolean(config.get("SMTP_URL", { infer: true })) &&
+					config.get("REQUIRE_EMAIL_VERIFICATION", { infer: true });
 				return createAuth({
 					db,
+					requireEmailVerification,
+					sendVerification: async (input) =>
+						mail.send({
+							to: input.email,
+							...verificationEmail({
+								name: input.name,
+								url: input.url,
+								locale: await localeForEmail(db, {
+									email: input.email,
+									acceptLanguage: input.acceptLanguage,
+								}),
+							}),
+						}),
 					sendInvitation: async (invite) =>
 						mail.send({
 							to: invite.email,

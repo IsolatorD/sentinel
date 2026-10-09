@@ -71,6 +71,7 @@ beforeEach(() => {
 	vi.mocked(configService.getPublicConfig).mockResolvedValue({
 		authProviders: { google: false },
 		emailEnabled: true,
+		emailVerification: false,
 	});
 	vi.mocked(organizationsService.listMembers).mockResolvedValue([
 		{
@@ -340,6 +341,7 @@ describe("canales", () => {
 		vi.mocked(configService.getPublicConfig).mockResolvedValue({
 			authProviders: { google: false },
 			emailEnabled: false,
+			emailVerification: false,
 		});
 		renderApp(CHANNELS);
 		expect(await screen.findByText(/no email configured/)).toBeInTheDocument();

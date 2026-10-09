@@ -20,6 +20,19 @@ async function storedLocale(
 	return isLocale(row?.locale) ? row.locale : undefined;
 }
 
+/** Idioma para escribirle a alguien por su correo: el guardado, si no el de su navegador, si no el por defecto. */
+export async function localeForEmail(
+	db: Database,
+	input: { email: string; acceptLanguage?: string | null },
+): Promise<Locale> {
+	return (
+		(await storedLocale(db, { email: input.email })) ??
+		(input.acceptLanguage
+			? parseAcceptLanguage(input.acceptLanguage)
+			: DEFAULT_LOCALE)
+	);
+}
+
 /**
  * Idioma para escribirle a alguien que quizá aún no tiene cuenta: el suyo si ya eligió uno; si no, el
  * de quien lo invita; si no, el del navegador de quien lo invita; y por último el idioma por defecto.

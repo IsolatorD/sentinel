@@ -18,6 +18,8 @@ export interface RequestOptions {
 	body?: unknown;
 	/** Cuerpo ya serializado (para probar JSON roto). */
 	rawBody?: string;
+	/** `manual` devuelve la redirección en lugar de seguirla (para leer sus cookies). */
+	redirect?: "manual";
 	/** Cuerpo binario (subida de source maps). */
 	binary?: Uint8Array;
 	session?: Session;
@@ -70,6 +72,7 @@ export class Api {
 		const res = await fetch(`${this.baseUrl}${path}`, {
 			method: options.method ?? (options.body !== undefined ? "POST" : "GET"),
 			headers,
+			redirect: options.redirect,
 			body:
 				(options.binary as BodyInit | undefined) ??
 				options.rawBody ??

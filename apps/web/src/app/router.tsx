@@ -11,6 +11,7 @@ import { sessionQueryOptions } from "@/hooks/useSession/useSession.constants";
 import { AcceptInvitationPage } from "@/pages/AcceptInvitationPage/AcceptInvitationPage";
 import { AlertsPage } from "@/pages/AlertsPage/AlertsPage";
 import { AuthedLayoutPage } from "@/pages/AuthedLayoutPage/AuthedLayoutPage";
+import { EmailVerifiedPage } from "@/pages/EmailVerifiedPage/EmailVerifiedPage";
 import { HomePage } from "@/pages/HomePage/HomePage";
 import { IssueDetailPage } from "@/pages/IssueDetailPage/IssueDetailPage";
 import { IssuesPage } from "@/pages/IssuesPage/IssuesPage";
@@ -25,12 +26,17 @@ import { ProjectsPage } from "@/pages/ProjectsPage/ProjectsPage";
 import { RegisterPage } from "@/pages/RegisterPage/RegisterPage";
 import { ReleasesPage } from "@/pages/ReleasesPage/ReleasesPage";
 import { TokensPage } from "@/pages/TokensPage/TokensPage";
+import { VerifyEmailPage } from "@/pages/VerifyEmailPage/VerifyEmailPage";
 import { safeRedirect } from "@/utils/redirect/redirect";
 import {
 	alertsSearchInputSchema,
 	issueSearchInputSchema,
 	issuesSearchInputSchema,
 } from "@/utils/searchParams/searchParams.constants";
+import {
+	parseVerifiedSearch,
+	parseVerifySearch,
+} from "@/utils/verification/verification";
 
 export interface RouterContext {
 	queryClient: QueryClient;
@@ -39,6 +45,20 @@ export interface RouterContext {
 const rootRoute = createRootRouteWithContext<RouterContext>()({
 	component: Outlet,
 	notFoundComponent: NotFoundPage,
+});
+
+// ---------- Público: con o sin sesión (verificación de correo) ----------
+const verifyEmailRoute = createRoute({
+	getParentRoute: () => rootRoute,
+	path: "/verify-email",
+	validateSearch: parseVerifySearch,
+	component: VerifyEmailPage,
+});
+const emailVerifiedRoute = createRoute({
+	getParentRoute: () => rootRoute,
+	path: "/email-verified",
+	validateSearch: parseVerifiedSearch,
+	component: EmailVerifiedPage,
 });
 
 // ---------- Público: solo para quien NO tiene sesión ----------
@@ -174,6 +194,8 @@ const settingsRoute = createRoute({
 });
 
 const routeTree = rootRoute.addChildren([
+	verifyEmailRoute,
+	emailVerifiedRoute,
 	guestRoute.addChildren([loginRoute, registerRoute]),
 	authedRoute.addChildren([
 		homeRoute,

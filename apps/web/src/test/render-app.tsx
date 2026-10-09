@@ -37,6 +37,7 @@ export function mockHappyPath() {
 	vi.mocked(configService.getPublicConfig).mockResolvedValue({
 		authProviders: { google: false },
 		emailEnabled: true,
+		emailVerification: false,
 	});
 	vi.mocked(organizationsService.list).mockResolvedValue([fx.org]);
 	// Sin preferencias guardadas que cambien el idioma, el tema o los recorridos de la prueba.

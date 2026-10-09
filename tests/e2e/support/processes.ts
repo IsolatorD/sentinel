@@ -30,9 +30,11 @@ export async function freePort(): Promise<number> {
 export function startApp(
 	name: "api" | "worker",
 	env: Record<string, string>,
+	/** Para distinguir procesos del mismo tipo (el archivo de log y los mensajes). */
+	label: string = name,
 ): ManagedProcess {
 	mkdirSync(logDir, { recursive: true });
-	const logFile = join(logDir, `${name}.log`);
+	const logFile = join(logDir, `${label}.log`);
 	const fd = openSync(logFile, "w");
 	const child = spawn(process.execPath, ["dist/main.js"], {
 		cwd: join(repoRoot, "apps", name),
@@ -41,7 +43,12 @@ export function startApp(
 		stdio: ["ignore", fd, fd],
 	});
 	closeSync(fd);
-	const managed: ManagedProcess = { name, child, logFile, exited: false };
+	const managed: ManagedProcess = {
+		name: label,
+		child,
+		logFile,
+		exited: false,
+	};
 	child.once("exit", () => {
 		managed.exited = true;
 	});

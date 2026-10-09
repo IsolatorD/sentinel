@@ -119,6 +119,13 @@ export const en = {
 	EMAIL_ALERT_VIEW: "View the issue",
 	EMAIL_ALERT_FOOTER:
 		"You receive this because of the alert rule “{{rule}}” in {{organization}}.",
+	EMAIL_VERIFY_SUBJECT: "Verify your email address",
+	EMAIL_VERIFY_TITLE: "Confirm your email address",
+	EMAIL_VERIFY_BODY:
+		"Hi {{name}}, confirm your email address to start using Sentinel.",
+	EMAIL_VERIFY_ACTION: "Verify my email",
+	EMAIL_VERIFY_HINT:
+		"The link expires in 24 hours. If you did not create this account, you can ignore this email.",
 	EMAIL_INVITE_SUBJECT:
 		"{{inviter}} invited you to {{organization}} on Sentinel",
 	EMAIL_INVITE_TITLE: "You have been invited to {{organization}}",

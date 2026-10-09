@@ -11,10 +11,12 @@ import { usePublicConfig } from "@/hooks/usePublicConfig/usePublicConfig";
 import { useRedirectTarget } from "@/hooks/useSearchParams/useSearchParams";
 import {
 	useGoogleSignIn,
+	useResendVerification,
 	useSession,
 	useSignIn,
 } from "@/hooks/useSession/useSession";
 import { ApiError } from "@/utils/apiError/apiError";
+import { verificationCallbackUrl } from "@/utils/verification/verification";
 
 export function LoginForm() {
 	const { t } = useTranslation();
@@ -24,6 +26,9 @@ export function LoginForm() {
 	const config = usePublicConfig();
 	const session = useSession();
 	const redirectTo = useRedirectTarget();
+	const resend = useResendVerification();
+	// La dirección con la que se intentó entrar: a ella se reenvía la verificación.
+	const [attempted, setAttempted] = useState("");
 	const [fieldErrors, setFieldErrors] = useState<{
 		email?: string;
 		password?: string;
@@ -50,14 +55,18 @@ export function LoginForm() {
 			return;
 		}
 		setFieldErrors({});
+		setAttempted(parsed.data.email);
 		signIn.mutate(parsed.data, {
 			onSuccess: () => navigate({ href: redirectTo ?? "/" }),
 		});
 	}
 
 	const error = signIn.error;
-	const message =
-		error instanceof ApiError && error.status === 401
+	const unverified =
+		error instanceof ApiError && error.code === "EMAIL_NOT_VERIFIED";
+	const message = unverified
+		? t("auth.login.emailNotVerified")
+		: error instanceof ApiError && error.status === 401
 			? t("auth.login.invalidCredentials")
 			: error
 				? t("common.genericError")
@@ -70,7 +79,29 @@ export function LoginForm() {
 			className="space-y-4"
 			data-testid="login-form"
 		>
-			{message && <Alert variant="error">{message}</Alert>}
+			{message && (
+				<Alert variant="error">
+					{message}
+					{unverified && (
+						<Button
+							size="sm"
+							className="mt-2"
+							loading={resend.isPending}
+							onClick={() =>
+								resend.mutate({
+									email: attempted,
+									callbackURL: verificationCallbackUrl(
+										window.location.origin,
+										redirectTo,
+									),
+								})
+							}
+						>
+							{t("auth.login.resendVerification")}
+						</Button>
+					)}
+				</Alert>
+			)}
 			<FormField
 				label={t("auth.login.email")}
 				htmlFor="email"

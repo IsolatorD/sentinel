@@ -8,5 +8,7 @@ export const publicConfigSchema = z.object({
 	}),
 	/** El servidor puede enviar correos (SMTP configurado): sin esto, los canales de email no entregan. */
 	emailEnabled: z.boolean(),
+	/** Quien se registra con email y contraseña debe verificar su correo antes de entrar. */
+	emailVerification: z.boolean(),
 });
 export type PublicConfig = z.infer<typeof publicConfigSchema>;

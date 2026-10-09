@@ -34,6 +34,9 @@ export const es: Deep<Translations> = {
 			subtitle: "Sigue los errores y mantén tus apps saludables.",
 			email: "Correo electrónico",
 			password: "Contraseña",
+			emailNotVerified:
+				"Verifica tu correo electrónico para iniciar sesión. Te enviamos un enlace.",
+			resendVerification: "Reenviar el correo de verificación",
 			submit: "Iniciar sesión",
 			submitting: "Iniciando sesión…",
 			google: "Continuar con Google",
@@ -463,6 +466,7 @@ export const es: Deep<Translations> = {
 		},
 	},
 	notices: {
+		verificationSent: "Correo de verificación enviado",
 		organizationCreated: "Organización creada",
 		invitationSent: "Invitación enviada",
 		invitationResent: "Invitación enviada de nuevo",
@@ -471,6 +475,31 @@ export const es: Deep<Translations> = {
 		invitationDeclined: "Invitación rechazada",
 		memberRemoved: "Miembro quitado",
 		roleUpdated: "Rol actualizado",
+	},
+	verifyEmail: {
+		title: "Revisa tu correo",
+		subtitle: "Un paso más para activar tu cuenta.",
+		sent: "Enviamos un enlace de verificación a {{email}}. Ábrelo para activar tu cuenta.",
+		noEmail:
+			"Abre el enlace de verificación que te enviamos por correo para activar tu cuenta.",
+		resend: "Reenviar el correo",
+		resendIn: "Reenviar en {{seconds}} s",
+		backToLogin: "Volver a iniciar sesión",
+	},
+	emailVerified: {
+		title: "Correo verificado",
+		subtitle: "Tu cuenta está lista.",
+		ok: "¡Gracias! Tu correo está verificado y ya iniciaste sesión.",
+		continue: "Continuar a Sentinel",
+		errorTitle: "No pudimos verificar tu correo",
+		errors: {
+			invalid: "Este enlace no es válido. Puede que ya se haya usado.",
+			expired: "Este enlace ha caducado.",
+			generic: "Algo salió mal al verificar tu correo.",
+		},
+		resendIntro: "Escribe tu correo y te enviaremos un enlace nuevo.",
+		email: "Correo electrónico",
+		resend: "Enviar un enlace nuevo",
 	},
 	alerts: {
 		title: "Alertas",

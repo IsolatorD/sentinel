@@ -12,12 +12,15 @@ export const authService = {
 		unwrap(await authClient.signIn.email(input));
 	},
 
-	async signUpEmail(input: {
-		name: string;
-		email: string;
-		password: string;
-	}): Promise<void> {
-		unwrap(await authClient.signUp.email(input));
+	/** Devuelve si la cuenta quedó pendiente de verificar el correo (en ese caso no hay sesión). */
+	async signUpEmail(
+		input: { name: string; email: string; password: string },
+		callbackURL?: string,
+	): Promise<{ needsVerification: boolean }> {
+		const data = unwrap(
+			await authClient.signUp.email({ ...input, callbackURL }),
+		);
+		return { needsVerification: data?.token === null };
 	},
 
 	/** `returnTo`: ruta interna a la que volver tras autenticarse con Google. */
@@ -33,5 +36,13 @@ export const authService = {
 
 	async signOut(): Promise<void> {
 		unwrap(await authClient.signOut());
+	},
+
+	/** Pide de nuevo el correo con el enlace de verificación. */
+	async sendVerificationEmail(
+		email: string,
+		callbackURL: string,
+	): Promise<void> {
+		unwrap(await authClient.sendVerificationEmail({ email, callbackURL }));
 	},
 };

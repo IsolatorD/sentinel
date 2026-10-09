@@ -30,6 +30,9 @@ export const en = {
 			subtitle: "Track errors and keep your apps healthy.",
 			email: "Email",
 			password: "Password",
+			emailNotVerified:
+				"Verify your email address to sign in. We sent you a link.",
+			resendVerification: "Resend the verification email",
 			submit: "Sign in",
 			submitting: "Signing in…",
 			google: "Continue with Google",
@@ -455,6 +458,7 @@ export const en = {
 		},
 	},
 	notices: {
+		verificationSent: "Verification email sent",
 		organizationCreated: "Organization created",
 		invitationSent: "Invitation sent",
 		invitationResent: "Invitation sent again",
@@ -463,6 +467,31 @@ export const en = {
 		invitationDeclined: "Invitation declined",
 		memberRemoved: "Member removed",
 		roleUpdated: "Role updated",
+	},
+	verifyEmail: {
+		title: "Check your inbox",
+		subtitle: "One more step to activate your account.",
+		sent: "We sent a verification link to {{email}}. Open it to activate your account.",
+		noEmail:
+			"Open the verification link we emailed you to activate your account.",
+		resend: "Resend the email",
+		resendIn: "Resend in {{seconds}} s",
+		backToLogin: "Back to sign in",
+	},
+	emailVerified: {
+		title: "Email verified",
+		subtitle: "Your account is ready.",
+		ok: "Thanks! Your email address is verified and you are signed in.",
+		continue: "Continue to Sentinel",
+		errorTitle: "We could not verify your email",
+		errors: {
+			invalid: "This link is not valid. It may have been used already.",
+			expired: "This link has expired.",
+			generic: "Something went wrong while verifying your email.",
+		},
+		resendIntro: "Enter your email address and we will send you a new link.",
+		email: "Email",
+		resend: "Send a new link",
 	},
 	alerts: {
 		title: "Alerts",

@@ -12,6 +12,7 @@ import { usePublicConfig } from "@/hooks/usePublicConfig/usePublicConfig";
 import { useRedirectTarget } from "@/hooks/useSearchParams/useSearchParams";
 import { useGoogleSignIn, useSignUp } from "@/hooks/useSession/useSession";
 import { ApiError } from "@/utils/apiError/apiError";
+import { verificationCallbackUrl } from "@/utils/verification/verification";
 
 export function RegisterForm() {
 	const { t } = useTranslation();
@@ -46,9 +47,27 @@ export function RegisterForm() {
 			return;
 		}
 		setErrors({});
-		signUp.mutate(parsed.data, {
-			onSuccess: () => navigate({ href: redirectTo ?? "/onboarding" }),
-		});
+		signUp.mutate(
+			{
+				...parsed.data,
+				callbackURL: verificationCallbackUrl(
+					window.location.origin,
+					redirectTo,
+				),
+			},
+			{
+				onSuccess: (result) =>
+					result.needsVerification
+						? navigate({
+								to: "/verify-email",
+								search: {
+									email: parsed.data.email,
+									...(redirectTo && { redirect: redirectTo }),
+								},
+							})
+						: navigate({ href: redirectTo ?? "/onboarding" }),
+			},
+		);
 	}
 
 	const error = signUp.error;

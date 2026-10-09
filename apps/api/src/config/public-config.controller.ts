@@ -23,6 +23,9 @@ export class PublicConfigController {
 				google: Boolean(this.config.get("GOOGLE_CLIENT_ID", { infer: true })),
 			},
 			emailEnabled: Boolean(this.config.get("SMTP_URL", { infer: true })),
+			emailVerification:
+				Boolean(this.config.get("SMTP_URL", { infer: true })) &&
+				this.config.get("REQUIRE_EMAIL_VERIFICATION", { infer: true }),
 		};
 	}
 }

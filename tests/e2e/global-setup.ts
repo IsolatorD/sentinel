@@ -69,21 +69,39 @@ export default async function setup(project: TestProject) {
 		SMTP_URL: `smtp://127.0.0.1:${smtpPort}`,
 		SMTP_FROM: "Sentinel <alerts@sentinel.test>",
 	};
-	const api = startApp("api", {
+	const secret = randomBytes(24).toString("base64");
+	const apiEnv = {
 		...shared,
-		API_PORT: String(port),
-		BETTER_AUTH_SECRET: randomBytes(24).toString("base64"),
-		BETTER_AUTH_URL: baseUrl,
+		BETTER_AUTH_SECRET: secret,
 		WEB_ORIGIN: "http://localhost:5173",
 		INGEST_RATE_LIMIT_PER_MINUTE: String(cfg.ingestRateLimitPerMinute),
 		ENABLE_DOCS: "true",
+	};
+	// La API principal no exige verificar el correo (así cada prueba se registra en un paso); la segunda sí.
+	const api = startApp("api", {
+		...apiEnv,
+		API_PORT: String(port),
+		BETTER_AUTH_URL: baseUrl,
+		REQUIRE_EMAIL_VERIFICATION: "false",
 	});
+	const verifyPort = await freePort();
+	const verifyBaseUrl = `http://localhost:${verifyPort}`;
+	const verifyApi = startApp(
+		"api",
+		{
+			...apiEnv,
+			API_PORT: String(verifyPort),
+			BETTER_AUTH_URL: verifyBaseUrl,
+			REQUIRE_EMAIL_VERIFICATION: "true",
+		},
+		"api-verify",
+	);
 	const worker = startApp("worker", {
 		...shared,
 		WEB_ORIGIN: "http://localhost:5173",
 		NOTIFICATION_RETRY_DELAY_MS: "150",
 	});
-	processes.push(api, worker);
+	processes.push(api, verifyApi, worker);
 
 	await waitFor(async () => (await fetch(`${baseUrl}/api/health`)).ok, {
 		timeoutMs: 60_000,
@@ -91,8 +109,15 @@ export default async function setup(project: TestProject) {
 		processes,
 	});
 
+	await waitFor(async () => (await fetch(`${verifyBaseUrl}/api/health`)).ok, {
+		timeoutMs: 60_000,
+		label: "la API con verificación responde en /api/health",
+		processes,
+	});
+
 	const context: E2EContext = {
 		baseUrl,
+		verifyBaseUrl,
 		databaseUrl: dbUrl,
 		redis: { host: cfg.redisHost, port: cfg.redisPort, db: cfg.redisDb },
 		ingestRateLimitPerMinute: cfg.ingestRateLimitPerMinute,

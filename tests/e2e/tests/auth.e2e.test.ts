@@ -155,6 +155,7 @@ describe("configuración pública", () => {
 		expect(publicConfigSchema.parse(res.json)).toEqual({
 			authProviders: { google: false },
 			emailEnabled: true,
+			emailVerification: false,
 		});
 		expect(res.text).not.toMatch(/secret|client/i);
 	});

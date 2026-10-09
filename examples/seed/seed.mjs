@@ -16,7 +16,7 @@ const PASSWORD = "demo-password-123";
 const cookies = new Map();
 async function request(
 	path,
-	{ method = "GET", body, headers = {}, session = true } = {},
+	{ method = "GET", body, headers = {}, session = true, redirect } = {},
 ) {
 	const h = { Origin: ORIGIN, ...headers };
 	if (body !== undefined) h["Content-Type"] = "application/json";
@@ -26,6 +26,7 @@ async function request(
 		method,
 		headers: h,
 		body: body !== undefined ? JSON.stringify(body) : undefined,
+		redirect,
 	});
 	for (const line of res.headers.getSetCookie()) {
 		const [pair] = line.split(";");
@@ -33,7 +34,13 @@ async function request(
 		cookies.set(pair.slice(0, i), pair.slice(i + 1));
 	}
 	const text = await res.text();
-	return { status: res.status, json: text ? JSON.parse(text) : undefined };
+	let json;
+	try {
+		json = text ? JSON.parse(text) : undefined;
+	} catch {
+		json = undefined; // p. ej. la respuesta vacía de una redirección
+	}
+	return { status: res.status, json };
 }
 const must = (res, what) => {
 	if (res.status >= 400)
@@ -44,11 +51,50 @@ const must = (res, what) => {
 };
 
 // ---------- usuario, organización, proyecto ----------
-const auth = await request("/api/auth/sign-in/email", {
-	method: "POST",
-	body: { email: EMAIL, password: PASSWORD },
-});
-if (auth.status !== 200) {
+/**
+ * Si el servidor exige verificar el correo (hay SMTP), abre el enlace del último correo de verificación
+ * del usuario demo. En desarrollo esos correos llegan a Mailpit (http://localhost:8025).
+ */
+async function verifyWithMailpit() {
+	const mailpit = process.env.MAILPIT_URL ?? "http://localhost:8025";
+	for (let attempt = 0; attempt < 20; attempt++) {
+		const found = await fetch(
+			`${mailpit}/api/v1/search?query=${encodeURIComponent(`to:${EMAIL}`)}`,
+		)
+			.then((r) => r.json())
+			.catch(() => undefined);
+		const message = found?.messages?.[0];
+		if (message) {
+			const body = await fetch(`${mailpit}/api/v1/message/${message.ID}`).then(
+				(r) => r.json(),
+			);
+			const link = /https?:\/\/\S+verify-email\S+/.exec(body.Text)?.[0];
+			if (link) {
+				const url = new URL(link);
+				const res = await request(`${url.pathname}${url.search}`, {
+					redirect: "manual",
+				});
+				if (res.status >= 300 && res.status < 400) return true;
+			}
+		}
+		await new Promise((r) => setTimeout(r, 500));
+	}
+	return false;
+}
+
+const signIn = () =>
+	request("/api/auth/sign-in/email", {
+		method: "POST",
+		body: { email: EMAIL, password: PASSWORD },
+	});
+const auth = await signIn();
+if (auth.status === 403) {
+	// Cuenta existente pero sin verificar: llegó (o se reenvía) un correo.
+	if (!(await verifyWithMailpit()))
+		throw new Error(
+			`${EMAIL} no está verificado y no se encontró el correo en Mailpit. Revisa http://localhost:8025`,
+		);
+} else if (auth.status !== 200) {
 	must(
 		await request("/api/auth/sign-up/email", {
 			method: "POST",
@@ -56,7 +102,10 @@ if (auth.status !== 200) {
 		}),
 		"registro",
 	);
+	// Con verificación activa el registro no inicia sesión: se verifica y se entra.
+	if ((await signIn()).status === 403) await verifyWithMailpit();
 }
+if (!cookies.size) must(await signIn(), "iniciar sesión");
 const orgs = must(
 	await request("/api/auth/organization/list"),
 	"listar organizaciones",

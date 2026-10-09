@@ -118,6 +118,13 @@ export const es: Record<MessageCode, string> = {
 	EMAIL_ALERT_VIEW: "Ver el issue",
 	EMAIL_ALERT_FOOTER:
 		"Recibes esto por la regla de alerta «{{rule}}» de {{organization}}.",
+	EMAIL_VERIFY_SUBJECT: "Verifica tu correo electrónico",
+	EMAIL_VERIFY_TITLE: "Confirma tu correo electrónico",
+	EMAIL_VERIFY_BODY:
+		"Hola {{name}}, confirma tu correo electrónico para empezar a usar Sentinel.",
+	EMAIL_VERIFY_ACTION: "Verificar mi correo",
+	EMAIL_VERIFY_HINT:
+		"El enlace caduca en 24 horas. Si no creaste esta cuenta, puedes ignorar este correo.",
 	EMAIL_INVITE_SUBJECT: "{{inviter}} te invitó a {{organization}} en Sentinel",
 	EMAIL_INVITE_TITLE: "Te han invitado a {{organization}}",
 	EMAIL_INVITE_BODY:

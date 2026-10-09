@@ -26,6 +26,8 @@ const apiEnvSchema = z
 			.int()
 			.positive()
 			.default(600),
+		/** Exige verificar el correo para entrar (solo tiene efecto si hay SMTP: sin correo nadie podría verificar). */
+		REQUIRE_EMAIL_VERIFICATION: emptyToUndefined(booleanString.default(true)),
 		TRUST_PROXY: emptyToUndefined(booleanString.default(false)),
 		ENABLE_DOCS: emptyToUndefined(booleanString.optional()),
 	})
