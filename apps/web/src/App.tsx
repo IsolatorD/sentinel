@@ -1,7 +1,10 @@
 import { type HealthResponse, healthResponseSchema } from "@sentinel/shared";
 import { useEffect, useState } from "react";
+import { AuthPage } from "./AuthPage";
+import { authClient } from "./auth-client";
 
 export function App() {
+	const { data: session, isPending } = authClient.useSession();
 	const [health, setHealth] = useState<HealthResponse | null>(null);
 	const [error, setError] = useState<string | null>(null);
 
@@ -15,13 +18,24 @@ export function App() {
 	return (
 		<main style={{ fontFamily: "system-ui", padding: 32 }}>
 			<h1>Sentinel</h1>
-			{error && <p>API no disponible: {error}</p>}
-			{health && (
-				<p>
-					API: {health.status} ({health.service}) — {health.timestamp}
-				</p>
+			<p style={{ color: "gray" }}>
+				{error
+					? `API no disponible: ${error}`
+					: `API: ${health?.status ?? "…"}`}
+			</p>
+			{isPending && <p>Cargando sesión…</p>}
+			{!isPending && !session && <AuthPage />}
+			{session && (
+				<div>
+					<p>
+						Sesión iniciada como <b>{session.user.name}</b> (
+						{session.user.email})
+					</p>
+					<button type="button" onClick={() => authClient.signOut()}>
+						Cerrar sesión
+					</button>
+				</div>
 			)}
-			{!health && !error && <p>Conectando con la API…</p>}
 		</main>
 	);
 }

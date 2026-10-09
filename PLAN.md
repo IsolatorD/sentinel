@@ -27,7 +27,7 @@ Un solo lenguaje (TypeScript) en todo el repo, alineado con tu experiencia en Re
 - **Base de datos:** PostgreSQL. ORM: Drizzle. Eventos en JSONB, tablas de eventos/spans particionadas por fecha para poder borrar por retención con facilidad.
 - **Frontend (`apps/web`):** SPA independiente dentro del monorepo, que consume la API por HTTP (ver §2.1). React + Vite + TypeScript, TanStack Router y Query, Tailwind + shadcn/ui, Recharts para gráficos, i18next para idiomas.
 - **SDK (`packages/sdk-browser`, luego `sdk-react`, `sdk-node`, `sdk-react-native`):** TypeScript, sin dependencias, con envío vía `fetch` y `sendBeacon`.
-- **Auth:** Better Auth (o implementación propia con sesiones + argon2). Se confirma al empezar la Fase 1.
+- **Auth:** Better Auth (decidido) con su plugin `organization`, que aporta organizaciones, membresías con roles e invitaciones. Adaptador de Drizzle sobre Postgres.
 - **Email:** Resend (plan gratuito) o SMTP genérico. Webhooks firmados con HMAC.
 - **Tests:** Vitest; Playwright para el flujo E2E principal.
 
@@ -124,7 +124,6 @@ SDK Node, React Native, Python. Retención configurable, cuotas, dashboard de es
 ## 9. Pendientes por definir
 
 1. Nombre final y dominio (por ahora "Sentinel").
-2. Librería de auth definitiva (Better Auth vs. propia).
-3. Proveedor de despliegue (después de la Fase 1).
-4. Licencia del repo (MIT / AGPL / privado).
-5. Diseño visual: referencias y paleta.
+2. Proveedor de despliegue (después de la Fase 1).
+3. Licencia del repo (MIT / AGPL / privado).
+4. Diseño visual: referencias y paleta.
