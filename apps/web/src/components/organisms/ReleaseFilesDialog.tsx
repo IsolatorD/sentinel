@@ -1,7 +1,7 @@
 import { FileCode2, Trash2 } from "lucide-react";
 import { useTranslation } from "react-i18next";
-import { Button } from "@/components/atoms/Button";
-import { Skeleton } from "@/components/atoms/Skeleton";
+import { Button } from "@/components/atoms/Button/Button";
+import { Skeleton } from "@/components/atoms/Skeleton/Skeleton";
 import { Alert } from "@/components/molecules/Alert";
 import { CodeBlock } from "@/components/molecules/CodeBlock";
 import { Modal } from "@/components/molecules/Modal";

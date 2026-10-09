@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import { Label } from "@/components/atoms/Label";
+import { Label } from "@/components/atoms/Label/Label";
 
 export interface FormFieldProps {
 	label: string;

@@ -1,10 +1,6 @@
 import { ChevronDown } from "lucide-react";
-import type { Ref, SelectHTMLAttributes } from "react";
+import type { SelectProps } from "@/components/atoms/Select/SelectInterface";
 import { cn } from "@/utils/cn/cn";
-
-export interface SelectProps extends SelectHTMLAttributes<HTMLSelectElement> {
-	ref?: Ref<HTMLSelectElement>;
-}
 
 /**
  * Select nativo con el estilo de la app (accesible y funciona bien en móvil).

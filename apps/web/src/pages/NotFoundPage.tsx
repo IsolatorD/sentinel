@@ -1,7 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import { Compass } from "lucide-react";
 import { useTranslation } from "react-i18next";
-import { buttonVariants } from "@/components/atoms/Button";
+import { buttonVariants } from "@/components/atoms/Button/Button.constants";
 import { EmptyState } from "@/components/molecules/EmptyState";
 
 export function NotFoundPage() {

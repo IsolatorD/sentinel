@@ -1,6 +1,6 @@
 import { useNavigate } from "@tanstack/react-router";
 import { useEffect } from "react";
-import { Spinner } from "@/components/atoms/Spinner";
+import { Spinner } from "@/components/atoms/Spinner/Spinner";
 import { useProjects } from "@/hooks/useProjects/useProjects";
 import { useCurrentOrganization } from "@/hooks/useScope/useScope";
 

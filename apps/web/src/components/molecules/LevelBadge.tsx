@@ -1,5 +1,5 @@
 import { useTranslation } from "react-i18next";
-import { Badge } from "@/components/atoms/Badge";
+import { Badge } from "@/components/atoms/Badge/Badge";
 
 type Tone = "fatal" | "danger" | "warning" | "info" | "neutral";
 

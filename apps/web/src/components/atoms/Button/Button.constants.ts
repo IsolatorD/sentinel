@@ -1,7 +1,4 @@
-import { cva, type VariantProps } from "class-variance-authority";
-import type { ButtonHTMLAttributes } from "react";
-import { cn } from "@/utils/cn/cn";
-import { Spinner } from "./Spinner";
+import { cva } from "class-variance-authority";
 
 export const buttonVariants = cva(
 	"inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md border font-medium transition-colors disabled:pointer-events-none disabled:opacity-50",
@@ -28,33 +25,3 @@ export const buttonVariants = cva(
 		defaultVariants: { variant: "secondary", size: "md" },
 	},
 );
-
-export interface ButtonProps
-	extends ButtonHTMLAttributes<HTMLButtonElement>,
-		VariantProps<typeof buttonVariants> {
-	loading?: boolean;
-}
-
-export function Button({
-	className,
-	variant,
-	size,
-	loading,
-	disabled,
-	children,
-	type = "button",
-	...props
-}: ButtonProps) {
-	return (
-		<button
-			type={type}
-			className={cn(buttonVariants({ variant, size }), className)}
-			disabled={disabled || loading}
-			aria-busy={loading || undefined}
-			{...props}
-		>
-			{loading && <Spinner className="text-current" />}
-			{children}
-		</button>
-	);
-}

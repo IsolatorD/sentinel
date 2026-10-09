@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Card } from "@/components/atoms/Card";
-import { Skeleton } from "@/components/atoms/Skeleton";
+import { Card } from "@/components/atoms/Card/Card";
+import { Skeleton } from "@/components/atoms/Skeleton/Skeleton";
 import { ErrorState } from "@/components/molecules/ErrorState";
 import { Pagination } from "@/components/molecules/Pagination";
 import { RelativeTime } from "@/components/molecules/RelativeTime";

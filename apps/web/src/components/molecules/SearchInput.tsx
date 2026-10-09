@@ -1,6 +1,6 @@
 import { Search, X } from "lucide-react";
 import type { InputHTMLAttributes } from "react";
-import { Input } from "@/components/atoms/Input";
+import { Input } from "@/components/atoms/Input/Input";
 import { cn } from "@/utils/cn/cn";
 
 export interface SearchInputProps

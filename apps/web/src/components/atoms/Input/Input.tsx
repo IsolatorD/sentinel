@@ -1,10 +1,5 @@
-import type { InputHTMLAttributes, Ref } from "react";
+import type { InputProps } from "@/components/atoms/Input/InputInterface";
 import { cn } from "@/utils/cn/cn";
-
-export interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
-	invalid?: boolean;
-	ref?: Ref<HTMLInputElement>;
-}
 
 export function Input({ className, invalid, ref, ...props }: InputProps) {
 	return (

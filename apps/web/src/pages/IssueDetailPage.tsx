@@ -1,7 +1,7 @@
 import { Link, useParams } from "@tanstack/react-router";
 import { ArrowLeft } from "lucide-react";
 import { useTranslation } from "react-i18next";
-import { Skeleton } from "@/components/atoms/Skeleton";
+import { Skeleton } from "@/components/atoms/Skeleton/Skeleton";
 import { ErrorState } from "@/components/molecules/ErrorState";
 import { EventNavigator } from "@/components/organisms/EventNavigator";
 import { IssueEventDetails } from "@/components/organisms/IssueEventDetails";

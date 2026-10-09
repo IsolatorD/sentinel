@@ -1,7 +1,7 @@
 import { Check, Copy } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Button } from "@/components/atoms/Button";
+import { Button } from "@/components/atoms/Button/Button";
 
 export function CopyButton({
 	value,

@@ -1,5 +1,5 @@
 import { useTranslation } from "react-i18next";
-import { Select } from "@/components/atoms/Select";
+import { Select } from "@/components/atoms/Select/Select";
 import { SUPPORTED_LANGUAGES } from "@/i18n";
 
 const NAMES: Record<string, string> = { en: "English", es: "Español" };

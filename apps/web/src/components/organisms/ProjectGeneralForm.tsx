@@ -1,9 +1,9 @@
 import { PLATFORMS, type ProjectDto } from "@sentinel/shared";
 import { type FormEvent, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Button } from "@/components/atoms/Button";
-import { Input } from "@/components/atoms/Input";
-import { Select } from "@/components/atoms/Select";
+import { Button } from "@/components/atoms/Button/Button";
+import { Input } from "@/components/atoms/Input/Input";
+import { Select } from "@/components/atoms/Select/Select";
 import { Alert } from "@/components/molecules/Alert";
 import { FormField } from "@/components/molecules/FormField";
 import { Section } from "@/components/molecules/Section";

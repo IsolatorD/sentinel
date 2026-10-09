@@ -1,7 +1,7 @@
 import { Menu as MenuIcon, X } from "lucide-react";
 import { type ReactNode, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Logo } from "@/components/atoms/Logo";
+import { Logo } from "@/components/atoms/Logo/Logo";
 
 /** Estructura de la app: barra lateral fija en escritorio y desplegable en móvil. */
 export function AppShellTemplate({

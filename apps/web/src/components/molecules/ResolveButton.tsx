@@ -1,7 +1,7 @@
 import type { Resolution } from "@sentinel/shared";
 import { CheckCircle2, ChevronDown } from "lucide-react";
 import { useTranslation } from "react-i18next";
-import { Button } from "@/components/atoms/Button";
+import { Button } from "@/components/atoms/Button/Button";
 import { Menu, MenuContent, MenuItem, MenuTrigger } from "./Menu";
 
 export interface ResolveButtonProps {

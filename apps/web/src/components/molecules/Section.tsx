@@ -1,5 +1,8 @@
 import type { ReactNode } from "react";
-import { Card, CardBody, CardHeader, CardTitle } from "@/components/atoms/Card";
+import { Card } from "@/components/atoms/Card/Card";
+import { CardBody } from "@/components/atoms/CardBody/CardBody";
+import { CardHeader } from "@/components/atoms/CardHeader/CardHeader";
+import { CardTitle } from "@/components/atoms/CardTitle/CardTitle";
 
 export function Section({
 	title,

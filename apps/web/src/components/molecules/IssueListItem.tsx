@@ -1,7 +1,7 @@
 import type { IssueDto } from "@sentinel/shared";
 import { Link } from "@tanstack/react-router";
 import { useTranslation } from "react-i18next";
-import { Badge } from "@/components/atoms/Badge";
+import { Badge } from "@/components/atoms/Badge/Badge";
 import { cn } from "@/utils/cn/cn";
 import { formatCompact, formatRelative } from "@/utils/time/time";
 import { LevelBadge } from "./LevelBadge";

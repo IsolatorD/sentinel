@@ -1,6 +1,6 @@
 import { Navigate, Outlet } from "@tanstack/react-router";
 import { useEffect } from "react";
-import { Spinner } from "@/components/atoms/Spinner";
+import { Spinner } from "@/components/atoms/Spinner/Spinner";
 import { ErrorState } from "@/components/molecules/ErrorState";
 import { Sidebar } from "@/components/organisms/Sidebar";
 import { AppShellTemplate } from "@/components/templates/AppShellTemplate";

@@ -1,6 +1,6 @@
 import { AlertTriangle } from "lucide-react";
 import { useTranslation } from "react-i18next";
-import { Button } from "@/components/atoms/Button";
+import { Button } from "@/components/atoms/Button/Button";
 import { EmptyState } from "./EmptyState";
 
 export function ErrorState({

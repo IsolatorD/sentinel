@@ -10,8 +10,8 @@ import {
 	Settings,
 } from "lucide-react";
 import { useTranslation } from "react-i18next";
-import { Avatar } from "@/components/atoms/Avatar";
-import { Logo } from "@/components/atoms/Logo";
+import { Avatar } from "@/components/atoms/Avatar/Avatar";
+import { Logo } from "@/components/atoms/Logo/Logo";
 import { LanguageSelect } from "@/components/molecules/LanguageSelect";
 import {
 	Menu,

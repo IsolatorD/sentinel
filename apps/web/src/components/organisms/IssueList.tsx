@@ -1,9 +1,10 @@
 import { Link } from "@tanstack/react-router";
 import { Inbox, SearchX } from "lucide-react";
 import { useTranslation } from "react-i18next";
-import { Button, buttonVariants } from "@/components/atoms/Button";
-import { Card } from "@/components/atoms/Card";
-import { Skeleton } from "@/components/atoms/Skeleton";
+import { Button } from "@/components/atoms/Button/Button";
+import { buttonVariants } from "@/components/atoms/Button/Button.constants";
+import { Card } from "@/components/atoms/Card/Card";
+import { Skeleton } from "@/components/atoms/Skeleton/Skeleton";
 import { EmptyState } from "@/components/molecules/EmptyState";
 import { ErrorState } from "@/components/molecules/ErrorState";
 import {

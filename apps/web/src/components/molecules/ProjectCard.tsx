@@ -2,9 +2,9 @@ import type { ProjectDto } from "@sentinel/shared";
 import { Link } from "@tanstack/react-router";
 import { ArrowRight } from "lucide-react";
 import { useTranslation } from "react-i18next";
-import { Avatar } from "@/components/atoms/Avatar";
-import { Badge } from "@/components/atoms/Badge";
-import { Card } from "@/components/atoms/Card";
+import { Avatar } from "@/components/atoms/Avatar/Avatar";
+import { Badge } from "@/components/atoms/Badge/Badge";
+import { Card } from "@/components/atoms/Card/Card";
 import { RelativeTime } from "./RelativeTime";
 
 export function ProjectCard({

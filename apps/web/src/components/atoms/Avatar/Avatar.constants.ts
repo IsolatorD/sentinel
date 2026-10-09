@@ -1,0 +1,22 @@
+export const PALETTE = [
+	"#6c5fc7",
+	"#3d74db",
+	"#2ba185",
+	"#d98b00",
+	"#e03e52",
+	"#7b2d8e",
+	"#0e8fa8",
+];
+
+export function colorFor(seed: string): string {
+	let hash = 0;
+	for (const ch of seed) hash = (hash * 31 + ch.charCodeAt(0)) >>> 0;
+	return PALETTE[hash % PALETTE.length];
+}
+
+export function initials(name: string): string {
+	const parts = name.trim().split(/\s+/).filter(Boolean);
+	if (parts.length === 0) return "?";
+	if (parts.length === 1) return parts[0].slice(0, 2).toUpperCase();
+	return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+}

@@ -1,6 +1,6 @@
 import type { IssueStatus } from "@sentinel/shared";
 import { useTranslation } from "react-i18next";
-import { Badge } from "@/components/atoms/Badge";
+import { Badge } from "@/components/atoms/Badge/Badge";
 
 const TONES = {
 	unresolved: "neutral",

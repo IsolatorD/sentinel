@@ -2,7 +2,7 @@ import type { ExceptionValue } from "@sentinel/shared";
 import { ChevronRight } from "lucide-react";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Button } from "@/components/atoms/Button";
+import { Button } from "@/components/atoms/Button/Button";
 import { CodeContext } from "@/components/molecules/CodeContext";
 import { cn } from "@/utils/cn/cn";
 import {

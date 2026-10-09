@@ -3,7 +3,7 @@ import { useNavigate } from "@tanstack/react-router";
 import { Check } from "lucide-react";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Button } from "@/components/atoms/Button";
+import { Button } from "@/components/atoms/Button/Button";
 import { cn } from "@/utils/cn/cn";
 import type { Organization } from "@/utils/organization/organizationInterface";
 import { writeStorage } from "@/utils/storage/storage";
