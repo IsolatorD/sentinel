@@ -1,4 +1,5 @@
-import type { ApiBodyOptions } from "@nestjs/swagger";
+import { applyDecorators } from "@nestjs/common";
+import { type ApiBodyOptions, ApiQuery } from "@nestjs/swagger";
 import { z } from "zod";
 
 type SchemaObject = Extract<ApiBodyOptions, { schema: unknown }>["schema"];
@@ -17,4 +18,21 @@ export function jsonSchema(
 		io,
 		unrepresentable: "any",
 	}) as SchemaObject;
+}
+
+/** Documenta como parámetros de query cada propiedad de un esquema Zod. */
+export function ApiZodQuery(schema: z.ZodObject): MethodDecorator {
+	const json = jsonSchema(schema, "input") as {
+		properties?: Record<string, SchemaObject>;
+		required?: string[];
+	};
+	return applyDecorators(
+		...Object.entries(json.properties ?? {}).map(([name, property]) =>
+			ApiQuery({
+				name,
+				required: json.required?.includes(name) ?? false,
+				schema: property as never,
+			}),
+		),
+	);
 }

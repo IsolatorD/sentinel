@@ -152,6 +152,11 @@ export class ProjectsService {
 
 	// ---------- Uso desde otros módulos ----------
 
+	/** Lanza 404 si el proyecto no existe en la organización. No comprueba permisos. */
+	async ensureExists(orgId: string, projectId: string): Promise<void> {
+		await this.requireProject(orgId, projectId);
+	}
+
 	/** ¿La clave pertenece al proyecto y está activa? La usa la ingesta de eventos. */
 	isIngestKeyValid(projectId: string, publicKey: string): Promise<boolean> {
 		return this.projects.isActiveKey(projectId, publicKey);

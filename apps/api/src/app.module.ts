@@ -9,6 +9,7 @@ import { type ApiEnv, validateApiEnv } from "./config/env.js";
 import { DatabaseModule } from "./database/database.module.js";
 import { HealthModule } from "./health/health.module.js";
 import { IngestModule } from "./ingest/ingest.module.js";
+import { IssuesModule } from "./issues/issues.module.js";
 import { OrganizationsModule } from "./organizations/organizations.module.js";
 import { ProjectsModule } from "./projects/projects.module.js";
 import { RedisModule } from "./redis/redis.module.js";
@@ -35,6 +36,7 @@ import { RedisModule } from "./redis/redis.module.js";
 		OrganizationsModule,
 		ProjectsModule,
 		IngestModule,
+		IssuesModule,
 	],
 	providers: [{ provide: APP_FILTER, useClass: AllExceptionsFilter }],
 })

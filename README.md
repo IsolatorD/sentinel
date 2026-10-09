@@ -82,3 +82,16 @@ controller  →  service  →  repository  →  db
 - **Errores:** toda la API responde con el mismo formato `{ statusCode, code, message, issues?, requestId }`.
 - **Logs:** JSON estructurado con `pino` (legible en desarrollo). Cada petición lleva un `x-request-id` (se respeta el entrante y se devuelve en la respuesta). Los headers sensibles y `sentinel_key` de la URL se redactan.
 - **Documentación:** OpenAPI generado desde los mismos esquemas Zod. UI en `/api/docs`, JSON en `/api/docs/openapi.json` y la referencia de Better Auth en `/api/auth/reference`. Se desactiva en producción salvo `ENABLE_DOCS=true`.
+
+## API de issues
+
+Requiere sesión. Cuelga de un proyecto: `/api/organizations/:orgId/projects/:projectId/issues`. Cualquier miembro puede leer y cambiar el estado; borrar requiere `owner` o `admin`.
+
+| Método | Ruta | |
+|---|---|---|
+| GET | `/` | lista paginada de issues |
+| GET / PATCH / DELETE | `/:issueId` | detalle con el último evento / cambiar estado / borrar |
+| GET | `/:issueId/events` | eventos del issue (resumen, más recientes primero) |
+| GET | `/:issueId/events/:eventId` | evento completo (stacktrace, breadcrumbs, contexto) |
+
+Parámetros del listado: `status` (`unresolved` por defecto, `resolved`, `ignored` o `all`), `level`, `q` (busca en título y culprit), `sort` (`lastSeen`, `firstSeen`, `events`), `order`, `limit` (máx. 100) y `offset`. Cada issue incluye `userCount` (usuarios distintos afectados). Un issue resuelto que vuelve a ocurrir se reabre solo; uno ignorado sigue ignorado.
