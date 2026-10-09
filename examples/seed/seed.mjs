@@ -1,5 +1,5 @@
 // Puebla Sentinel con datos de demostración realistas.
-//   node examples/seed/seed.mjs [--api http://localhost:3000] [--web-origin http://localhost:5173]
+//   node examples/seed/seed.mjs [--api http://localhost:3000] [--web-origin http://localhost:5173] [--mailpit http://localhost:8025]
 // Crea (o reutiliza) un usuario demo, una organización, un proyecto y una variedad de errores.
 // Solo para desarrollo local: las credenciales son de prueba.
 const argv = process.argv.slice(2);
@@ -56,7 +56,7 @@ const must = (res, what) => {
  * del usuario demo. En desarrollo esos correos llegan a Mailpit (http://localhost:8025).
  */
 async function verifyWithMailpit() {
-	const mailpit = process.env.MAILPIT_URL ?? "http://localhost:8025";
+	const mailpit = args.mailpit ?? "http://localhost:8025";
 	for (let attempt = 0; attempt < 20; attempt++) {
 		const found = await fetch(
 			`${mailpit}/api/v1/search?query=${encodeURIComponent(`to:${EMAIL}`)}`,
