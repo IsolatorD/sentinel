@@ -5,6 +5,7 @@ import {
 	EVENTS_QUEUE,
 	type IngestEvent,
 	type IngestJobData,
+	scrubEvent,
 } from "@sentinel/shared";
 import type { Queue } from "bullmq";
 
@@ -34,7 +35,8 @@ export class IngestService {
 				projectId,
 				eventId,
 				receivedAt: new Date().toISOString(),
-				event,
+				// Los secretos se eliminan aquí, antes de tocar Redis y la base de datos.
+				event: scrubEvent(event),
 				client,
 			},
 			{

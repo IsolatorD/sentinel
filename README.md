@@ -155,3 +155,13 @@ Detalles que conviene saber:
 - Si falta el mapa o no se puede resolver un frame, el evento se guarda igual con el frame original.
 
 Para verlo funcionando sin configurar nada: `pnpm seed:demo && pnpm demo:sourcemaps` minifica un pequeño checkout, sube su mapa con la CLI, envía un error ocurrido en el bundle y te dice qué abrir.
+
+## Datos sensibles
+
+Los eventos pueden arrastrar secretos sin que nadie lo note (una contraseña en un formulario, un `Authorization` en las cabeceras, un token en la URL). La API los elimina **antes de encolar el evento**, así que nunca llegan a Redis ni a la base de datos (`packages/shared/src/scrub.ts`):
+
+- **Por clave**: el valor de cualquier campo llamado `password`, `token`, `secret`, `api_key`, `authorization`, `cookie`, `credit_card`, `cvv`, `ssn`... (en cualquier estilo: `apiKey`, `X-Api-Key`, `refresh_token`) se reemplaza por `[Filtered]`, en cualquier profundidad.
+- **Por contenido**, en cualquier texto (mensajes, URLs, breadcrumbs, `extra`): JWT, `Bearer ...`, números de tarjeta válidos (algoritmo de Luhn), claves de AWS/GitHub/Stripe/Slack, `usuario:clave@` en URLs, parámetros como `?access_token=...`, `password=...` y bloques de clave privada.
+- No se tocan los campos de identificación (`event_id`, `release`, `user.id`...) ni mensajes normales como `Invalid token: expired`: un filtro que esconde de más hace los errores ilegibles.
+
+Es una red de seguridad, no un sustituto de no enviar datos sensibles: el SDK ya omite el texto de los clicks y la query de las URLs.

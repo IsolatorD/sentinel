@@ -522,3 +522,65 @@ describe("ingesta: límites de ritmo", () => {
 		).toBe(202);
 	});
 });
+
+describe("datos sensibles", () => {
+	it("se eliminan antes de guardar el evento, por clave y por contenido", async () => {
+		const t = await createTenant();
+		const res = await t.client.ingest(t.projectId, t.key, {
+			level: "error",
+			message: "Pago rechazado con 4242 4242 4242 4242",
+			user: { id: "u1", email: "ana@example.com" },
+			request: {
+				url: "https://shop.dev/cart?access_token=abc123&page=2",
+				headers: {
+					Authorization: "Bearer abcdefghijkl",
+					"User-Agent": "Mozilla",
+				},
+			},
+			extra: { form: { password: "hunter2", name: "Ana" } },
+			exception: {
+				values: [{ type: "Error", value: "login failed password=hunter2" }],
+			},
+		});
+		expect(res.status).toBe(202);
+
+		await eventually(async () => {
+			const { items } = (
+				await t.client.get(`${t.projectPath}/issues?status=all`, t.owner)
+			).json;
+			expect(items).toHaveLength(1);
+		});
+		const issues = (
+			await t.client.get(`${t.projectPath}/issues?status=all`, t.owner)
+		).json;
+		const issue = issues.items[0];
+		const events = (
+			await t.client.get(`${t.projectPath}/issues/${issue.id}/events`, t.owner)
+		).json;
+		const detail = (
+			await t.client.get(
+				`${t.projectPath}/issues/${issue.id}/events/${events.items[0].id}`,
+				t.owner,
+			)
+		).json;
+		const payload = JSON.stringify(detail.payload);
+
+		for (const secret of ["hunter2", "4242 4242", "abc123", "abcdefghijkl"]) {
+			expect(payload, secret).not.toContain(secret);
+		}
+		expect(detail.payload.request.headers).toEqual({
+			Authorization: "[Filtered]",
+			"User-Agent": "Mozilla",
+		});
+		expect(detail.payload.request.url).toBe(
+			"https://shop.dev/cart?access_token=[Filtered]&page=2",
+		);
+		expect(detail.payload.extra.form).toEqual({
+			password: "[Filtered]",
+			name: "Ana",
+		});
+		// Lo que no es sensible se conserva, incluida la identificación del usuario.
+		expect(detail.payload.user).toEqual({ id: "u1", email: "ana@example.com" });
+		expect(detail.message).not.toContain("hunter2");
+	});
+});
