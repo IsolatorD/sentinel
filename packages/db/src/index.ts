@@ -15,6 +15,7 @@ export {
 	sql,
 	TransactionRollbackError,
 } from "drizzle-orm";
+export { runMigrations } from "./migrate.js";
 export * from "./schema/index.js";
 export { schema };
 

@@ -17,6 +17,12 @@ export function createAuth(opts: AuthOptions) {
 		secret: opts.secret,
 		baseURL: opts.baseURL,
 		trustedOrigins: [opts.webOrigin],
+		advanced: {
+			// Explícito a propósito: por defecto Better Auth apaga la validación de origen
+			// cuando NODE_ENV=test, y la seguridad no debe depender del entorno.
+			disableOriginCheck: false,
+			disableCSRFCheck: false,
+		},
 		database: drizzleAdapter(opts.db, { provider: "pg", schema }),
 		emailAndPassword: {
 			enabled: true,

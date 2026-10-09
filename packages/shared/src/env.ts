@@ -23,6 +23,8 @@ export const baseEnvShape = {
 	DATABASE_URL: z.string().url(),
 	REDIS_HOST: z.string().min(1).default("localhost"),
 	REDIS_PORT: z.coerce.number().int().positive().default(6379),
+	/** Índice de la base de Redis (0 a 15). Permite aislar entornos que comparten un Redis. */
+	REDIS_DB: z.coerce.number().int().min(0).max(15).default(0),
 };
 
 /** Valida las variables de entorno y falla al arrancar con un mensaje claro. */

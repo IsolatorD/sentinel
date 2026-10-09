@@ -34,6 +34,7 @@ import { EventsModule } from "./events/events.module.js";
 				connection: {
 					host: config.get("REDIS_HOST", { infer: true }),
 					port: config.get("REDIS_PORT", { infer: true }),
+					db: config.get("REDIS_DB", { infer: true }),
 				},
 			}),
 		}),
