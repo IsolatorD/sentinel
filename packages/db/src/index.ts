@@ -9,6 +9,7 @@ export {
 	countDistinct,
 	desc,
 	eq,
+	exists,
 	ilike,
 	inArray,
 	or,

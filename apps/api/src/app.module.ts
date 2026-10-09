@@ -14,6 +14,7 @@ import { IssuesModule } from "./issues/issues.module.js";
 import { OrganizationsModule } from "./organizations/organizations.module.js";
 import { ProjectsModule } from "./projects/projects.module.js";
 import { RedisModule } from "./redis/redis.module.js";
+import { ReleasesModule } from "./releases/releases.module.js";
 
 @Module({
 	imports: [
@@ -39,6 +40,7 @@ import { RedisModule } from "./redis/redis.module.js";
 		ProjectsModule,
 		IngestModule,
 		IssuesModule,
+		ReleasesModule,
 	],
 	providers: [{ provide: APP_FILTER, useClass: AllExceptionsFilter }],
 })

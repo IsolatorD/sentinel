@@ -6,12 +6,13 @@ import type {
 	IssueDetailDto,
 	IssueDto,
 	IssueListDto,
-	IssueStatus,
 	ListIssueEventsQuery,
 	ListIssuesQuery,
+	UpdateIssueInput,
 } from "@sentinel/shared";
 import { OrgAccessService } from "../organizations/org-access.service.js";
 import { ProjectsService } from "../projects/projects.service.js";
+import { ReleasesService } from "../releases/releases.service.js";
 import {
 	type EventRow,
 	IssueEventsRepository,
@@ -26,7 +27,13 @@ const toIssueDto = (row: IssueRow, userCount: number): IssueDto => ({
 	culprit: row.culprit,
 	type: row.type,
 	level: row.level,
-	status: row.status as IssueStatus,
+	status: row.status as IssueDto["status"],
+	firstRelease: row.firstRelease,
+	lastRelease: row.lastRelease,
+	resolvedRelease: row.resolvedRelease,
+	resolvedInclusive: row.resolvedInclusive,
+	regressedAt: row.regressedAt ? row.regressedAt.toISOString() : null,
+	regressedInRelease: row.regressedInRelease,
 	eventCount: row.eventCount,
 	userCount,
 	firstSeen: row.firstSeen.toISOString(),
@@ -59,6 +66,7 @@ export class IssuesService {
 		private readonly events: IssueEventsRepository,
 		private readonly access: OrgAccessService,
 		private readonly projects: ProjectsService,
+		private readonly releases: ReleasesService,
 	) {}
 
 	async list(
@@ -96,16 +104,41 @@ export class IssuesService {
 		};
 	}
 
-	/** Resolver o ignorar es trabajo de triage: lo puede hacer cualquier miembro. */
+	/**
+	 * Resolver o ignorar es trabajo de triage: lo puede hacer cualquier miembro.
+	 * Al resolver se puede ligar a una release (ver `resolutionSchema`):
+	 * - "próxima release": la referencia es la última release conocida y reabre una posterior.
+	 *   Si el proyecto aún no tiene releases no hay referencia, y cualquier evento reabrirá el issue.
+	 * - "release X": la corrección va en X, y la propia X ya cuenta como regresión.
+	 */
 	async updateStatus(
 		userId: string,
 		orgId: string,
 		projectId: string,
 		issueId: string,
-		status: IssueStatus,
+		input: UpdateIssueInput,
 	): Promise<IssueDto> {
 		await this.authorize(userId, orgId, projectId, "member");
-		const row = await this.issues.updateStatus(projectId, issueId, status);
+
+		let resolvedRelease: string | null = null;
+		let resolvedInclusive = false;
+		if (input.status === "resolved" && input.resolution) {
+			if (input.resolution.type === "release") {
+				resolvedRelease = input.resolution.release;
+				resolvedInclusive = true;
+				// Se registra para poder ordenarla por fecha si su versión no es semver.
+				await this.releases.ensure(projectId, resolvedRelease);
+			} else {
+				resolvedRelease =
+					(await this.releases.latestVersion(projectId)) ?? null;
+			}
+		}
+
+		const row = await this.issues.updateStatus(projectId, issueId, {
+			status: input.status,
+			resolvedRelease,
+			resolvedInclusive,
+		});
 		if (!row) throw new NotFoundException("Issue not found");
 		const users = await this.issues.userCounts([issueId]);
 		return toIssueDto(row, users.get(issueId) ?? 0);

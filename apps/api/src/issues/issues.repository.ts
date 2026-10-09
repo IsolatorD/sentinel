@@ -8,6 +8,7 @@ import {
 	desc,
 	eq,
 	event,
+	exists,
 	ilike,
 	inArray,
 	issue,
@@ -19,6 +20,12 @@ import { containsPattern } from "./domain/search.js";
 
 export type IssueRow = typeof issue.$inferSelect;
 
+export interface StatusChange {
+	status: IssueStatus;
+	resolvedRelease: string | null;
+	resolvedInclusive: boolean;
+}
+
 // Única capa que conoce Drizzle para issues.
 @Injectable()
 export class IssuesRepository {
@@ -29,6 +36,22 @@ export class IssuesRepository {
 		query: ListIssuesQuery,
 	): Promise<{ rows: IssueRow[]; total: number }> {
 		const pattern = query.q ? containsPattern(query.q) : undefined;
+
+		// Entorno y release viven en los eventos: se filtra por "tiene algún evento que cumpla".
+		const eventFilters = [
+			query.environment ? eq(event.environment, query.environment) : undefined,
+			query.release ? eq(event.release, query.release) : undefined,
+		].filter((f) => f !== undefined);
+		const byEvents =
+			eventFilters.length > 0
+				? exists(
+						this.db
+							.select({ one: event.id })
+							.from(event)
+							.where(and(eq(event.issueId, issue.id), ...eventFilters)),
+					)
+				: undefined;
+
 		const where = and(
 			eq(issue.projectId, projectId),
 			query.status === "all" ? undefined : eq(issue.status, query.status),
@@ -36,6 +59,7 @@ export class IssuesRepository {
 			pattern
 				? or(ilike(issue.title, pattern), ilike(issue.culprit, pattern))
 				: undefined,
+			byEvents,
 		);
 
 		const sortColumn = {
@@ -85,14 +109,26 @@ export class IssuesRepository {
 		return row;
 	}
 
+	/**
+	 * Cambio manual de estado. Al resolver se guarda la release asociada (si la hay), y siempre
+	 * se limpia la marca de regresión: la persona ya ha revisado el issue.
+	 */
 	async updateStatus(
 		projectId: string,
 		issueId: string,
-		status: IssueStatus,
+		change: StatusChange,
 	): Promise<IssueRow | undefined> {
 		const [row] = await this.db
 			.update(issue)
-			.set({ status })
+			.set({
+				status: change.status,
+				resolvedRelease:
+					change.status === "resolved" ? change.resolvedRelease : null,
+				resolvedInclusive:
+					change.status === "resolved" ? change.resolvedInclusive : false,
+				regressedAt: null,
+				regressedInRelease: null,
+			})
 			.where(and(eq(issue.id, issueId), eq(issue.projectId, projectId)))
 			.returning();
 		return row;

@@ -20,6 +20,10 @@ export const listIssuesQuerySchema = paginationQuerySchema.extend({
 	level: levelSchema.optional(),
 	/** Busca en el título y en el culprit. */
 	q: z.string().trim().min(1).max(200).optional(),
+	/** Solo issues con algún evento en este entorno. */
+	environment: z.string().trim().min(1).max(256).optional(),
+	/** Solo issues con algún evento en esta release. */
+	release: z.string().trim().min(1).max(256).optional(),
 	sort: z.enum(ISSUE_SORTS).default("lastSeen"),
 	order: z.enum(["asc", "desc"]).default("desc"),
 });
@@ -28,7 +32,30 @@ export type ListIssuesQuery = z.infer<typeof listIssuesQuerySchema>;
 export const listIssueEventsQuerySchema = paginationQuerySchema;
 export type ListIssueEventsQuery = z.infer<typeof listIssueEventsQuerySchema>;
 
-export const updateIssueSchema = z.object({ status: issueStatusSchema });
+/**
+ * Cómo se resuelve un issue respecto de las releases:
+ * - `next_release`: se corregirá en la próxima; solo reabre un evento de una release posterior a la actual.
+ * - `release`: la corrección va en esa release; reabre un evento de ella o de una posterior.
+ * Sin `resolution`, cualquier evento nuevo reabre el issue.
+ */
+export const resolutionSchema = z.discriminatedUnion("type", [
+	z.object({ type: z.literal("next_release") }),
+	z.object({
+		type: z.literal("release"),
+		release: z.string().trim().min(1).max(256),
+	}),
+]);
+export type Resolution = z.infer<typeof resolutionSchema>;
+
+export const updateIssueSchema = z
+	.object({
+		status: issueStatusSchema,
+		resolution: resolutionSchema.optional(),
+	})
+	.refine((v) => v.resolution === undefined || v.status === "resolved", {
+		path: ["resolution"],
+		message: "A resolution only applies when status is 'resolved'",
+	});
 export type UpdateIssueInput = z.infer<typeof updateIssueSchema>;
 
 // ---------- Respuestas ----------
@@ -50,6 +77,15 @@ export const issueDtoSchema = z.object({
 	type: z.string(),
 	level: z.string(),
 	status: issueStatusSchema,
+	/** Releases en las que apareció por primera y por última vez (null si no enviaban release). */
+	firstRelease: z.string().nullable(),
+	lastRelease: z.string().nullable(),
+	/** Si está resuelto en función de una release: cuál, y si esa misma release ya cuenta como regresión. */
+	resolvedRelease: z.string().nullable(),
+	resolvedInclusive: z.boolean(),
+	/** Se reabrió solo tras estar resuelto (regresión), y en qué release. */
+	regressedAt: z.string().datetime().nullable(),
+	regressedInRelease: z.string().nullable(),
 	eventCount: z.number().int(),
 	/** Usuarios distintos afectados (según el identificador del evento). */
 	userCount: z.number().int(),

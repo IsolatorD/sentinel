@@ -3,6 +3,7 @@ import { describe, expect, it, vi } from "vitest";
 import { OrgAccessService } from "../organizations/org-access.service.js";
 import type { OrganizationsRepository } from "../organizations/organizations.repository.js";
 import type { ProjectsService } from "../projects/projects.service.js";
+import type { ReleasesService } from "../releases/releases.service.js";
 import type {
 	EventRow,
 	IssueEventsRepository,
@@ -24,6 +25,12 @@ const issueRow = (over: Partial<IssueRow> = {}): IssueRow => ({
 	type: "TypeError",
 	level: "error",
 	status: "unresolved",
+	firstRelease: null,
+	lastRelease: null,
+	resolvedRelease: null,
+	resolvedInclusive: false,
+	regressedAt: null,
+	regressedInRelease: null,
 	eventCount: 3,
 	firstSeen: at,
 	lastSeen: at,
@@ -54,6 +61,7 @@ function setup(
 		issues?: Partial<IssuesRepository>;
 		events?: Partial<IssueEventsRepository>;
 		projectExists?: boolean;
+		latestRelease?: string;
 	} = {},
 ) {
 	const access = new OrgAccessService({
@@ -65,6 +73,10 @@ function setup(
 				throw new NotFoundException("Project not found");
 		}),
 	} as unknown as ProjectsService;
+	const releases = {
+		latestVersion: vi.fn(async () => deps.latestRelease),
+		ensure: vi.fn(async () => {}),
+	};
 	const issues = { userCounts: vi.fn(async () => new Map()), ...deps.issues };
 	const events = { ...deps.events };
 	return {
@@ -73,7 +85,9 @@ function setup(
 			events as unknown as IssueEventsRepository,
 			access,
 			projects,
+			releases as unknown as ReleasesService,
 		),
+		releases,
 		issues,
 		events,
 		projects,
@@ -126,7 +140,9 @@ describe("IssuesService: acceso", () => {
 			service.list("u", "org", PROJECT_ID, query),
 		).resolves.toBeDefined();
 		await expect(
-			service.updateStatus("u", "org", PROJECT_ID, ISSUE_ID, "resolved"),
+			service.updateStatus("u", "org", PROJECT_ID, ISSUE_ID, {
+				status: "resolved",
+			}),
 		).resolves.toMatchObject({
 			status: "resolved",
 		});
@@ -218,7 +234,9 @@ describe("IssuesService: cambios y borrado", () => {
 			issues: { updateStatus: vi.fn(async () => undefined) },
 		});
 		await expect(
-			service.updateStatus("u", "org", PROJECT_ID, ISSUE_ID, "ignored"),
+			service.updateStatus("u", "org", PROJECT_ID, ISSUE_ID, {
+				status: "ignored",
+			}),
 		).rejects.toBeInstanceOf(NotFoundException);
 	});
 
@@ -284,5 +302,68 @@ describe("IssuesService: eventos", () => {
 			service.getEvent("u", "org", PROJECT_ID, ISSUE_ID, EVENT_ID),
 		).rejects.toBeInstanceOf(NotFoundException);
 		expect(find).not.toHaveBeenCalled();
+	});
+});
+
+describe("IssuesService.updateStatus: resolución ligada a una release", () => {
+	const run = async (
+		input: Parameters<IssuesService["updateStatus"]>[4],
+		latestRelease?: string,
+	) => {
+		const updateStatus = vi.fn(async (..._args: unknown[]) => issueRow());
+		const ctx = setup("member", { latestRelease, issues: { updateStatus } });
+		await ctx.service.updateStatus("u", "org", PROJECT_ID, ISSUE_ID, input);
+		return { change: updateStatus.mock.calls[0]?.[2], releases: ctx.releases };
+	};
+
+	it("sin `resolution`, cualquier evento nuevo reabrirá el issue", async () => {
+		const { change } = await run({ status: "resolved" }, "2.4.0");
+		expect(change).toEqual({
+			status: "resolved",
+			resolvedRelease: null,
+			resolvedInclusive: false,
+		});
+	});
+
+	it("'próxima release' toma como referencia la última release conocida, de forma no inclusiva", async () => {
+		const { change } = await run(
+			{ status: "resolved", resolution: { type: "next_release" } },
+			"2.4.0",
+		);
+		expect(change).toEqual({
+			status: "resolved",
+			resolvedRelease: "2.4.0",
+			resolvedInclusive: false,
+		});
+	});
+
+	it("'próxima release' en un proyecto sin releases no tiene referencia (reabre con cualquier evento)", async () => {
+		const { change } = await run({
+			status: "resolved",
+			resolution: { type: "next_release" },
+		});
+		expect(change).toMatchObject({ resolvedRelease: null });
+	});
+
+	it("'release X' es inclusiva y registra la release para poder ordenarla", async () => {
+		const { change, releases } = await run({
+			status: "resolved",
+			resolution: { type: "release", release: "2.5.0" },
+		});
+		expect(change).toEqual({
+			status: "resolved",
+			resolvedRelease: "2.5.0",
+			resolvedInclusive: true,
+		});
+		expect(releases.ensure).toHaveBeenCalledWith(PROJECT_ID, "2.5.0");
+	});
+
+	it("ignorar o reabrir descarta cualquier resolución previa", async () => {
+		const { change } = await run({ status: "unresolved" }, "2.4.0");
+		expect(change).toEqual({
+			status: "unresolved",
+			resolvedRelease: null,
+			resolvedInclusive: false,
+		});
 	});
 });

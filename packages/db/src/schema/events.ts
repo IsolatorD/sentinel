@@ -1,4 +1,5 @@
 import {
+	boolean,
 	index,
 	integer,
 	jsonb,
@@ -25,6 +26,16 @@ export const issue = pgTable(
 		level: text("level").notNull().default("error"),
 		status: text("status").notNull().default("unresolved"),
 		eventCount: integer("event_count").notNull().default(0),
+		// Releases en las que apareció por primera vez y por última vez.
+		firstRelease: text("first_release"),
+		lastRelease: text("last_release"),
+		// Resolución ligada a una release: si es null, cualquier evento nuevo reabre el issue.
+		// Con valor, solo reabre un evento de una release posterior (o igual, si es inclusiva).
+		resolvedRelease: text("resolved_release"),
+		resolvedInclusive: boolean("resolved_inclusive").notNull().default(false),
+		// Se reabrió solo después de estar resuelto (regresión), y en qué release.
+		regressedAt: timestamp("regressed_at", { withTimezone: true }),
+		regressedInRelease: text("regressed_in_release"),
 		firstSeen: timestamp("first_seen", { withTimezone: true }).notNull(),
 		lastSeen: timestamp("last_seen", { withTimezone: true }).notNull(),
 		createdAt: timestamp("created_at", { withTimezone: true })
@@ -69,5 +80,10 @@ export const event = pgTable(
 	(t) => [
 		index("event_issue_timestamp_idx").on(t.issueId, t.timestamp),
 		index("event_project_timestamp_idx").on(t.projectId, t.timestamp),
+		// Filtros del listado de issues por entorno y release.
+		index("event_issue_environment_idx").on(t.issueId, t.environment),
+		index("event_issue_release_idx").on(t.issueId, t.release),
+		index("event_project_environment_idx").on(t.projectId, t.environment),
+		index("event_project_release_idx").on(t.projectId, t.release),
 	],
 );

@@ -83,7 +83,7 @@ export class IssuesController {
 	@ApiOperation({
 		summary: "Cambia el estado de un issue (resolver, ignorar, reabrir)",
 		description:
-			"Cualquier miembro puede hacerlo. Un issue resuelto que vuelve a ocurrir se reabre solo.",
+			"Cualquier miembro puede hacerlo. Al resolver se puede indicar `resolution`: `next_release` (se corregirá en la próxima; solo reabre un evento de una release posterior a la actual) o `{ type: 'release', release }` (la corrección va en esa release). Sin `resolution`, cualquier evento nuevo reabre el issue (una regresión).",
 	})
 	@ApiBody({ schema: docs.updateIssue })
 	@ApiOkResponse({ schema: docs.issue })
@@ -94,13 +94,7 @@ export class IssuesController {
 		@Param("issueId", ParseUUIDPipe) issueId: string,
 		@Body(new ZodValidationPipe(updateIssueSchema)) body: UpdateIssueInput,
 	) {
-		return this.issues.updateStatus(
-			user.id,
-			orgId,
-			projectId,
-			issueId,
-			body.status,
-		);
+		return this.issues.updateStatus(user.id, orgId, projectId, issueId, body);
 	}
 
 	@Delete(":issueId")
