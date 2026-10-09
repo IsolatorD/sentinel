@@ -1,0 +1,99 @@
+import { randomBytes } from "node:crypto";
+import { runMigrations } from "@sentinel/db";
+import { Redis } from "ioredis";
+import pg from "pg";
+import type { TestProject } from "vitest/node";
+import { databaseUrl, e2eConfig } from "./support/config.js";
+import type { E2EContext } from "./support/context.js";
+import {
+	freePort,
+	type ManagedProcess,
+	startApp,
+	stop,
+	waitFor,
+} from "./support/processes.js";
+
+const processes: ManagedProcess[] = [];
+
+async function recreateDatabase(adminUrl: string, name: string) {
+	const admin = new pg.Client({ connectionString: adminUrl });
+	await admin.connect();
+	try {
+		await admin.query(`DROP DATABASE IF EXISTS ${name} WITH (FORCE)`);
+		await admin.query(`CREATE DATABASE ${name}`);
+	} finally {
+		await admin.end();
+	}
+}
+
+export default async function setup(project: TestProject) {
+	const cfg = e2eConfig;
+	const dbUrl = databaseUrl(cfg.postgresAdminUrl, cfg.databaseName);
+
+	// 1. Base de datos propia, siempre limpia, con el esquema real (migraciones).
+	await recreateDatabase(cfg.postgresAdminUrl, cfg.databaseName);
+	await runMigrations(dbUrl);
+
+	// 2. Índice de Redis propio, vacío.
+	const redis = new Redis({
+		host: cfg.redisHost,
+		port: cfg.redisPort,
+		db: cfg.redisDb,
+	});
+	await redis.flushdb();
+	await redis.quit();
+
+	// 3. API y worker compilados, como en producción.
+	const port = await freePort();
+	const baseUrl = `http://localhost:${port}`;
+	const shared = {
+		NODE_ENV: "test",
+		LOG_LEVEL: "warn",
+		DATABASE_URL: dbUrl,
+		REDIS_HOST: cfg.redisHost,
+		REDIS_PORT: String(cfg.redisPort),
+		REDIS_DB: String(cfg.redisDb),
+	};
+	const api = startApp("api", {
+		...shared,
+		API_PORT: String(port),
+		BETTER_AUTH_SECRET: randomBytes(24).toString("base64"),
+		BETTER_AUTH_URL: baseUrl,
+		WEB_ORIGIN: "http://localhost:5173",
+		INGEST_RATE_LIMIT_PER_MINUTE: String(cfg.ingestRateLimitPerMinute),
+		ENABLE_DOCS: "true",
+	});
+	const worker = startApp("worker", shared);
+	processes.push(api, worker);
+
+	await waitFor(async () => (await fetch(`${baseUrl}/api/health`)).ok, {
+		timeoutMs: 60_000,
+		label: "la API responde en /api/health",
+		processes,
+	});
+
+	const context: E2EContext = {
+		baseUrl,
+		databaseUrl: dbUrl,
+		redis: { host: cfg.redisHost, port: cfg.redisPort, db: cfg.redisDb },
+		ingestRateLimitPerMinute: cfg.ingestRateLimitPerMinute,
+	};
+	project.provide("e2e", context);
+
+	return async function teardown() {
+		await Promise.all(processes.map(stop));
+		const cleanup = new Redis({
+			host: cfg.redisHost,
+			port: cfg.redisPort,
+			db: cfg.redisDb,
+		});
+		await cleanup.flushdb();
+		await cleanup.quit();
+		const admin = new pg.Client({ connectionString: cfg.postgresAdminUrl });
+		await admin.connect();
+		await admin.query(
+			`DROP DATABASE IF EXISTS ${cfg.databaseName} WITH (FORCE)`,
+		);
+		await admin.end();
+	};
+}

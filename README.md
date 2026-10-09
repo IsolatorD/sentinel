@@ -95,3 +95,16 @@ Requiere sesión. Cuelga de un proyecto: `/api/organizations/:orgId/projects/:pr
 | GET | `/:issueId/events/:eventId` | evento completo (stacktrace, breadcrumbs, contexto) |
 
 Parámetros del listado: `status` (`unresolved` por defecto, `resolved`, `ignored` o `all`), `level`, `q` (busca en título y culprit), `sort` (`lastSeen`, `firstSeen`, `events`), `order`, `limit` (máx. 100) y `offset`. Cada issue incluye `userCount` (usuarios distintos afectados). Un issue resuelto que vuelve a ocurrir se reabre solo; uno ignorado sigue ignorado.
+
+## Pruebas
+
+| Comando | Qué ejecuta | Necesita |
+|---|---|---|
+| `pnpm test` | Tests unitarios (reglas puras, servicios con repositorios falsos, SDK en jsdom) | nada |
+| `pnpm test:e2e` | Pruebas de integración en `tests/e2e` | `pnpm infra:up` (Postgres y Redis) |
+
+Las pruebas de integración compilan y **arrancan la API y el worker reales** (`dist/`), y los ejercitan por HTTP contra Postgres y Redis reales: autenticación, permisos por rol, aislamiento entre organizaciones, ingesta, agrupación, idempotencia, rate limiting, CORS, la API de issues y el SDK de navegador.
+
+Son independientes de tu entorno de desarrollo: usan su propia base de datos (`sentinel_e2e`, que se recrea y se borra en cada corrida), el índice 15 de Redis y un puerto libre, así que se pueden correr con `pnpm dev` encendido. Si algo falla, los logs de la API y el worker quedan en `tests/e2e/.logs`. Variables opcionales: `E2E_POSTGRES_URL`, `E2E_REDIS_HOST`, `E2E_REDIS_PORT`, `E2E_REDIS_DB`.
+
+En el CI corren como un job aparte con servicios de Postgres y Redis.

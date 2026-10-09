@@ -1,0 +1,25 @@
+{
+	"name": "@sentinel/e2e",
+	"version": "0.0.0",
+	"private": true,
+	"type": "module",
+	"description": "Pruebas de integración: levantan la API y el worker compilados contra Postgres y Redis reales.",
+	"scripts": {
+		"e2e": "vitest run",
+		"typecheck": "tsc --noEmit"
+	},
+	"devDependencies": {
+		"@sentinel/browser": "workspace:*",
+		"@sentinel/db": "workspace:*",
+		"@sentinel/shared": "workspace:*",
+		"@types/node": "^26.6.4",
+		"@types/pg": "^8.23.1",
+		"bullmq": "^6.3.11",
+		"ioredis": "^6.0.0",
+		"jsdom": "^30.1.2",
+		"pg": "^8.23.1",
+		"typescript": "~5.9.3",
+		"vitest": "^5.0.3",
+		"zod": "^4.6.5"
+	}
+}
