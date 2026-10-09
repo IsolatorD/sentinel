@@ -1,6 +1,7 @@
 import { BullModule } from "@nestjs/bullmq";
 import { Module } from "@nestjs/common";
 import { ConfigModule, ConfigService } from "@nestjs/config";
+import { DatabaseModule } from "./database/database.module.js";
 import { EventsModule } from "./events/events.module.js";
 
 @Module({
@@ -15,6 +16,7 @@ import { EventsModule } from "./events/events.module.js";
 				},
 			}),
 		}),
+		DatabaseModule,
 		EventsModule,
 	],
 })

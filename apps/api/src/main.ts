@@ -10,7 +10,11 @@ import { AppModule } from "./app.module.js";
 async function bootstrap() {
 	const app = await NestFactory.create<NestFastifyApplication>(
 		AppModule,
-		new FastifyAdapter(),
+		new FastifyAdapter({
+			bodyLimit: 1024 * 1024,
+			// Detrás de un proxy/CDN, activar para que request.ip sea la IP real.
+			trustProxy: process.env.TRUST_PROXY === "true",
+		}),
 		{ bodyParser: false },
 	);
 
@@ -33,9 +37,24 @@ async function bootstrap() {
 	);
 
 	app.setGlobalPrefix("api");
+	// CORS por ruta: la ingesta la llaman los SDK desde cualquier sitio (sin
+	// cookies); el resto de la API solo acepta el origen del dashboard.
+	const webOrigin = process.env.WEB_ORIGIN ?? "http://localhost:5173";
+	const ingestPath = /^\/api\/[0-9a-f-]{36}\/events/i;
 	app.enableCors({
-		origin: process.env.WEB_ORIGIN ?? "http://localhost:5173",
-		credentials: true,
+		delegator: (req, callback) => {
+			callback(
+				null,
+				ingestPath.test(req.url)
+					? {
+							origin: "*",
+							methods: ["POST", "OPTIONS"],
+							allowedHeaders: ["Content-Type", "X-Sentinel-Key"],
+							maxAge: 86_400,
+						}
+					: { origin: webOrigin, credentials: true },
+			);
+		},
 	});
 
 	const port = Number(process.env.API_PORT ?? 3000);
