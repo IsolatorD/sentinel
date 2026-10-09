@@ -1,7 +1,7 @@
 import { BullModule } from "@nestjs/bullmq";
 import { Module } from "@nestjs/common";
 import { ConfigModule, ConfigService } from "@nestjs/config";
-import { EventsModule } from "./events/events.module";
+import { EventsModule } from "./events/events.module.js";
 
 @Module({
 	imports: [

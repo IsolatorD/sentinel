@@ -1,7 +1,7 @@
 import { All, Controller, Inject, Req, Res } from "@nestjs/common";
 import type { FastifyReply, FastifyRequest } from "fastify";
-import type { Auth } from "./auth";
-import { AUTH } from "./auth.constants";
+import { AUTH } from "./auth.constants.js";
+import type { Auth } from "./auth.js";
 
 // Better Auth expone un handler Web estándar (Request -> Response).
 // Este controlador traduce entre Fastify y ese handler.

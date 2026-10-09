@@ -1,10 +1,10 @@
 import { Module } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import type { Database } from "@sentinel/db";
-import { DB } from "../database/database.module";
-import { createAuth } from "./auth";
-import { AUTH } from "./auth.constants";
-import { AuthController } from "./auth.controller";
+import { DB } from "../database/database.module.js";
+import { AUTH } from "./auth.constants.js";
+import { AuthController } from "./auth.controller.js";
+import { createAuth } from "./auth.js";
 
 @Module({
 	controllers: [AuthController],

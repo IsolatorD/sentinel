@@ -7,7 +7,7 @@ import {
 	uniqueIndex,
 	uuid,
 } from "drizzle-orm/pg-core";
-import { organization } from "./auth";
+import { organization } from "./auth.js";
 
 export const project = pgTable(
 	"project",

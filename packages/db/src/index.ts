@@ -1,8 +1,8 @@
 import { drizzle } from "drizzle-orm/node-postgres";
 import { Pool } from "pg";
-import * as schema from "./schema";
+import * as schema from "./schema/index.js";
 
-export * from "./schema";
+export * from "./schema/index.js";
 export { schema };
 
 export function createDb(connectionString: string) {
