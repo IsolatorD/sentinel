@@ -7,6 +7,7 @@ import {
 	FastifyAdapter,
 	type NestFastifyApplication,
 } from "@nestjs/platform-fastify";
+import { MAX_SOURCE_MAP_BYTES } from "@sentinel/shared";
 import { Logger } from "nestjs-pino";
 import { AppModule } from "./app.module.js";
 import { resolveRequestId } from "./common/logging.js";
@@ -62,6 +63,36 @@ async function bootstrap() {
 	fastify.addHook("onRequest", async (request, reply) => {
 		reply.header("x-request-id", String(request.id));
 	});
+
+	// Subida de source maps: cuerpo binario con su propio límite (el JSON de la ingesta sigue en 1 MB).
+	// Como la autenticación ocurre después de leer el cuerpo, el tipo binario solo se acepta en la
+	// ruta de subida y solo si la petición trae credenciales: así nadie puede obligar al servidor
+	// a almacenar 25 MB por petición en cualquier otro endpoint.
+	const artifactUpload =
+		/^\/api\/organizations\/[^/]+\/projects\/[^/]+\/releases\/[^/]+\/artifacts\/?$/;
+	fastify.addHook("onRequest", async (request, reply) => {
+		const contentType = request.headers["content-type"] ?? "";
+		if (!contentType.startsWith("application/octet-stream")) return;
+		const path = request.url.split("?", 1)[0];
+		const allowed = request.method === "PUT" && artifactUpload.test(path);
+		const hasCredentials = Boolean(
+			request.headers.authorization || request.headers.cookie,
+		);
+		if (allowed && hasCredentials) return;
+		const status = allowed ? 401 : 415;
+		return reply.code(status).send({
+			statusCode: status,
+			code: status === 401 ? "UNAUTHORIZED" : "UNSUPPORTED_MEDIA_TYPE",
+			message: status === 401 ? "Unauthorized" : "Unsupported media type",
+			requestId: String(request.id),
+		});
+	});
+
+	fastify.addContentTypeParser(
+		"application/octet-stream",
+		{ parseAs: "buffer", bodyLimit: MAX_SOURCE_MAP_BYTES },
+		(_req, body, done) => done(null, body),
+	);
 
 	app.setGlobalPrefix("api");
 

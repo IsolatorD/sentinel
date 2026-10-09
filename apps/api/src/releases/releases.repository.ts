@@ -6,9 +6,18 @@ import {
 	eq,
 	event,
 	release,
+	releaseArtifact,
 	sql,
 } from "@sentinel/db";
 import { DB } from "../database/database.module.js";
+
+export interface ArtifactRow {
+	id: string;
+	name: string;
+	size: number;
+	sha256: string;
+	createdAt: Date;
+}
 
 export interface ReleaseRow {
 	version: string;
@@ -39,7 +48,7 @@ export class ReleasesRepository {
 			createdAt: release.createdAt,
 			eventCount: sql<number>`(select count(*)::int from "event" as e where e."project_id" = ${outerProject} and e."release" = ${outerVersion})`,
 			newIssueCount: sql<number>`(select count(*)::int from "issue" as i where i."project_id" = ${outerProject} and i."first_release" = ${outerVersion})`,
-			artifactCount: sql<number>`0`,
+			artifactCount: sql<number>`(select count(*)::int from "release_artifact" as a where a."release_id" = "release"."id")`,
 			firstEventAt: sql<
 				string | null
 			>`(select min(e."timestamp") from "event" as e where e."project_id" = ${outerProject} and e."release" = ${outerVersion})`,
@@ -110,5 +119,94 @@ export class ReleasesRepository {
 		return rows
 			.map((r) => r.environment)
 			.filter((e): e is string => e !== null);
+	}
+
+	// ---------- Archivos de la release (source maps) ----------
+
+	async listArtifacts(
+		projectId: string,
+		version: string,
+	): Promise<ArtifactRow[]> {
+		return this.db
+			.select({
+				id: releaseArtifact.id,
+				name: releaseArtifact.name,
+				size: releaseArtifact.size,
+				sha256: releaseArtifact.sha256,
+				createdAt: releaseArtifact.createdAt,
+			})
+			.from(releaseArtifact)
+			.innerJoin(release, eq(release.id, releaseArtifact.releaseId))
+			.where(
+				and(eq(release.projectId, projectId), eq(release.version, version)),
+			)
+			.orderBy(releaseArtifact.name);
+	}
+
+	/** Guarda (o reemplaza) el archivo de esa release con ese nombre; crea la release si hace falta. */
+	async upsertArtifact(
+		projectId: string,
+		version: string,
+		file: { name: string; size: number; sha256: string; content: Buffer },
+	): Promise<ArtifactRow> {
+		return this.db.transaction(async (tx) => {
+			await tx
+				.insert(release)
+				.values({ projectId, version })
+				.onConflictDoNothing();
+			const [rel] = await tx
+				.select({ id: release.id })
+				.from(release)
+				.where(
+					and(eq(release.projectId, projectId), eq(release.version, version)),
+				)
+				.limit(1);
+
+			const [row] = await tx
+				.insert(releaseArtifact)
+				.values({ projectId, releaseId: rel.id, ...file })
+				.onConflictDoUpdate({
+					target: [releaseArtifact.releaseId, releaseArtifact.name],
+					set: {
+						size: file.size,
+						sha256: file.sha256,
+						content: file.content,
+						createdAt: new Date(),
+					},
+				})
+				.returning({
+					id: releaseArtifact.id,
+					name: releaseArtifact.name,
+					size: releaseArtifact.size,
+					sha256: releaseArtifact.sha256,
+					createdAt: releaseArtifact.createdAt,
+				});
+			return row;
+		});
+	}
+
+	async deleteArtifact(
+		projectId: string,
+		version: string,
+		artifactId: string,
+	): Promise<boolean> {
+		const [rel] = await this.db
+			.select({ id: release.id })
+			.from(release)
+			.where(
+				and(eq(release.projectId, projectId), eq(release.version, version)),
+			)
+			.limit(1);
+		if (!rel) return false;
+		const rows = await this.db
+			.delete(releaseArtifact)
+			.where(
+				and(
+					eq(releaseArtifact.id, artifactId),
+					eq(releaseArtifact.releaseId, rel.id),
+				),
+			)
+			.returning({ id: releaseArtifact.id });
+		return rows.length > 0;
 	}
 }

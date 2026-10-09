@@ -6,3 +6,5 @@ export * from "./issues.js";
 export * from "./projects.js";
 export * from "./public-config.js";
 export * from "./releases.js";
+export * from "./source-maps.js";
+export * from "./tokens.js";

@@ -2,6 +2,7 @@ import type { IngestJobData } from "@sentinel/shared";
 import { describe, expect, it } from "vitest";
 import type { EventRepository, NewEvent } from "./event.repository.js";
 import { EventsService } from "./events.service.js";
+import type { SymbolicatorService } from "./symbolicator.service.js";
 
 function setup() {
 	const saved: NewEvent[] = [];
@@ -11,7 +12,12 @@ function setup() {
 			return { eventId: event.id, isNewIssue: true, duplicate: false };
 		},
 	};
-	return { service: new EventsService(repo), saved };
+	return {
+		service: new EventsService(repo, {
+			symbolicate: async (_p: string, e: unknown) => e,
+		} as unknown as SymbolicatorService),
+		saved,
+	};
 }
 
 const job = (

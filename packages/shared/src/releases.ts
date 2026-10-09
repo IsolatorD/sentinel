@@ -17,3 +17,15 @@ export type ReleaseDto = z.infer<typeof releaseDtoSchema>;
 export const releaseListDtoSchema = z.array(releaseDtoSchema);
 
 export const environmentListDtoSchema = z.array(z.string());
+
+export const artifactDtoSchema = z.object({
+	id: z.string().uuid(),
+	/** Archivo minificado al que corresponde el mapa, con "~" por el origen (p. ej. "~/assets/app.js"). */
+	name: z.string(),
+	size: z.number().int(),
+	sha256: z.string(),
+	createdAt: z.string().datetime(),
+});
+export type ArtifactDto = z.infer<typeof artifactDtoSchema>;
+
+export const artifactListDtoSchema = z.array(artifactDtoSchema);

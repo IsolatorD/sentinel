@@ -18,6 +18,12 @@ export const stackFrameSchema = z.object({
 	lineno: z.number().int().nonnegative().optional(),
 	colno: z.number().int().nonnegative().optional(),
 	in_app: z.boolean().optional(),
+	// Los añade el servidor al simbolizar con source maps (el SDK no los envía).
+	abs_path: medium.optional(),
+	context_line: medium.optional(),
+	pre_context: z.array(medium).max(10).optional(),
+	post_context: z.array(medium).max(10).optional(),
+	symbolicated: z.boolean().optional(),
 });
 export type StackFrame = z.infer<typeof stackFrameSchema>;
 

@@ -2,14 +2,23 @@ import { Injectable } from "@nestjs/common";
 import type { IngestJobData } from "@sentinel/shared";
 import { analyzeEvent, parseEventTimestamp } from "./domain/fingerprint.js";
 import { EventRepository, type SaveResult } from "./event.repository.js";
+import { SymbolicatorService } from "./symbolicator.service.js";
 
 @Injectable()
 export class EventsService {
-	constructor(private readonly events: EventRepository) {}
+	constructor(
+		private readonly events: EventRepository,
+		private readonly symbolicator: SymbolicatorService,
+	) {}
 
-	/** Analiza el evento (fingerprint, título, timestamp) y lo delega al repositorio. */
-	store(data: IngestJobData): Promise<SaveResult> {
-		const { event: ev, client } = data;
+	/**
+	 * Prepara el evento y lo delega al repositorio. El orden importa: primero se simboliza con los
+	 * source maps y recién después se calcula el fingerprint, para que agrupe por el código original
+	 * (el mismo error en dos builds distintos es un solo issue).
+	 */
+	async store(data: IngestJobData): Promise<SaveResult> {
+		const { client } = data;
+		const ev = await this.symbolicator.symbolicate(data.projectId, data.event);
 		const receivedAt = new Date(data.receivedAt);
 
 		return this.events.save({
