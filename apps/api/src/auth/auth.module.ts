@@ -4,11 +4,13 @@ import type { Database } from "@sentinel/db";
 import { DB } from "../database/database.module.js";
 import { AUTH } from "./auth.constants.js";
 import { AuthController } from "./auth.controller.js";
+import { AuthGuard } from "./auth.guard.js";
 import { createAuth } from "./auth.js";
 
 @Module({
 	controllers: [AuthController],
 	providers: [
+		AuthGuard,
 		{
 			provide: AUTH,
 			inject: [DB, ConfigService],
@@ -30,6 +32,6 @@ import { createAuth } from "./auth.js";
 			},
 		},
 	],
-	exports: [AUTH],
+	exports: [AUTH, AuthGuard],
 })
 export class AuthModule {}

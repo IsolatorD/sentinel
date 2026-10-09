@@ -2,6 +2,7 @@ import { All, Controller, Inject, Req, Res } from "@nestjs/common";
 import type { FastifyReply, FastifyRequest } from "fastify";
 import { AUTH } from "./auth.constants.js";
 import type { Auth } from "./auth.js";
+import { toWebHeaders } from "./web-headers.js";
 
 // Better Auth expone un handler Web estándar (Request -> Response).
 // Este controlador traduce entre Fastify y ese handler.
@@ -13,14 +14,7 @@ export class AuthController {
 	async handle(@Req() req: FastifyRequest, @Res() reply: FastifyReply) {
 		const url = new URL(req.url, `${req.protocol}://${req.hostname}`);
 
-		const headers = new Headers();
-		for (const [key, value] of Object.entries(req.headers)) {
-			if (Array.isArray(value)) {
-				for (const v of value) headers.append(key, v);
-			} else if (value !== undefined) {
-				headers.set(key, value);
-			}
-		}
+		const headers = toWebHeaders(req.headers);
 
 		const hasBody = req.method !== "GET" && req.method !== "HEAD";
 		const request = new Request(url, {
