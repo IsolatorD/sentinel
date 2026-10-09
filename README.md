@@ -165,3 +165,7 @@ Los eventos pueden arrastrar secretos sin que nadie lo note (una contraseña en 
 - No se tocan los campos de identificación (`event_id`, `release`, `user.id`...) ni mensajes normales como `Invalid token: expired`: un filtro que esconde de más hace los errores ilegibles.
 
 Es una red de seguridad, no un sustituto de no enviar datos sensibles: el SDK ya omite el texto de los clicks y la query de las URLs.
+
+## SDK de React
+
+`packages/sdk-react` (`@sentinel/react`) añade un `ErrorBoundary` que envía los errores de render con la pila de componentes, `withErrorBoundary` y `reactRootOptions()` para los handlers de React 19 (`onUncaughtError`, `onCaughtError`, `onRecoverableError`). Cada error se envía una sola vez aunque llegue por varios caminos. Ver su [README](packages/sdk-react/README.md).

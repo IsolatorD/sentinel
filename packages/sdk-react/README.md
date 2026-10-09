@@ -1,0 +1,79 @@
+# @sentinel/react
+
+SDK de Sentinel para React: un `ErrorBoundary` que envía los errores de render con su **pila de componentes**, y las opciones de React 19 para no perder ninguno. Reexporta todo `@sentinel/browser`, así que con un solo import tienes `init`, `captureException`, etc.
+
+Requiere React 18 o superior (los handlers de la raíz, React 19).
+
+## Uso
+
+```tsx
+import * as Sentinel from "@sentinel/react";
+import { createRoot } from "react-dom/client";
+
+Sentinel.init({ dsn: "https://<clave>@sentinel.example.com/<projectId>", release: "1.4.2" });
+
+createRoot(document.getElementById("root")!, Sentinel.reactRootOptions()).render(
+	<Sentinel.ErrorBoundary fallback={<p>Algo salió mal.</p>}>
+		<App />
+	</Sentinel.ErrorBoundary>,
+);
+```
+
+## `ErrorBoundary`
+
+Atrapa los errores de render de sus hijos, los envía y muestra `fallback` en lugar de dejar la pantalla en blanco.
+
+```tsx
+<Sentinel.ErrorBoundary
+	fallback={({ error, eventId, resetError }) => (
+		<div>
+			<p>No pudimos mostrar esta página. Referencia: {eventId}</p>
+			<button onClick={resetError}>Reintentar</button>
+		</div>
+	)}
+	resetKeys={[location.pathname]}
+>
+	<Routes />
+</Sentinel.ErrorBoundary>
+```
+
+| Prop | |
+|---|---|
+| `fallback` | Un nodo, o una función que recibe `{ error, componentStack, eventId, resetError }`. Sin ella no se muestra nada en su lugar. |
+| `resetKeys` | Si cambia alguno de estos valores (p. ej. la ruta), el límite se reinicia solo. |
+| `onError(error, componentStack, eventId)` | Después de enviar. |
+| `onReset(error, componentStack, eventId)` | Al volver a mostrar los hijos. |
+| `beforeCapture(hint, error, componentStack)` | Devuelve un `hint` con `tags`, `extra` o `level` para ese envío. |
+
+Para envolver un componente que no controlas: `withErrorBoundary(Component, { fallback })`.
+
+Cada evento lleva `contexts.react.componentStack` (visible en el detalle del issue) y los tags `handled` y `mechanism`.
+
+## `reactRootOptions()` (React 19)
+
+Opciones para `createRoot` / `hydrateRoot` que envían lo que React reporta por su cuenta:
+
+| Handler | Cuándo | Tags |
+|---|---|---|
+| `onUncaughtError` | Ningún límite lo atrapó (la app se desmonta). | `handled: false`, `react.uncaught` |
+| `onCaughtError` | Lo atrapó un `ErrorBoundary`, incluidos los de librerías de terceros. | `handled: true`, `react.caught` |
+| `onRecoverableError` | React se recuperó solo (p. ej. diferencias de hidratación). Nivel `warning`. | `handled: true`, `react.recoverable` |
+
+Usar `ErrorBoundary` y `reactRootOptions()` a la vez es seguro: cada error se envía **una sola vez**, llegue por el camino que llegue primero.
+
+`reactRootOptions(callback)` acepta un callback que se invoca tras cada envío con `(error, info, eventId)`.
+
+## Notas
+
+- Un `beforeCapture`, `onError` o callback que lance una excepción nunca impide el envío ni rompe el fallback.
+- Si el SDK no está inicializado, el `ErrorBoundary` sigue mostrando el fallback; simplemente no envía nada.
+- En React 18 en modo desarrollo, React además relanza el error como un error global del navegador. El SDK descarta el duplicado (mismo error en menos de un segundo), pero el que llega primero puede ser el global; en producción no ocurre.
+
+## Desarrollo
+
+```bash
+pnpm --filter @sentinel/react build
+pnpm --filter @sentinel/react test
+```
+
+Los tests usan el SDK real y validan cada evento contra el `ingestEventSchema` del backend.
