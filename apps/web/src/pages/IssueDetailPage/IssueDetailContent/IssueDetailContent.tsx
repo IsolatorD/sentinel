@@ -18,6 +18,7 @@ import {
 import { useCurrentProject } from "@/hooks/useScope/useScope";
 import { useIssueSearch } from "@/hooks/useSearchParams/useSearchParams";
 import { useSession } from "@/hooks/useSession/useSession";
+import { useTour } from "@/hooks/useTour/useTour";
 import { NotFoundPage } from "@/pages/NotFoundPage/NotFoundPage";
 import { ApiError } from "@/utils/apiError/apiError";
 
@@ -31,6 +32,9 @@ export function IssueDetailContent() {
 	const issue = useIssue(scope, issueId);
 	const recent = useIssueEvents(scope, issueId, { limit: 50, offset: 0 });
 	const picked = useIssueEvent(scope, issueId, search.event);
+	const event = search.event ? picked.data : issue.data?.latestEvent;
+	// Los hooks van antes de cualquier retorno anticipado.
+	useTour("issueDetail", { ready: Boolean(issue.data && event) });
 
 	if (!organization || !project) return null;
 	if (issue.isError) {
@@ -44,7 +48,6 @@ export function IssueDetailContent() {
 		);
 	}
 	const ready = { orgId: organization.id, projectId: project.id };
-	const event = search.event ? picked.data : issue.data?.latestEvent;
 
 	return (
 		<PageTemplate
@@ -70,15 +73,17 @@ export function IssueDetailContent() {
 						projectSlug={project.slug}
 					/>
 
-					<TabBar
-						label={t("issue.tabs.label")}
-						active={search.tab}
-						onChange={(tab) => update({ tab: tab as typeof search.tab })}
-						tabs={(["details", "events", "activity"] as const).map((id) => ({
-							id,
-							label: t(`issue.tabs.${id}`),
-						}))}
-					/>
+					<div data-tour="issue-tabs">
+						<TabBar
+							label={t("issue.tabs.label")}
+							active={search.tab}
+							onChange={(tab) => update({ tab: tab as typeof search.tab })}
+							tabs={(["details", "events", "activity"] as const).map((id) => ({
+								id,
+								label: t(`issue.tabs.${id}`),
+							}))}
+						/>
+					</div>
 
 					<div key={search.tab} className="animate-fade-in">
 						{search.tab === "activity" ? (

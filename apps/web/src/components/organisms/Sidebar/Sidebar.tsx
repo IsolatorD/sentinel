@@ -14,10 +14,13 @@ import { OrgSwitcher } from "@/components/organisms/Sidebar/OrgSwitcher/OrgSwitc
 import { ProjectSwitcher } from "@/components/organisms/Sidebar/ProjectSwitcher/ProjectSwitcher";
 import { UserMenu } from "@/components/organisms/Sidebar/UserMenu/UserMenu";
 import { useCurrentProject } from "@/hooks/useScope/useScope";
+import { useTour } from "@/hooks/useTour/useTour";
 
 export function Sidebar() {
 	const { t } = useTranslation();
 	const { organization, project } = useCurrentProject();
+	// La bienvenida se lanza sola la primera vez; el menú de la persona permite repetirla.
+	const { restart } = useTour("welcome", { ready: Boolean(organization) });
 
 	return (
 		<div
@@ -32,7 +35,11 @@ export function Sidebar() {
 				<ProjectSwitcher />
 			</div>
 			{organization && (
-				<nav aria-label={t("nav.main")} className="flex flex-col gap-0.5">
+				<nav
+					aria-label={t("nav.main")}
+					data-tour="main-nav"
+					className="flex flex-col gap-0.5"
+				>
 					{project && (
 						<>
 							<SidebarLink
@@ -104,7 +111,7 @@ export function Sidebar() {
 				</nav>
 			)}
 			<div className="mt-auto border-t border-white/10 pt-3">
-				<UserMenu />
+				<UserMenu onStartTour={restart} />
 			</div>
 		</div>
 	);

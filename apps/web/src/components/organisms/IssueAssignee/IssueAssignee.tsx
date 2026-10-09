@@ -15,22 +15,24 @@ export function IssueAssignee({ issue, scope }: IssueAssigneeProps) {
 	const includesCurrent = !current || list.some((m) => m.userId === current.id);
 
 	return (
-		<Select
-			aria-label={t("issue.assignee.label")}
-			className="w-48 text-sm font-normal"
-			value={current?.id ?? ""}
-			disabled={update.isPending}
-			onChange={(e) => update.mutate({ assigneeId: e.target.value || null })}
-		>
-			<option value="">{t("issue.assignee.unassigned")}</option>
-			{current && !includesCurrent && (
-				<option value={current.id}>{current.name}</option>
-			)}
-			{list.map((m) => (
-				<option key={m.userId} value={m.userId}>
-					{m.user.name}
-				</option>
-			))}
-		</Select>
+		<div data-tour="issue-assignee">
+			<Select
+				aria-label={t("issue.assignee.label")}
+				className="w-48 text-sm font-normal"
+				value={current?.id ?? ""}
+				disabled={update.isPending}
+				onChange={(e) => update.mutate({ assigneeId: e.target.value || null })}
+			>
+				<option value="">{t("issue.assignee.unassigned")}</option>
+				{current && !includesCurrent && (
+					<option value={current.id}>{current.name}</option>
+				)}
+				{list.map((m) => (
+					<option key={m.userId} value={m.userId}>
+						{m.user.name}
+					</option>
+				))}
+			</Select>
+		</div>
 	);
 }

@@ -28,15 +28,17 @@ export function IssueEventDetails({ event }: { event: EventDetailDto }) {
 	return (
 		<div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_20rem]">
 			<div className="min-w-0 space-y-4">
-				<Section title={t("issue.stackTrace.title")}>
-					{view.exception ? (
-						<StackTrace exceptions={view.exception.values} />
-					) : (
-						<p className="font-mono text-sm text-foreground">
-							{view.message ?? t("issue.stackTrace.noStack")}
-						</p>
-					)}
-				</Section>
+				<div data-tour="issue-stack">
+					<Section title={t("issue.stackTrace.title")}>
+						{view.exception ? (
+							<StackTrace exceptions={view.exception.values} />
+						) : (
+							<p className="font-mono text-sm text-foreground">
+								{view.message ?? t("issue.stackTrace.noStack")}
+							</p>
+						)}
+					</Section>
+				</div>
 				<Section title={t("issue.breadcrumbs.title")}>
 					<BreadcrumbList breadcrumbs={view.breadcrumbs ?? []} />
 				</Section>

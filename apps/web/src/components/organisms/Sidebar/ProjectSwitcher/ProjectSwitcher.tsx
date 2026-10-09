@@ -18,6 +18,7 @@ export function ProjectSwitcher() {
 	return (
 		<Menu>
 			<MenuTrigger
+				data-tour="project-switcher"
 				className="flex w-full items-center gap-2 rounded-md border border-white/10 px-2.5 py-1.5 text-left text-sm text-sidebar-text hover:bg-sidebar-hover"
 				aria-label={t("nav.project")}
 			>

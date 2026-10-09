@@ -400,6 +400,59 @@ export const en = {
 			generic: "{{who}} updated this issue",
 		},
 	},
+	tour: {
+		next: "Next",
+		back: "Back",
+		done: "Done",
+		progress: "{{current}} of {{total}}",
+		replay: "Show the guided tour",
+		welcome: {
+			org: {
+				title: "Your organization",
+				body: "Switch between organizations or create a new one here. Each one has its own projects, members and settings.",
+			},
+			project: {
+				title: "Projects",
+				body: "A project is one app that sends errors to Sentinel. Pick the one you want to look at.",
+			},
+			nav: {
+				title: "Everything about a project",
+				body: "Issues are the errors, grouped. Releases show what each version brought, Alerts tell you when something needs attention, and Settings has your DSN.",
+			},
+			user: {
+				title: "Your account",
+				body: "Change the language or sign out. You can repeat this tour from this menu whenever you want.",
+			},
+		},
+		issues: {
+			filters: {
+				title: "Find what matters",
+				body: "Filter by status, environment, release or assignee, search by text and change the order.",
+			},
+			list: {
+				title: "Your issues",
+				body: "Each row is an error with all its occurrences grouped. Click one to see its stack trace, who is affected and what led to it.",
+			},
+		},
+		issueDetail: {
+			header: {
+				title: "The issue at a glance",
+				body: "Resolve it, ignore it or reopen it. You can even say it will be fixed in a release: if it comes back later, it is flagged as a regression.",
+			},
+			assignee: {
+				title: "Who is on it",
+				body: "Assign the issue to someone on your team so nothing falls through the cracks.",
+			},
+			tabs: {
+				title: "Details, events and activity",
+				body: "Browse every occurrence, or use Activity to comment and see who changed what.",
+			},
+			stack: {
+				title: "Where it failed",
+				body: "The stack trace shows the code path. With source maps uploaded you see your original code, not the minified bundle.",
+			},
+		},
+	},
 	alerts: {
 		title: "Alerts",
 		subtitle:

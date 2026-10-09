@@ -50,6 +50,7 @@ export function IssueFilters() {
 		<div
 			className="flex flex-wrap items-center gap-3"
 			data-testid="issue-filters"
+			data-tour="issue-filters"
 		>
 			<div
 				role="tablist"

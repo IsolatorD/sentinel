@@ -408,6 +408,59 @@ export const es: Deep<Translations> = {
 			generic: "{{who}} actualizó este issue",
 		},
 	},
+	tour: {
+		next: "Siguiente",
+		back: "Atrás",
+		done: "Entendido",
+		progress: "{{current}} de {{total}}",
+		replay: "Ver el recorrido guiado",
+		welcome: {
+			org: {
+				title: "Tu organización",
+				body: "Cambia de organización o crea una nueva desde aquí. Cada una tiene sus proyectos, miembros y ajustes.",
+			},
+			project: {
+				title: "Proyectos",
+				body: "Un proyecto es una app que envía errores a Sentinel. Elige el que quieres revisar.",
+			},
+			nav: {
+				title: "Todo sobre un proyecto",
+				body: "Los issues son los errores, agrupados. Releases muestra qué trajo cada versión, Alertas te avisa cuando algo necesita atención y Configuración tiene tu DSN.",
+			},
+			user: {
+				title: "Tu cuenta",
+				body: "Cambia el idioma o cierra sesión. Puedes repetir este recorrido desde este menú cuando quieras.",
+			},
+		},
+		issues: {
+			filters: {
+				title: "Encuentra lo que importa",
+				body: "Filtra por estado, entorno, release o responsable, busca por texto y cambia el orden.",
+			},
+			list: {
+				title: "Tus issues",
+				body: "Cada fila es un error con todas sus ocurrencias agrupadas. Haz clic en uno para ver su stack trace, a quién afecta y qué lo provocó.",
+			},
+		},
+		issueDetail: {
+			header: {
+				title: "El issue de un vistazo",
+				body: "Resuélvelo, ignóralo o reábrelo. Incluso puedes decir que se corregirá en una release: si vuelve a ocurrir después, se marca como regresión.",
+			},
+			assignee: {
+				title: "Quién se encarga",
+				body: "Asigna el issue a alguien de tu equipo para que nada se pierda.",
+			},
+			tabs: {
+				title: "Detalles, eventos y actividad",
+				body: "Revisa cada ocurrencia o usa Actividad para comentar y ver quién cambió qué.",
+			},
+			stack: {
+				title: "Dónde falló",
+				body: "El stack trace muestra el camino del código. Con los source maps subidos ves tu código original, no el bundle minificado.",
+			},
+		},
+	},
 	alerts: {
 		title: "Alertas",
 		subtitle:

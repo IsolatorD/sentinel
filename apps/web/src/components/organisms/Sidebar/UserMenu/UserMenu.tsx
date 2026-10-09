@@ -1,5 +1,5 @@
 import { useNavigate } from "@tanstack/react-router";
-import { LogOut } from "lucide-react";
+import { CircleHelp, LogOut } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { Avatar } from "@/components/atoms/Avatar/Avatar";
 import { LanguageSelect } from "@/components/molecules/LanguageSelect/LanguageSelect";
@@ -11,7 +11,12 @@ import { MenuSeparator } from "@/components/molecules/MenuSeparator/MenuSeparato
 import { MenuTrigger } from "@/components/molecules/MenuTrigger/MenuTrigger";
 import { useSession, useSignOut } from "@/hooks/useSession/useSession";
 
-export function UserMenu() {
+export function UserMenu({
+	onStartTour,
+}: {
+	/** Repite el recorrido guiado de bienvenida. */
+	onStartTour?: () => void;
+}) {
 	const { t } = useTranslation();
 	const navigate = useNavigate();
 	const session = useSession();
@@ -22,6 +27,7 @@ export function UserMenu() {
 	return (
 		<Menu>
 			<MenuTrigger
+				data-tour="user-menu"
 				className="flex w-full items-center gap-2.5 rounded-md px-2 py-1.5 text-left hover:bg-sidebar-hover"
 				aria-label={t("nav.account")}
 			>
@@ -41,6 +47,12 @@ export function UserMenu() {
 					<LanguageSelect />
 				</div>
 				<MenuSeparator />
+				{onStartTour && (
+					<MenuItem onSelect={onStartTour}>
+						<CircleHelp aria-hidden className="size-4" />
+						{t("tour.replay")}
+					</MenuItem>
+				)}
 				<MenuItem
 					onSelect={() =>
 						signOut.mutate(undefined, {

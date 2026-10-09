@@ -13,6 +13,7 @@ import { ListSkeleton } from "@/components/organisms/IssueList/ListSkeleton/List
 import { useIssues } from "@/hooks/useIssues/useIssues";
 import { useCurrentProject } from "@/hooks/useScope/useScope";
 import { useIssuesSearch } from "@/hooks/useSearchParams/useSearchParams";
+import { useTour } from "@/hooks/useTour/useTour";
 import { cn } from "@/utils/cn/cn";
 import { PAGE_SIZE } from "@/utils/searchParams/searchParams.constants";
 
@@ -54,10 +55,11 @@ export function IssueList() {
 			{ resetPage: true },
 		);
 	const data = issues.data;
+	useTour("issues", { ready: Boolean(data && data.items.length > 0) });
 
 	return (
 		<div className="space-y-3">
-			<Card className="overflow-hidden">
+			<Card className="overflow-hidden" data-tour="issue-list">
 				<div
 					className={cn(
 						ISSUE_GRID,

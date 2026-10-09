@@ -49,7 +49,7 @@ export function IssueHeader({
 			: undefined;
 
 	return (
-		<Card className="p-5" data-testid="issue-header">
+		<Card className="p-5" data-testid="issue-header" data-tour="issue-header">
 			<div className="flex flex-wrap items-start justify-between gap-4">
 				<div className="min-w-0">
 					<div className="mb-2 flex items-center gap-2">

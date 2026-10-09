@@ -14,3 +14,11 @@ export function writeStorage(key: string, value: string): void {
 		// Sin persistencia: la app sigue funcionando.
 	}
 }
+
+export function removeStorage(key: string): void {
+	try {
+		window.localStorage.removeItem(key);
+	} catch {
+		// Sin persistencia: no hay nada que borrar.
+	}
+}
