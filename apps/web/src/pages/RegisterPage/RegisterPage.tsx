@@ -1,7 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import { useTranslation } from "react-i18next";
 import { RegisterForm } from "@/components/organisms/RegisterForm/RegisterForm";
-import { AuthTemplate } from "@/components/templates/AuthTemplate";
+import { AuthTemplate } from "@/components/templates/AuthTemplate/AuthTemplate";
 
 export function RegisterPage() {
 	const { t } = useTranslation();

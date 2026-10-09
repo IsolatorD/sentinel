@@ -124,6 +124,17 @@ La semilla crea el usuario `demo@sentinel.dev` (contraseña `demo-password-123`,
 
 **Arquitectura** (atómica, ver `PLAN.md` §2.2): `components/{atoms,molecules,organisms,templates}`, `pages/`, `services/` (única capa que llama a la API, validando con los esquemas de `shared`) y `hooks/` (TanStack Query sobre los services). Ningún componente ni página importa un service; un test lo verifica en cada ejecución. El estado de la pantalla (filtros, página, pestaña, evento elegido) vive en la URL.
 
+**Estructura de carpetas** (la verifica `architecture.test.ts`): cada componente, página, hook, service y util vive en su propia carpeta con su mismo nombre, y solo declara una cosa:
+
+```
+components/atoms/Button/
+├── Button.tsx              # el componente
+├── ButtonInterface.d.ts    # sus interfaces y tipos
+└── Button.constants.ts     # constantes y helpers que no necesitan estar dentro (variantes, listas, funciones puras)
+```
+
+Los subcomponentes que solo usa su padre van anidados (`organisms/Sidebar/OrgSwitcher/`); los exportados y reutilizables, al lado de los demás. Las funciones de ayuda globales están en `utils/`. Los imports usan la ruta completa (`@/components/atoms/Button/Button`), sin `index.ts`. El cliente HTTP es axios (`services/http`).
+
 Rutas: `/login`, `/register`, `/onboarding`, `/:org/projects`, `/:org/projects/:proyecto/issues`, `/:org/projects/:proyecto/issues/:issue`, `/:org/projects/:proyecto/settings`.
 
 ## Releases y regresiones

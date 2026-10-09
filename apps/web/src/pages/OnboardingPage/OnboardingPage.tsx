@@ -1,6 +1,6 @@
 import { useTranslation } from "react-i18next";
 import { OnboardingFlow } from "@/components/organisms/OnboardingFlow/OnboardingFlow";
-import { AuthTemplate } from "@/components/templates/AuthTemplate";
+import { AuthTemplate } from "@/components/templates/AuthTemplate/AuthTemplate";
 
 export function OnboardingPage() {
 	const { t } = useTranslation();

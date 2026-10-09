@@ -1,9 +1,9 @@
 import { useTranslation } from "react-i18next";
 import { IssueFilters } from "@/components/organisms/IssueFilters/IssueFilters";
 import { IssueList } from "@/components/organisms/IssueList/IssueList";
-import { PageTemplate } from "@/components/templates/PageTemplate";
+import { PageTemplate } from "@/components/templates/PageTemplate/PageTemplate";
 import { useCurrentProject } from "@/hooks/useScope/useScope";
-import { ProjectGate } from "./ProjectGate";
+import { ProjectGate } from "@/pages/ProjectGate/ProjectGate";
 
 export function IssuesPage() {
 	const { t } = useTranslation();

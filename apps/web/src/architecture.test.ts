@@ -5,6 +5,8 @@ import { describe, expect, it } from "vitest";
 // Reglas de arquitectura del frontend (ver PLAN.md §2.2), verificadas automáticamente:
 //  - Ningún componente ni página llama a un service: solo a través de hooks.
 //  - Átomos y moléculas reciben todo por props: no usan hooks de datos.
+//  - Estructura de carpetas: cada componente, página, hook, service y util vive en una carpeta con su
+//    nombre, con sus tipos en [Nombre]Interface.d.ts y sus constantes/helpers en [Nombre].constants.ts.
 
 const SRC = join(__dirname);
 
@@ -82,5 +84,95 @@ describe("arquitectura del frontend", () => {
 			importsOf(f).some(isServiceImport),
 		);
 		expect(usesServices).toBe(true);
+	});
+
+	describe("estructura de carpetas", () => {
+		const LAYERS = [
+			"components/atoms",
+			"components/molecules",
+			"components/organisms",
+			"components/templates",
+			"pages",
+			"hooks",
+			"services",
+			"utils",
+		];
+		const withTests = (dir: string): string[] =>
+			readdirSync(dir).flatMap((name) => {
+				const path = join(dir, name);
+				if (statSync(path).isDirectory()) return withTests(path);
+				return /\.(ts|tsx)$/.test(name) ? [path] : [];
+			});
+		const all = LAYERS.flatMap((layer) => withTests(join(SRC, layer)));
+
+		/** `Button.constants.test.tsx` -> `Button`; `ButtonInterface.d.ts` -> `Button`. */
+		const stemOf = (file: string) =>
+			(file.split("/").pop() ?? "")
+				.replace(/\.(d\.ts|tsx|ts)$/, "")
+				.replace(/\.test$/, "")
+				.replace(/\.constants$/, "")
+				.replace(/Interface$/, "");
+
+		it("hay archivos que revisar", () => {
+			expect(all.length).toBeGreaterThan(100);
+		});
+
+		it("cada archivo vive en una carpeta con su mismo nombre", () => {
+			const found = all
+				.filter((f) => f.split("/").at(-2) !== stemOf(f))
+				.map((f) => relative(SRC, f));
+			expect(found, found.join("\n")).toEqual([]);
+		});
+
+		it("los tipos viven en [Nombre]Interface.d.ts, no dentro del archivo del componente", () => {
+			const found = all
+				.filter((f) => !f.endsWith(".d.ts") && !/\.test\.tsx?$/.test(f))
+				.filter((f) =>
+					/^(export )?(interface|type) \w+/m.test(readFileSync(f, "utf8")),
+				)
+				.map((f) => relative(SRC, f));
+			expect(found, found.join("\n")).toEqual([]);
+		});
+
+		it("los archivos .d.ts solo tienen tipos y se llaman [Nombre]Interface.d.ts", () => {
+			const dts = all.filter((f) => f.endsWith(".d.ts"));
+			expect(dts.length).toBeGreaterThan(0);
+			const badName = dts.filter((f) => !f.endsWith("Interface.d.ts"));
+			const withValues = dts.filter((f) =>
+				/^export (const|let|var|function|class|enum) /m.test(
+					readFileSync(f, "utf8"),
+				),
+			);
+			expect([...badName, ...withValues].map((f) => relative(SRC, f))).toEqual(
+				[],
+			);
+		});
+
+		it("cada archivo de componente declara un solo componente", () => {
+			const found = all
+				.filter((f) => f.endsWith(".tsx") && !/\.test\.tsx$/.test(f))
+				.filter(
+					(f) =>
+						(
+							readFileSync(f, "utf8").match(
+								/^(export )?(function|const) [A-Z]\w*/gm,
+							) ?? []
+						).length > 1,
+				)
+				.map((f) => relative(SRC, f));
+			expect(found, found.join("\n")).toEqual([]);
+		});
+
+		it("los .constants.ts no contienen componentes", () => {
+			const found = all
+				.filter((f) => f.endsWith(".constants.ts"))
+				.filter((f) =>
+					/<\/[A-Za-z]|<[A-Z]\w*(\s[^<>]*)?\/>|React\./.test(
+						readFileSync(f, "utf8"),
+					),
+				)
+				.map((f) => relative(SRC, f));
+			expect(found, found.join("\n")).toEqual([]);
+		});
 	});
 });

@@ -1,7 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import { useTranslation } from "react-i18next";
 import { LoginForm } from "@/components/organisms/LoginForm/LoginForm";
-import { AuthTemplate } from "@/components/templates/AuthTemplate";
+import { AuthTemplate } from "@/components/templates/AuthTemplate/AuthTemplate";
 
 export function LoginPage() {
 	const { t } = useTranslation();

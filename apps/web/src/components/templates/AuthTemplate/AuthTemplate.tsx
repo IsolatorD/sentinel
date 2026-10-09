@@ -1,16 +1,7 @@
-import type { ReactNode } from "react";
 import { useTranslation } from "react-i18next";
 import { Logo } from "@/components/atoms/Logo/Logo";
 import { LanguageSelect } from "@/components/molecules/LanguageSelect/LanguageSelect";
-
-export interface AuthTemplateProps {
-	title: string;
-	subtitle?: string;
-	children: ReactNode;
-	footer?: ReactNode;
-	/** Más ancho, para pasos con contenido (onboarding). */
-	wide?: boolean;
-}
+import type { AuthTemplateProps } from "@/components/templates/AuthTemplate/AuthTemplateInterface";
 
 /** Pantalla de acceso: panel de marca a la izquierda y el formulario a la derecha. */
 export function AuthTemplate({

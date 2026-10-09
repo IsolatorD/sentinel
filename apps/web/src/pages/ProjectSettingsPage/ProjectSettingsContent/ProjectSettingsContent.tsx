@@ -5,12 +5,11 @@ import { DeleteProjectSection } from "@/components/organisms/DeleteProjectSectio
 import { InstallInstructions } from "@/components/organisms/InstallInstructions/InstallInstructions";
 import { ProjectGeneralForm } from "@/components/organisms/ProjectGeneralForm/ProjectGeneralForm";
 import { ProjectKeysManager } from "@/components/organisms/ProjectKeysManager/ProjectKeysManager";
-import { PageTemplate } from "@/components/templates/PageTemplate";
+import { PageTemplate } from "@/components/templates/PageTemplate/PageTemplate";
 import { useProject } from "@/hooks/useProjects/useProjects";
 import { useCurrentProject } from "@/hooks/useScope/useScope";
-import { ProjectGate } from "./ProjectGate";
 
-function Content() {
+export function ProjectSettingsContent() {
 	const { t } = useTranslation();
 	const { organization, project: listed } = useCurrentProject();
 	// El detalle trae las claves DSN; la lista de proyectos no.
@@ -45,13 +44,5 @@ function Content() {
 				</div>
 			)}
 		</PageTemplate>
-	);
-}
-
-export function ProjectSettingsPage() {
-	return (
-		<ProjectGate>
-			<Content />
-		</ProjectGate>
 	);
 }

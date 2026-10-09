@@ -3,12 +3,12 @@ import { useEffect } from "react";
 import { Spinner } from "@/components/atoms/Spinner/Spinner";
 import { ErrorState } from "@/components/molecules/ErrorState/ErrorState";
 import { Sidebar } from "@/components/organisms/Sidebar/Sidebar";
-import { AppShellTemplate } from "@/components/templates/AppShellTemplate";
+import { AppShellTemplate } from "@/components/templates/AppShellTemplate/AppShellTemplate";
 import { useCurrentOrganization } from "@/hooks/useScope/useScope";
 import { useSession } from "@/hooks/useSession/useSession";
+import { NotFoundPage } from "@/pages/NotFoundPage/NotFoundPage";
 import { writeStorage } from "@/utils/storage/storage";
 import { LAST_ORG_KEY } from "@/utils/storage/storage.constants";
-import { NotFoundPage } from "./NotFoundPage";
 
 /** Marco de la app para una organización: barra lateral y contenido. */
 export function OrgLayoutPage() {

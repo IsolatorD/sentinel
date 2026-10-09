@@ -7,7 +7,7 @@ import { EventNavigator } from "@/components/organisms/EventNavigator/EventNavig
 import { IssueEventDetails } from "@/components/organisms/IssueEventDetails/IssueEventDetails";
 import { IssueEventsTable } from "@/components/organisms/IssueEventsTable/IssueEventsTable";
 import { IssueHeader } from "@/components/organisms/IssueHeader/IssueHeader";
-import { PageTemplate } from "@/components/templates/PageTemplate";
+import { PageTemplate } from "@/components/templates/PageTemplate/PageTemplate";
 import {
 	useIssue,
 	useIssueEvent,
@@ -15,12 +15,11 @@ import {
 } from "@/hooks/useIssues/useIssues";
 import { useCurrentProject } from "@/hooks/useScope/useScope";
 import { useIssueSearch } from "@/hooks/useSearchParams/useSearchParams";
+import { NotFoundPage } from "@/pages/NotFoundPage/NotFoundPage";
 import { ApiError } from "@/utils/apiError/apiError";
 import { cn } from "@/utils/cn/cn";
-import { NotFoundPage } from "./NotFoundPage";
-import { ProjectGate } from "./ProjectGate";
 
-function Content() {
+export function IssueDetailContent() {
 	const { t } = useTranslation();
 	const { issueId } = useParams({ strict: false }) as { issueId: string };
 	const { organization, project, scope } = useCurrentProject();
@@ -111,13 +110,5 @@ function Content() {
 				</div>
 			)}
 		</PageTemplate>
-	);
-}
-
-export function IssueDetailPage() {
-	return (
-		<ProjectGate>
-			<Content />
-		</ProjectGate>
 	);
 }
