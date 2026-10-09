@@ -16,6 +16,7 @@ import { useDeleteRelease, useReleases } from "@/hooks/useReleases/useReleases";
 import { useCurrentProject } from "@/hooks/useScope/useScope";
 import { staggerStyle } from "@/utils/animation/animation";
 import { ApiError } from "@/utils/apiError/apiError";
+import { apiErrorText } from "@/utils/apiErrorText/apiErrorText";
 import { formatCompact } from "@/utils/time/time";
 
 export function ReleasesTable() {
@@ -44,7 +45,7 @@ export function ReleasesTable() {
 				<Alert variant="error">
 					{remove.error instanceof ApiError && remove.error.status === 403
 						? t("releases.forbidden")
-						: t("common.genericError")}
+						: apiErrorText(remove.error, t("common.genericError"))}
 				</Alert>
 			)}
 			<Card className="overflow-x-auto">

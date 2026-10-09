@@ -8,6 +8,8 @@ export class ApiError extends Error {
 		readonly code?: string,
 		readonly issues?: ErrorResponse["issues"],
 		readonly requestId?: string,
+		/** Código estable del mensaje (`ISSUE_NOT_FOUND`): permite traducir aquí si el texto no llegó. */
+		readonly reason?: string,
 	) {
 		super(message);
 		this.name = "ApiError";

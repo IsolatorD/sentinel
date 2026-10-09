@@ -11,6 +11,7 @@ import {
 } from "@/hooks/useOrganizations/useOrganizations";
 import { useSession, useSignOut } from "@/hooks/useSession/useSession";
 import { ApiError } from "@/utils/apiError/apiError";
+import { apiErrorText } from "@/utils/apiErrorText/apiErrorText";
 import { writeStorage } from "@/utils/storage/storage";
 import { LAST_ORG_KEY } from "@/utils/storage/storage.constants";
 
@@ -80,7 +81,11 @@ export function InvitationCard({ invitationId }: InvitationCardProps) {
 						: t("members.roles.member"),
 				})}
 			</p>
-			{failure && <Alert variant="error">{t("common.genericError")}</Alert>}
+			{failure && (
+				<Alert variant="error">
+					{apiErrorText(failure, t("common.genericError"))}
+				</Alert>
+			)}
 			<div className="flex gap-2">
 				<Button
 					variant="primary"

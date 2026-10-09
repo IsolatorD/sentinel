@@ -348,7 +348,6 @@ export const en = {
 			title: "Pending invitations",
 			expires: "expires",
 			resend: "Resend",
-			resent: "Invitation sent again.",
 			cancel: "Cancel invitation to",
 			loadError: "Could not load the invitations.",
 			empty: {
@@ -454,6 +453,16 @@ export const en = {
 				body: "The stack trace shows the code path. With source maps uploaded you see your original code, not the minified bundle.",
 			},
 		},
+	},
+	notices: {
+		organizationCreated: "Organization created",
+		invitationSent: "Invitation sent",
+		invitationResent: "Invitation sent again",
+		invitationCancelled: "Invitation cancelled",
+		invitationAccepted: "You joined the organization",
+		invitationDeclined: "Invitation declined",
+		memberRemoved: "Member removed",
+		roleUpdated: "Role updated",
 	},
 	alerts: {
 		title: "Alerts",

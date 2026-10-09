@@ -14,6 +14,7 @@ import {
 	useUpdateKey,
 } from "@/hooks/useProjects/useProjects";
 import { ApiError } from "@/utils/apiError/apiError";
+import { apiErrorText } from "@/utils/apiErrorText/apiErrorText";
 
 export function ProjectKeysManager({
 	project,
@@ -49,7 +50,7 @@ export function ProjectKeysManager({
 				<Alert variant="error" className="mb-4">
 					{failure instanceof ApiError && failure.status === 403
 						? t("settings.forbidden")
-						: t("common.genericError")}
+						: apiErrorText(failure, t("common.genericError"))}
 				</Alert>
 			)}
 			<ul className="divide-y divide-border">

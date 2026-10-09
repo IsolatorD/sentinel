@@ -1,5 +1,6 @@
 import { screen, waitFor, within } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import { preferencesService } from "@/services/preferencesService/preferencesService";
 import { ISSUES_PATH, mockHappyPath, renderApp } from "@/test/render-app";
 
 vi.mock("@/services/authService/authService");
@@ -49,7 +50,12 @@ describe("tema", () => {
 	});
 
 	it("lo guardado se muestra al abrir el menú", async () => {
-		window.localStorage.setItem("sentinel:theme", "dark");
+		// El tema guardado en la cuenta es el que manda (y se copia a este navegador).
+		vi.mocked(preferencesService.get).mockResolvedValue({
+			locale: "en",
+			theme: "dark",
+			toursSeen: [],
+		});
 		const { user } = renderApp(ISSUES_PATH);
 		const menu = await openAccountMenu(user);
 		expect(within(menu).getByLabelText("Theme")).toHaveValue("dark");

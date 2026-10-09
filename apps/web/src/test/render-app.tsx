@@ -2,6 +2,7 @@ import { QueryClientProvider } from "@tanstack/react-query";
 import { createMemoryHistory, RouterProvider } from "@tanstack/react-router";
 import { render } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
+import { Toaster } from "sonner";
 import { vi } from "vitest";
 import { createQueryClient } from "@/app/query-client";
 import { createAppRouter } from "@/app/router";
@@ -9,6 +10,7 @@ import { authService } from "@/services/authService/authService";
 import { configService } from "@/services/configService/configService";
 import { issuesService } from "@/services/issuesService/issuesService";
 import { organizationsService } from "@/services/organizationsService/organizationsService";
+import { preferencesService } from "@/services/preferencesService/preferencesService";
 import { projectsService } from "@/services/projectsService/projectsService";
 import * as fx from "./fixtures";
 
@@ -20,6 +22,7 @@ export function renderApp(path: string) {
 	const utils = render(
 		<QueryClientProvider client={queryClient}>
 			<RouterProvider router={router} />
+			<Toaster />
 		</QueryClientProvider>,
 	);
 	return { ...utils, router, queryClient, user: userEvent.setup() };
@@ -36,6 +39,18 @@ export function mockHappyPath() {
 		emailEnabled: true,
 	});
 	vi.mocked(organizationsService.list).mockResolvedValue([fx.org]);
+	// Sin preferencias guardadas que cambien el idioma, el tema o los recorridos de la prueba.
+	vi.mocked(preferencesService.get).mockResolvedValue({
+		locale: "en",
+		theme: "system",
+		toursSeen: [],
+	});
+	vi.mocked(preferencesService.update).mockImplementation(async (input) => ({
+		locale: "en",
+		theme: "system",
+		toursSeen: [],
+		...input,
+	}));
 	vi.mocked(projectsService.list).mockResolvedValue([fx.project]);
 	vi.mocked(projectsService.get).mockResolvedValue(fx.project);
 	vi.mocked(issuesService.list).mockResolvedValue(fx.issueList());

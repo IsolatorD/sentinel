@@ -1,6 +1,8 @@
 import type { AxiosAdapter, InternalAxiosRequestConfig } from "axios";
-import { afterEach, beforeEach, describe, expect, it } from "vitest";
+import { toast } from "sonner";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { z } from "zod";
+import i18n from "@/i18n";
 import { http } from "@/services/http/http";
 import { apiClient } from "@/services/http/http.constants";
 import { ApiError } from "@/utils/apiError/apiError";
@@ -106,5 +108,55 @@ describe("http", () => {
 			throw new Error("Network Error");
 		};
 		await expect(http("/api/x")).rejects.toThrow("Network Error");
+	});
+});
+
+describe("http: idioma y avisos", () => {
+	/** Como `respond`, pero con cabeceras en la respuesta. */
+	const respondWithHeaders = (
+		status: number,
+		headers: Record<string, string>,
+	) => {
+		apiClient.defaults.adapter = async (config) => {
+			requests.push(config);
+			return { data: {}, status, statusText: "", headers, config };
+		};
+	};
+
+	afterEach(async () => {
+		await i18n.changeLanguage("en");
+		vi.restoreAllMocks();
+	});
+
+	it("manda el idioma de la interfaz en cada petición", async () => {
+		respond(200, {});
+		await http("/api/x", { schema: z.object({}) });
+		expect(requests[0].headers.get("Accept-Language")).toBe("en");
+
+		await i18n.changeLanguage("es");
+		await http("/api/x", { schema: z.object({}) });
+		expect(requests[1].headers.get("Accept-Language")).toBe("es");
+	});
+
+	it("muestra como aviso lo que la API manda en sus cabeceras", async () => {
+		const success = vi.spyOn(toast, "success").mockImplementation(() => "id");
+		respondWithHeaders(201, {
+			"x-sentinel-message": encodeURIComponent("Proyecto «Tienda» creado"),
+			"x-sentinel-message-code": "NOTICE_PROJECT_CREATED",
+		});
+		await http("/api/x", { method: "POST", body: {} });
+		expect(success).toHaveBeenCalledTimes(1);
+		expect(success).toHaveBeenCalledWith("Proyecto «Tienda» creado");
+	});
+
+	it("una respuesta sin aviso, o un error, no muestran nada", async () => {
+		const success = vi.spyOn(toast, "success").mockImplementation(() => "id");
+		respond(200, {});
+		await http("/api/x", { schema: z.object({}) });
+		respondWithHeaders(400, {
+			"x-sentinel-message": encodeURIComponent("No debería verse"),
+		});
+		await http("/api/x").catch(() => {});
+		expect(success).not.toHaveBeenCalled();
 	});
 });

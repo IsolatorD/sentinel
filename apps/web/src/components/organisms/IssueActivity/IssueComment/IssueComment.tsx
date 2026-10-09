@@ -9,6 +9,7 @@ import { Modal } from "@/components/molecules/Modal/Modal";
 import { RelativeTime } from "@/components/molecules/RelativeTime/RelativeTime";
 import type { IssueCommentProps } from "@/components/organisms/IssueActivity/IssueComment/IssueCommentInterface";
 import { useDeleteComment, useEditComment } from "@/hooks/useIssues/useIssues";
+import { apiErrorText } from "@/utils/apiErrorText/apiErrorText";
 
 export function IssueComment({
 	comment,
@@ -78,7 +79,9 @@ export function IssueComment({
 				{editing ? (
 					<div className="mt-2 space-y-2">
 						{edit.isError && (
-							<Alert variant="error">{t("common.genericError")}</Alert>
+							<Alert variant="error">
+								{apiErrorText(edit.error, t("common.genericError"))}
+							</Alert>
 						)}
 						<Textarea
 							aria-label={t("activity.edit")}

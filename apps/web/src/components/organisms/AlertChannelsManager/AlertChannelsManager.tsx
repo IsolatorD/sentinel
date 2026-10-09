@@ -24,6 +24,7 @@ import type { ReadyScope } from "@/hooks/useAlerts/useAlertsInterface";
 import { usePublicConfig } from "@/hooks/usePublicConfig/usePublicConfig";
 import { staggerStyle } from "@/utils/animation/animation";
 import { ApiError } from "@/utils/apiError/apiError";
+import { apiErrorText } from "@/utils/apiErrorText/apiErrorText";
 
 export function AlertChannelsManager({ scope }: { scope: ReadyScope }) {
 	const { t } = useTranslation();
@@ -76,7 +77,7 @@ export function AlertChannelsManager({ scope }: { scope: ReadyScope }) {
 				<Alert variant="error">
 					{failure.error instanceof ApiError && failure.error.status === 403
 						? t("alerts.forbidden")
-						: t("common.genericError")}
+						: apiErrorText(failure.error, t("common.genericError"))}
 				</Alert>
 			)}
 			<Card>

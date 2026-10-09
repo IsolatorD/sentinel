@@ -5,6 +5,7 @@ import { Textarea } from "@/components/atoms/Textarea/Textarea";
 import { Alert } from "@/components/molecules/Alert/Alert";
 import type { CommentComposerProps } from "@/components/organisms/IssueActivity/CommentComposer/CommentComposerInterface";
 import { useAddComment } from "@/hooks/useIssues/useIssues";
+import { apiErrorText } from "@/utils/apiErrorText/apiErrorText";
 
 /** Caja para escribir un comentario nuevo. Ctrl/⌘ + Enter lo envía. */
 export function CommentComposer({ scope, issueId }: CommentComposerProps) {
@@ -32,7 +33,11 @@ export function CommentComposer({ scope, issueId }: CommentComposerProps) {
 
 	return (
 		<form onSubmit={onSubmit} className="space-y-2" data-testid="comment-form">
-			{add.isError && <Alert variant="error">{t("common.genericError")}</Alert>}
+			{add.isError && (
+				<Alert variant="error">
+					{apiErrorText(add.error, t("common.genericError"))}
+				</Alert>
+			)}
 			<Textarea
 				aria-label={t("activity.commentLabel")}
 				placeholder={t("activity.placeholder")}

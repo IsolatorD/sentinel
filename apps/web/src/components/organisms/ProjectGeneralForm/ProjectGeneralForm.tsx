@@ -9,6 +9,7 @@ import { FormField } from "@/components/molecules/FormField/FormField";
 import { Section } from "@/components/molecules/Section/Section";
 import { useUpdateProject } from "@/hooks/useProjects/useProjects";
 import { ApiError } from "@/utils/apiError/apiError";
+import { apiErrorText } from "@/utils/apiErrorText/apiErrorText";
 
 export function ProjectGeneralForm({
 	project,
@@ -48,7 +49,7 @@ export function ProjectGeneralForm({
 					<Alert variant="error">
 						{update.error instanceof ApiError && update.error.status === 403
 							? t("settings.forbidden")
-							: t("common.genericError")}
+							: apiErrorText(update.error, t("common.genericError"))}
 					</Alert>
 				)}
 				<FormField

@@ -11,6 +11,7 @@ import { FormField } from "@/components/molecules/FormField/FormField";
 import { Modal } from "@/components/molecules/Modal/Modal";
 import { useDeleteProject } from "@/hooks/useProjects/useProjects";
 import { ApiError } from "@/utils/apiError/apiError";
+import { apiErrorText } from "@/utils/apiErrorText/apiErrorText";
 
 export function DeleteProjectSection({
 	project,
@@ -73,7 +74,7 @@ export function DeleteProjectSection({
 					<Alert variant="error" className="mb-3">
 						{remove.error instanceof ApiError && remove.error.status === 403
 							? t("settings.forbidden")
-							: t("common.genericError")}
+							: apiErrorText(remove.error, t("common.genericError"))}
 					</Alert>
 				)}
 				<FormField

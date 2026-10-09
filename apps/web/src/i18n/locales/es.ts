@@ -355,7 +355,6 @@ export const es: Deep<Translations> = {
 			title: "Invitaciones pendientes",
 			expires: "caduca",
 			resend: "Reenviar",
-			resent: "Invitación enviada de nuevo.",
 			cancel: "Cancelar la invitación a",
 			loadError: "No se pudieron cargar las invitaciones.",
 			empty: {
@@ -462,6 +461,16 @@ export const es: Deep<Translations> = {
 				body: "El stack trace muestra el camino del código. Con los source maps subidos ves tu código original, no el bundle minificado.",
 			},
 		},
+	},
+	notices: {
+		organizationCreated: "Organización creada",
+		invitationSent: "Invitación enviada",
+		invitationResent: "Invitación enviada de nuevo",
+		invitationCancelled: "Invitación cancelada",
+		invitationAccepted: "Te uniste a la organización",
+		invitationDeclined: "Invitación rechazada",
+		memberRemoved: "Miembro quitado",
+		roleUpdated: "Rol actualizado",
 	},
 	alerts: {
 		title: "Alertas",

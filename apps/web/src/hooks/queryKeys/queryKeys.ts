@@ -4,6 +4,7 @@ import type { ListIssuesQuery } from "@sentinel/shared";
 export const queryKeys = {
 	session: ["session"] as const,
 	publicConfig: ["public-config"] as const,
+	preferences: ["preferences"] as const,
 	organizations: ["organizations"] as const,
 	projects: (orgId: string) => ["orgs", orgId, "projects"] as const,
 	project: (orgId: string, projectId: string) =>

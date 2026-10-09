@@ -10,6 +10,7 @@ import {
 import { sessionQueryOptions } from "@/hooks/useSession/useSession.constants";
 import { AcceptInvitationPage } from "@/pages/AcceptInvitationPage/AcceptInvitationPage";
 import { AlertsPage } from "@/pages/AlertsPage/AlertsPage";
+import { AuthedLayoutPage } from "@/pages/AuthedLayoutPage/AuthedLayoutPage";
 import { HomePage } from "@/pages/HomePage/HomePage";
 import { IssueDetailPage } from "@/pages/IssueDetailPage/IssueDetailPage";
 import { IssuesPage } from "@/pages/IssuesPage/IssuesPage";
@@ -86,7 +87,7 @@ const authedRoute = createRoute({
 			throw redirect({ to: "/login", search: back ? { redirect: back } : {} });
 		}
 	},
-	component: Outlet,
+	component: AuthedLayoutPage,
 });
 const homeRoute = createRoute({
 	getParentRoute: () => authedRoute,

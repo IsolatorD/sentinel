@@ -27,6 +27,7 @@ import type {
 } from "@/components/organisms/AlertRuleDialog/AlertRuleDialogInterface";
 import { useCreateRule, useUpdateRule } from "@/hooks/useAlerts/useAlerts";
 import { ApiError } from "@/utils/apiError/apiError";
+import { apiErrorText } from "@/utils/apiErrorText/apiErrorText";
 import { describeMinutes } from "@/utils/duration/duration";
 
 /** Crea o edita una regla de alerta. Para reiniciar el formulario, el padre cambia su `key`. */
@@ -152,7 +153,7 @@ export function AlertRuleDialog({
 					<Alert variant="error">
 						{mutation.error instanceof ApiError && mutation.error.status === 403
 							? t("alerts.forbidden")
-							: t("common.genericError")}
+							: apiErrorText(mutation.error, t("common.genericError"))}
 					</Alert>
 				)}
 				<FormField

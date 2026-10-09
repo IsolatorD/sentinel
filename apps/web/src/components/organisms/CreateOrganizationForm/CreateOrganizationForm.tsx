@@ -5,6 +5,7 @@ import { Input } from "@/components/atoms/Input/Input";
 import { Alert } from "@/components/molecules/Alert/Alert";
 import { FormField } from "@/components/molecules/FormField/FormField";
 import { useCreateOrganization } from "@/hooks/useOrganizations/useOrganizations";
+import { apiErrorText } from "@/utils/apiErrorText/apiErrorText";
 import type { Organization } from "@/utils/organization/organizationInterface";
 import { uniqueSlug } from "@/utils/slug/slug";
 
@@ -35,7 +36,9 @@ export function CreateOrganizationForm({
 			data-testid="create-org-form"
 		>
 			{create.isError && (
-				<Alert variant="error">{t("common.genericError")}</Alert>
+				<Alert variant="error">
+					{apiErrorText(create.error, t("common.genericError"))}
+				</Alert>
 			)}
 			<FormField
 				label={t("onboarding.org.name")}

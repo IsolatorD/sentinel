@@ -1,5 +1,7 @@
+import { TOUR_IDS } from "@sentinel/shared";
 import { useCallback, useEffect } from "react";
 import { useTranslation } from "react-i18next";
+import { useUpdatePreferences } from "@/hooks/usePreferences/usePreferences";
 import { useSession } from "@/hooks/useSession/useSession";
 import { TOUR_DELAY_MS, TOURS } from "@/hooks/useTour/useTour.constants";
 import type { TourId, UseTourOptions } from "@/hooks/useTour/useTourInterface";
@@ -11,6 +13,11 @@ import {
 import { tourSeenKey } from "@/utils/storage/storage.constants";
 import { isTourActive, isTourEnabled, startTour } from "@/utils/tour/tour";
 
+/** Recorridos que esta persona ya vio en este navegador. */
+function seenTours(userId: string): TourId[] {
+	return TOUR_IDS.filter((id) => readStorage(tourSeenKey(userId, id)));
+}
+
 /**
  * Recorrido guiado de una pantalla. Se lanza solo la primera vez que la persona llega (y no antes de
  * haber visto el de bienvenida), y `start` permite repetirlo. Quién lo vio se recuerda por usuario.
@@ -18,6 +25,7 @@ import { isTourActive, isTourEnabled, startTour } from "@/utils/tour/tour";
 export function useTour(id: TourId, { ready }: UseTourOptions) {
 	const { t } = useTranslation();
 	const userId = useSession().data?.user.id;
+	const savePreferences = useUpdatePreferences();
 
 	const start = useCallback(() => {
 		if (!userId) return false;
@@ -38,9 +46,12 @@ export function useTour(id: TourId, { ready }: UseTourOptions) {
 				}),
 			},
 			// Cerrarlo a medias también cuenta: no se vuelve a molestar.
-			onClose: () => writeStorage(tourSeenKey(userId, id), "1"),
+			onClose: () => {
+				writeStorage(tourSeenKey(userId, id), "1");
+				savePreferences.mutate({ toursSeen: seenTours(userId) });
+			},
 		});
-	}, [id, t, userId]);
+	}, [id, t, userId, savePreferences]);
 
 	useEffect(() => {
 		if (!ready || !userId || !isTourEnabled()) return;
@@ -59,9 +70,10 @@ export function useTour(id: TourId, { ready }: UseTourOptions) {
 		if (userId) {
 			for (const tour of Object.keys(TOURS))
 				removeStorage(tourSeenKey(userId, tour));
+			savePreferences.mutate({ toursSeen: [] });
 		}
 		return start();
-	}, [userId, start]);
+	}, [userId, start, savePreferences]);
 
 	return { start, restart };
 }

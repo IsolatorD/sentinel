@@ -10,6 +10,7 @@ import { MenuLabel } from "@/components/molecules/MenuLabel/MenuLabel";
 import { MenuSeparator } from "@/components/molecules/MenuSeparator/MenuSeparator";
 import { MenuTrigger } from "@/components/molecules/MenuTrigger/MenuTrigger";
 import { ThemeSelect } from "@/components/molecules/ThemeSelect/ThemeSelect";
+import { useUpdatePreferences } from "@/hooks/usePreferences/usePreferences";
 import { useSession, useSignOut } from "@/hooks/useSession/useSession";
 import { useTheme } from "@/hooks/useTheme/useTheme";
 
@@ -24,6 +25,7 @@ export function UserMenu({
 	const session = useSession();
 	const signOut = useSignOut();
 	const { theme, setTheme } = useTheme();
+	const savePreferences = useUpdatePreferences();
 	const user = session.data?.user;
 	if (!user) return null;
 
@@ -47,11 +49,21 @@ export function UserMenu({
 			<MenuContent align="start" side="top" className="w-64">
 				<MenuLabel>{t("common.language")}</MenuLabel>
 				<div className="px-2 pb-1">
-					<LanguageSelect />
+					<LanguageSelect
+						onChange={(language) =>
+							savePreferences.mutate({ locale: language as "en" | "es" })
+						}
+					/>
 				</div>
 				<MenuLabel>{t("common.theme")}</MenuLabel>
 				<div className="px-2 pb-1">
-					<ThemeSelect value={theme} onChange={setTheme} />
+					<ThemeSelect
+						value={theme}
+						onChange={(next) => {
+							setTheme(next);
+							savePreferences.mutate({ theme: next });
+						}}
+					/>
 				</div>
 				<MenuSeparator />
 				{onStartTour && (

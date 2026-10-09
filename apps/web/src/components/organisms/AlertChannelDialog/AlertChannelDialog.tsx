@@ -20,6 +20,7 @@ import type {
 import { useCreateChannel } from "@/hooks/useAlerts/useAlerts";
 import { useMembers } from "@/hooks/useOrganizations/useOrganizations";
 import { ApiError } from "@/utils/apiError/apiError";
+import { apiErrorText } from "@/utils/apiErrorText/apiErrorText";
 
 export function AlertChannelDialog({
 	open,
@@ -95,9 +96,7 @@ export function AlertChannelDialog({
 					<Alert variant="error">
 						{create.error instanceof ApiError && create.error.status === 403
 							? t("alerts.forbidden")
-							: create.error instanceof ApiError && create.error.status === 400
-								? create.error.message
-								: t("common.genericError")}
+							: apiErrorText(create.error, t("common.genericError"))}
 					</Alert>
 				)}
 				<FormField

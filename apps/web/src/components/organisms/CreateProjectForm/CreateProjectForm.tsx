@@ -8,6 +8,7 @@ import { Alert } from "@/components/molecules/Alert/Alert";
 import { FormField } from "@/components/molecules/FormField/FormField";
 import type { CreateProjectFormProps } from "@/components/organisms/CreateProjectForm/CreateProjectFormInterface";
 import { useCreateProject } from "@/hooks/useProjects/useProjects";
+import { apiErrorText } from "@/utils/apiErrorText/apiErrorText";
 
 export function CreateProjectForm({
 	orgId,
@@ -42,7 +43,9 @@ export function CreateProjectForm({
 			data-testid="create-project-form"
 		>
 			{create.isError && (
-				<Alert variant="error">{t("common.genericError")}</Alert>
+				<Alert variant="error">
+					{apiErrorText(create.error, t("common.genericError"))}
+				</Alert>
 			)}
 			<FormField
 				label={t("projects.createDialog.name")}

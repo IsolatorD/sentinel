@@ -183,7 +183,7 @@ describe("miembros", () => {
 			resend: true,
 		});
 		expect(
-			await screen.findByText("Invitation sent again."),
+			await screen.findByText("Invitation sent again"),
 		).toBeInTheDocument();
 
 		await user.click(

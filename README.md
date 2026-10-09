@@ -246,3 +246,13 @@ Otras cabeceras: `X-Sentinel-Event`, `X-Sentinel-Delivery` (id del envío, útil
 - **Invitaciones por correo**: se envía un enlace (`/accept-invitation/<id>`) a la dirección invitada. Si esa persona no tiene sesión, pasa por el login (o el registro) y **vuelve al enlace** (`?redirect=`, solo rutas internas). La invitación solo la puede aceptar la cuenta con ese correo.
 
 El correo no lo envía la API sino el worker, a través de una cola (`emails`): así hay un único lugar con acceso al SMTP y los fallos se reintentan sin bloquear la petición.
+
+## Idioma, mensajes y avisos
+
+- **Idioma de la persona**: se elige en el menú de la cuenta y se guarda en su perfil (`GET/PATCH /api/me/preferences`: idioma, tema y recorridos vistos), así que la sigue entre dispositivos. La primera vez se toma el del navegador.
+- **Errores traducidos desde el backend**: el panel manda su idioma en `Accept-Language` y la API responde en él, incluidos los mensajes de validación (con el valor recibido: «se esperaba texto, recibido número»). Cada error lleva `code` (genérico, según el estado HTTP) y `reason` (específico y estable, p. ej. `ISSUE_NOT_FOUND`): si el texto no llegara, el panel traduce con el mismo catálogo.
+- **Catálogo único** en `packages/shared/src/messages` (`en.ts` y `es.ts`, con las mismas claves y los mismos `{{valores}}`; un test lo verifica). Sirve a errores, avisos de éxito y correos.
+- **Avisos de éxito (sonner)**: las operaciones (crear un proyecto, resolver un issue, asignarlo, comentar, crear un canal...) declaran su aviso con `@Notice(...)` y la API lo manda ya traducido en la cabecera `X-Sentinel-Message` (más `X-Sentinel-Message-Code`), sin cambiar el cuerpo de la respuesta. Las operaciones de Better Auth (organizaciones, invitaciones, miembros) no pasan por nuestra API de la misma forma, así que sus avisos los redacta el panel.
+- **Correos en el idioma de cada destinatario**: las invitaciones usan el idioma del invitado si ya tiene cuenta; si no, el de quien invita. Las alertas por email se escriben una a una en el idioma de cada miembro. Los webhooks y Slack se mantienen en inglés (no hay un destinatario con idioma).
+
+Añadir un idioma: una clave nueva en `SUPPORTED_LOCALES`, su catálogo, el locale de Zod y los textos del panel.

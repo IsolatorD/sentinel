@@ -19,6 +19,7 @@ import {
 } from "@/hooks/useTokens/useTokens";
 import { staggerStyle } from "@/utils/animation/animation";
 import { ApiError } from "@/utils/apiError/apiError";
+import { apiErrorText } from "@/utils/apiErrorText/apiErrorText";
 
 export function ApiTokensManager({ orgId }: { orgId: string }) {
 	const { t } = useTranslation();
@@ -78,7 +79,11 @@ export function ApiTokensManager({ orgId }: { orgId: string }) {
 				</form>
 			</Card>
 
-			{failure && <Alert variant="error">{t("common.genericError")}</Alert>}
+			{failure && (
+				<Alert variant="error">
+					{apiErrorText(failure.error, t("common.genericError"))}
+				</Alert>
+			)}
 
 			<Card>
 				{!tokens.data ? (

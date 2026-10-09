@@ -456,7 +456,14 @@ describe("canales", () => {
 
 	it("el servidor puede rechazar una URL (host interno) y se muestra su motivo", async () => {
 		vi.mocked(alertsService.createChannel).mockRejectedValue(
-			new ApiError(400, "The URL points to a private or internal address"),
+			new ApiError(
+				400,
+				"The URL points to a private or internal address",
+				"BAD_REQUEST",
+				undefined,
+				undefined,
+				"URL_NOT_ALLOWED",
+			),
 		);
 		const { user } = renderApp(CHANNELS);
 		await user.click(

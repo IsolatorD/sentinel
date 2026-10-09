@@ -25,6 +25,7 @@ import {
 } from "@/hooks/useOrganizations/useOrganizations";
 import { staggerStyle } from "@/utils/animation/animation";
 import { ApiError } from "@/utils/apiError/apiError";
+import { apiErrorText } from "@/utils/apiErrorText/apiErrorText";
 import { ASSIGNABLE_ROLES } from "@/utils/invitation/invitation.constants";
 import type { AssignableRole } from "@/utils/invitation/invitationInterface";
 import type { OrgMember } from "@/utils/member/memberInterface";
@@ -66,7 +67,7 @@ export function MembersManager({ orgId, currentUserId }: MembersManagerProps) {
 				<Alert variant="error">
 					{failure.error instanceof ApiError && failure.error.status === 403
 						? t("members.forbidden")
-						: t("common.genericError")}
+						: apiErrorText(failure.error, t("common.genericError"))}
 				</Alert>
 			)}
 
@@ -227,11 +228,6 @@ export function MembersManager({ orgId, currentUserId }: MembersManagerProps) {
 								</li>
 							))}
 						</ul>
-					)}
-					{resend.isSuccess && (
-						<div className="border-t border-border p-3">
-							<Alert variant="success">{t("members.pending.resent")}</Alert>
-						</div>
 					)}
 				</Section>
 			)}

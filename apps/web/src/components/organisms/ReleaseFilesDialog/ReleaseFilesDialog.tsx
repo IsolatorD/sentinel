@@ -12,6 +12,7 @@ import {
 } from "@/hooks/useReleases/useReleases";
 import { useCurrentProject } from "@/hooks/useScope/useScope";
 import { ApiError } from "@/utils/apiError/apiError";
+import { apiErrorText } from "@/utils/apiErrorText/apiErrorText";
 import { sourceMapsUploadSnippet } from "@/utils/cliSnippets/cliSnippets";
 import { formatBytes } from "@/utils/format/format";
 
@@ -45,7 +46,7 @@ export function ReleaseFilesDialog({
 					<Alert variant="error">
 						{remove.error instanceof ApiError && remove.error.status === 403
 							? t("releases.files.forbidden")
-							: t("common.genericError")}
+							: apiErrorText(remove.error, t("common.genericError"))}
 					</Alert>
 				)}
 				{artifacts.isError ? (

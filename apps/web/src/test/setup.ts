@@ -1,6 +1,6 @@
 import "@testing-library/jest-dom/vitest";
 import { cleanup } from "@testing-library/react";
-import { afterEach, beforeAll } from "vitest";
+import { afterEach, beforeAll, vi } from "vitest";
 import i18n from "@/i18n";
 import { apiClient } from "@/services/http/http.constants";
 
@@ -8,6 +8,9 @@ beforeAll(async () => {
 	// Las aserciones de los tests están en inglés, sin importar el idioma del entorno.
 	await i18n.changeLanguage("en");
 });
+
+// Las preferencias del servidor se simulan en todas las pruebas (cada una puede ajustar lo que devuelven).
+vi.mock("@/services/preferencesService/preferencesService");
 
 // Ningún test sale a la red: lo que no se simula con `vi.mock` falla como una caída de red. Sin esto,
 // axios (a diferencia de `fetch` con URL relativa) llegaría a un servidor local si lo hubiera.

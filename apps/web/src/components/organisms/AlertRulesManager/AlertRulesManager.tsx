@@ -21,6 +21,7 @@ import {
 import type { ReadyScope } from "@/hooks/useAlerts/useAlertsInterface";
 import { staggerStyle } from "@/utils/animation/animation";
 import { ApiError } from "@/utils/apiError/apiError";
+import { apiErrorText } from "@/utils/apiErrorText/apiErrorText";
 import { describeMinutes } from "@/utils/duration/duration";
 
 export function AlertRulesManager({ scope }: { scope: ReadyScope }) {
@@ -79,7 +80,7 @@ export function AlertRulesManager({ scope }: { scope: ReadyScope }) {
 				<Alert variant="error">
 					{failure.error instanceof ApiError && failure.error.status === 403
 						? t("alerts.forbidden")
-						: t("common.genericError")}
+						: apiErrorText(failure.error, t("common.genericError"))}
 				</Alert>
 			)}
 			<Card>

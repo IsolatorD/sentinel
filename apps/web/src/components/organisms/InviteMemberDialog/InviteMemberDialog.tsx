@@ -10,6 +10,7 @@ import { EMAIL } from "@/components/organisms/InviteMemberDialog/InviteMemberDia
 import type { InviteMemberDialogProps } from "@/components/organisms/InviteMemberDialog/InviteMemberDialogInterface";
 import { useInviteMember } from "@/hooks/useOrganizations/useOrganizations";
 import { ApiError } from "@/utils/apiError/apiError";
+import { apiErrorText } from "@/utils/apiErrorText/apiErrorText";
 import { ASSIGNABLE_ROLES } from "@/utils/invitation/invitation.constants";
 import type { AssignableRole } from "@/utils/invitation/invitationInterface";
 
@@ -42,7 +43,7 @@ export function InviteMemberDialog({
 				? t("members.forbidden")
 				: /already/i.test(failure.message)
 					? t("members.invite.alreadyInvited")
-					: t("common.genericError")
+					: apiErrorText(failure, t("common.genericError"))
 			: failure
 				? t("common.genericError")
 				: null;
