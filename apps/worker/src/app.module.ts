@@ -5,6 +5,7 @@ import { LoggerModule } from "nestjs-pino";
 import { validateWorkerEnv, type WorkerEnv } from "./config/env.js";
 import { DatabaseModule } from "./database/database.module.js";
 import { EventsModule } from "./events/events.module.js";
+import { MailModule } from "./mail/mail.module.js";
 
 @Module({
 	imports: [
@@ -40,6 +41,7 @@ import { EventsModule } from "./events/events.module.js";
 		}),
 		DatabaseModule,
 		EventsModule,
+		MailModule,
 	],
 })
 export class AppModule {}

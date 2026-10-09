@@ -1,9 +1,9 @@
 import { Injectable } from "@nestjs/common";
 import { emailRecipientsSchema } from "@sentinel/shared";
+import { MailerService } from "../../mail/mailer.service.js";
 import { AlertsRepository } from "../alerts.repository.js";
 import { DeliveryError } from "../domain/delivery-error.js";
 import { emailContent } from "../domain/messages.js";
-import { MailerService } from "../mailer.service.js";
 import { Notifier, type NotifyInput } from "./notifier.js";
 
 @Injectable()

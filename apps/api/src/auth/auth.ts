@@ -10,6 +10,14 @@ export interface AuthOptions {
 	baseURL: string;
 	webOrigin: string;
 	google?: { clientId: string; clientSecret: string };
+	/** Envía la invitación a una organización (el correo lo arma y encola quien la implemente). */
+	sendInvitation?: (input: {
+		invitationId: string;
+		email: string;
+		role: string | null | undefined;
+		organizationName: string;
+		inviterName: string;
+	}) => Promise<void>;
 }
 
 export function createAuth(opts: AuthOptions) {
@@ -34,6 +42,15 @@ export function createAuth(opts: AuthOptions) {
 			openAPI(),
 			organization({
 				creatorRole: "owner",
+				sendInvitationEmail: async (data) => {
+					await opts.sendInvitation?.({
+						invitationId: data.id,
+						email: data.email,
+						role: data.role,
+						organizationName: data.organization.name,
+						inviterName: data.inviter.user.name,
+					});
+				},
 			}),
 		],
 	});

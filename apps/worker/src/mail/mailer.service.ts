@@ -1,8 +1,8 @@
 import { Injectable, Logger } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { createTransport, type Transporter } from "nodemailer";
+import { DeliveryError } from "../alerts/domain/delivery-error.js";
 import type { WorkerEnv } from "../config/env.js";
-import { DeliveryError } from "./domain/delivery-error.js";
 
 export interface Mail {
 	to: string;

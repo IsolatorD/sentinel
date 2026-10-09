@@ -1,17 +1,16 @@
 import { createHmac } from "node:crypto";
-import { readFileSync } from "node:fs";
 import {
 	channelDtoSchema,
 	createdChannelDtoSchema,
 	deliveryListDtoSchema,
 	ruleDtoSchema,
 } from "@sentinel/shared";
-import { afterEach, describe, expect, inject, it } from "vitest";
+import { afterEach, describe, expect, it } from "vitest";
 import { scalar } from "../support/db.js";
 import { eventually } from "../support/eventually.js";
 import { createTenant, errorEvent, type Tenant } from "../support/factories.js";
+import { mails } from "../support/mailbox.js";
 import { type Receiver, startReceiver } from "../support/receiver.js";
-import type { SinkMail } from "../support/smtp-sink.js";
 
 const receivers: Receiver[] = [];
 afterEach(async () => {
@@ -59,12 +58,6 @@ async function ingest(t: Tenant, event: unknown) {
 /** Espera a que el worker guarde N issues (así se sabe que procesó los eventos anteriores). */
 const settle = (t: Tenant, issues: number) =>
 	eventually(async () => expect(await issueCount(t)).toBe(issues));
-
-const mails = (): SinkMail[] =>
-	readFileSync(inject("e2e").mailFile, "utf8")
-		.split("\n")
-		.filter(Boolean)
-		.map((l) => JSON.parse(l));
 
 describe("canales", () => {
 	it("un webhook devuelve su secreto una sola vez y la URL siempre enmascarada", async () => {
