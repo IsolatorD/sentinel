@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { CodeBlock } from "@/components/molecules/CodeBlock";
+import { CodeBlock } from "@/components/molecules/CodeBlock/CodeBlock";
 import { cn } from "@/utils/cn/cn";
 import {
 	npmSnippet,

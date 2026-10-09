@@ -1,8 +1,8 @@
 import { useTranslation } from "react-i18next";
-import { CodeBlock } from "@/components/molecules/CodeBlock";
-import { KeyValueList } from "@/components/molecules/KeyValueList";
-import { Section } from "@/components/molecules/Section";
-import { TagPill } from "@/components/molecules/TagPill";
+import { CodeBlock } from "@/components/molecules/CodeBlock/CodeBlock";
+import { KeyValueList } from "@/components/molecules/KeyValueList/KeyValueList";
+import { Section } from "@/components/molecules/Section/Section";
+import { TagPill } from "@/components/molecules/TagPill/TagPill";
 import { contextEntries } from "@/utils/eventView/eventView";
 import type { EventView } from "@/utils/eventView/eventViewInterface";
 

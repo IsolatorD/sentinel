@@ -2,9 +2,9 @@ import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Card } from "@/components/atoms/Card/Card";
 import { Skeleton } from "@/components/atoms/Skeleton/Skeleton";
-import { ErrorState } from "@/components/molecules/ErrorState";
-import { Pagination } from "@/components/molecules/Pagination";
-import { RelativeTime } from "@/components/molecules/RelativeTime";
+import { ErrorState } from "@/components/molecules/ErrorState/ErrorState";
+import { Pagination } from "@/components/molecules/Pagination/Pagination";
+import { RelativeTime } from "@/components/molecules/RelativeTime/RelativeTime";
 import { useIssueEvents } from "@/hooks/useIssues/useIssues";
 import type { ReadyScope } from "@/hooks/useIssues/useIssuesInterface";
 

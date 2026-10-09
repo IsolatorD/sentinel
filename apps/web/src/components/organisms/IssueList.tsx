@@ -5,13 +5,11 @@ import { Button } from "@/components/atoms/Button/Button";
 import { buttonVariants } from "@/components/atoms/Button/Button.constants";
 import { Card } from "@/components/atoms/Card/Card";
 import { Skeleton } from "@/components/atoms/Skeleton/Skeleton";
-import { EmptyState } from "@/components/molecules/EmptyState";
-import { ErrorState } from "@/components/molecules/ErrorState";
-import {
-	ISSUE_GRID,
-	IssueListItem,
-} from "@/components/molecules/IssueListItem";
-import { Pagination } from "@/components/molecules/Pagination";
+import { EmptyState } from "@/components/molecules/EmptyState/EmptyState";
+import { ErrorState } from "@/components/molecules/ErrorState/ErrorState";
+import { IssueListItem } from "@/components/molecules/IssueListItem/IssueListItem";
+import { ISSUE_GRID } from "@/components/molecules/IssueListItem/IssueListItem.constants";
+import { Pagination } from "@/components/molecules/Pagination/Pagination";
 import { useIssues } from "@/hooks/useIssues/useIssues";
 import { useCurrentProject } from "@/hooks/useScope/useScope";
 import { useIssuesSearch } from "@/hooks/useSearchParams/useSearchParams";

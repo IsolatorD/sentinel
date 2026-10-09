@@ -12,16 +12,14 @@ import {
 import { useTranslation } from "react-i18next";
 import { Avatar } from "@/components/atoms/Avatar/Avatar";
 import { Logo } from "@/components/atoms/Logo/Logo";
-import { LanguageSelect } from "@/components/molecules/LanguageSelect";
-import {
-	Menu,
-	MenuContent,
-	MenuItem,
-	MenuLabel,
-	MenuSeparator,
-	MenuTrigger,
-} from "@/components/molecules/Menu";
-import { SidebarLink } from "@/components/molecules/SidebarLink";
+import { LanguageSelect } from "@/components/molecules/LanguageSelect/LanguageSelect";
+import { Menu } from "@/components/molecules/Menu/Menu";
+import { MenuContent } from "@/components/molecules/MenuContent/MenuContent";
+import { MenuItem } from "@/components/molecules/MenuItem/MenuItem";
+import { MenuLabel } from "@/components/molecules/MenuLabel/MenuLabel";
+import { MenuSeparator } from "@/components/molecules/MenuSeparator/MenuSeparator";
+import { MenuTrigger } from "@/components/molecules/MenuTrigger/MenuTrigger";
+import { SidebarLink } from "@/components/molecules/SidebarLink/SidebarLink";
 import {
 	useCurrentOrganization,
 	useCurrentProject,

@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Button } from "@/components/atoms/Button/Button";
 import { Select } from "@/components/atoms/Select/Select";
-import { SearchInput } from "@/components/molecules/SearchInput";
+import { SearchInput } from "@/components/molecules/SearchInput/SearchInput";
 import { useEnvironments, useReleases } from "@/hooks/useReleases/useReleases";
 import { useCurrentProject } from "@/hooks/useScope/useScope";
 import { useIssuesSearch } from "@/hooks/useSearchParams/useSearchParams";

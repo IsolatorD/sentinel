@@ -6,9 +6,9 @@ import { Button } from "@/components/atoms/Button/Button";
 import { Card } from "@/components/atoms/Card/Card";
 import { CardBody } from "@/components/atoms/CardBody/CardBody";
 import { Input } from "@/components/atoms/Input/Input";
-import { Alert } from "@/components/molecules/Alert";
-import { FormField } from "@/components/molecules/FormField";
-import { Modal } from "@/components/molecules/Modal";
+import { Alert } from "@/components/molecules/Alert/Alert";
+import { FormField } from "@/components/molecules/FormField/FormField";
+import { Modal } from "@/components/molecules/Modal/Modal";
 import { useDeleteProject } from "@/hooks/useProjects/useProjects";
 import { ApiError } from "@/utils/apiError/apiError";
 

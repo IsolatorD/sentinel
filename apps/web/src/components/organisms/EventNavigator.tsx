@@ -2,7 +2,7 @@ import type { EventDetailDto, EventSummaryDto } from "@sentinel/shared";
 import { ChevronLeft, ChevronRight, ChevronsRight } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { Button } from "@/components/atoms/Button/Button";
-import { RelativeTime } from "@/components/molecules/RelativeTime";
+import { RelativeTime } from "@/components/molecules/RelativeTime/RelativeTime";
 
 export interface EventNavigatorProps {
 	event: EventDetailDto;

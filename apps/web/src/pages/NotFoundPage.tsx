@@ -2,7 +2,7 @@ import { Link } from "@tanstack/react-router";
 import { Compass } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { buttonVariants } from "@/components/atoms/Button/Button.constants";
-import { EmptyState } from "@/components/molecules/EmptyState";
+import { EmptyState } from "@/components/molecules/EmptyState/EmptyState";
 
 export function NotFoundPage() {
 	const { t } = useTranslation();

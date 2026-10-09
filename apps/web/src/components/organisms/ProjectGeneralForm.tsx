@@ -4,9 +4,9 @@ import { useTranslation } from "react-i18next";
 import { Button } from "@/components/atoms/Button/Button";
 import { Input } from "@/components/atoms/Input/Input";
 import { Select } from "@/components/atoms/Select/Select";
-import { Alert } from "@/components/molecules/Alert";
-import { FormField } from "@/components/molecules/FormField";
-import { Section } from "@/components/molecules/Section";
+import { Alert } from "@/components/molecules/Alert/Alert";
+import { FormField } from "@/components/molecules/FormField/FormField";
+import { Section } from "@/components/molecules/Section/Section";
 import { useUpdateProject } from "@/hooks/useProjects/useProjects";
 import { ApiError } from "@/utils/apiError/apiError";
 

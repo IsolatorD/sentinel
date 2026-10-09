@@ -6,12 +6,12 @@ import { Button } from "@/components/atoms/Button/Button";
 import { Card } from "@/components/atoms/Card/Card";
 import { Input } from "@/components/atoms/Input/Input";
 import { Skeleton } from "@/components/atoms/Skeleton/Skeleton";
-import { Alert } from "@/components/molecules/Alert";
-import { CopyButton } from "@/components/molecules/CopyButton";
-import { EmptyState } from "@/components/molecules/EmptyState";
-import { ErrorState } from "@/components/molecules/ErrorState";
-import { Modal } from "@/components/molecules/Modal";
-import { RelativeTime } from "@/components/molecules/RelativeTime";
+import { Alert } from "@/components/molecules/Alert/Alert";
+import { CopyButton } from "@/components/molecules/CopyButton/CopyButton";
+import { EmptyState } from "@/components/molecules/EmptyState/EmptyState";
+import { ErrorState } from "@/components/molecules/ErrorState/ErrorState";
+import { Modal } from "@/components/molecules/Modal/Modal";
+import { RelativeTime } from "@/components/molecules/RelativeTime/RelativeTime";
 import {
 	useCreateToken,
 	useRevokeToken,

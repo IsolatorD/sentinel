@@ -1,6 +1,6 @@
 import type { ProjectDto } from "@sentinel/shared";
 import { useTranslation } from "react-i18next";
-import { Modal } from "@/components/molecules/Modal";
+import { Modal } from "@/components/molecules/Modal/Modal";
 import { CreateProjectForm } from "./CreateProjectForm";
 
 export interface CreateProjectDialogProps {

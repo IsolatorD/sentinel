@@ -1,6 +1,6 @@
 import { useTranslation } from "react-i18next";
 import { Skeleton } from "@/components/atoms/Skeleton/Skeleton";
-import { Section } from "@/components/molecules/Section";
+import { Section } from "@/components/molecules/Section/Section";
 import { DeleteProjectSection } from "@/components/organisms/DeleteProjectSection";
 import { InstallInstructions } from "@/components/organisms/InstallInstructions";
 import { ProjectGeneralForm } from "@/components/organisms/ProjectGeneralForm";

@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 import { Spinner } from "@/components/atoms/Spinner/Spinner";
-import { ErrorState } from "@/components/molecules/ErrorState";
+import { ErrorState } from "@/components/molecules/ErrorState/ErrorState";
 import { useCurrentProject } from "@/hooks/useScope/useScope";
 import { NotFoundPage } from "./NotFoundPage";
 

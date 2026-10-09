@@ -4,8 +4,8 @@ import { useTranslation } from "react-i18next";
 import { Button } from "@/components/atoms/Button/Button";
 import { Input } from "@/components/atoms/Input/Input";
 import { Select } from "@/components/atoms/Select/Select";
-import { Alert } from "@/components/molecules/Alert";
-import { FormField } from "@/components/molecules/FormField";
+import { Alert } from "@/components/molecules/Alert/Alert";
+import { FormField } from "@/components/molecules/FormField/FormField";
 import { useCreateProject } from "@/hooks/useProjects/useProjects";
 
 export interface CreateProjectFormProps {

@@ -6,12 +6,12 @@ import { useTranslation as useI18n, useTranslation } from "react-i18next";
 import { Badge } from "@/components/atoms/Badge/Badge";
 import { Button } from "@/components/atoms/Button/Button";
 import { Card } from "@/components/atoms/Card/Card";
-import { LevelBadge } from "@/components/molecules/LevelBadge";
-import { Modal } from "@/components/molecules/Modal";
-import { RelativeTime } from "@/components/molecules/RelativeTime";
-import { ResolveButton } from "@/components/molecules/ResolveButton";
-import { StatBlock } from "@/components/molecules/StatBlock";
-import { StatusBadge } from "@/components/molecules/StatusBadge";
+import { LevelBadge } from "@/components/molecules/LevelBadge/LevelBadge";
+import { Modal } from "@/components/molecules/Modal/Modal";
+import { RelativeTime } from "@/components/molecules/RelativeTime/RelativeTime";
+import { ResolveButton } from "@/components/molecules/ResolveButton/ResolveButton";
+import { StatBlock } from "@/components/molecules/StatBlock/StatBlock";
+import { StatusBadge } from "@/components/molecules/StatusBadge/StatusBadge";
 import {
 	useDeleteIssue,
 	useUpdateIssueStatus,

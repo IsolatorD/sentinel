@@ -5,10 +5,10 @@ import { useTranslation } from "react-i18next";
 import { Badge } from "@/components/atoms/Badge/Badge";
 import { Button } from "@/components/atoms/Button/Button";
 import { Input } from "@/components/atoms/Input/Input";
-import { Alert } from "@/components/molecules/Alert";
-import { CopyButton } from "@/components/molecules/CopyButton";
-import { Modal } from "@/components/molecules/Modal";
-import { Section } from "@/components/molecules/Section";
+import { Alert } from "@/components/molecules/Alert/Alert";
+import { CopyButton } from "@/components/molecules/CopyButton/CopyButton";
+import { Modal } from "@/components/molecules/Modal/Modal";
+import { Section } from "@/components/molecules/Section/Section";
 import {
 	useCreateKey,
 	useDeleteKey,

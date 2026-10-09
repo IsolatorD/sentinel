@@ -1,8 +1,8 @@
 import type { EventDetailDto } from "@sentinel/shared";
 import { useTranslation } from "react-i18next";
-import { Alert } from "@/components/molecules/Alert";
-import { CodeBlock } from "@/components/molecules/CodeBlock";
-import { Section } from "@/components/molecules/Section";
+import { Alert } from "@/components/molecules/Alert/Alert";
+import { CodeBlock } from "@/components/molecules/CodeBlock/CodeBlock";
+import { Section } from "@/components/molecules/Section/Section";
 import { parseEventPayload } from "@/utils/eventView/eventView";
 import { BreadcrumbList } from "./BreadcrumbList";
 import { EventContext } from "./EventContext";
