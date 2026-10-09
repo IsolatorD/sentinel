@@ -51,6 +51,29 @@ sentinel/
 
 El frontend es una app aparte, no se sirve desde NestJS: en desarrollo corre con Vite (hot reload) y llama a la API; en producción se compila a archivos estáticos (servidos por CDN o Caddy). Comparte tipos y esquemas con la API desde `packages/shared`. Autenticación por cookie de sesión (`httpOnly`), con CORS restringido al dominio del dashboard.
 
+### 2.2 Arquitectura del frontend (`apps/web`)
+
+Arquitectura atómica (Atomic Design) y acceso a datos siempre a través de hooks:
+
+```
+apps/web/src/
+├── components/
+│   ├── atoms/        # botón, input, badge... (sin lógica de negocio)
+│   ├── molecules/    # campo de formulario, tarjeta de issue...
+│   ├── organisms/    # tabla de issues, formulario de login, sidebar...
+│   └── templates/    # layouts de página (sin datos reales)
+├── pages/            # pantallas: ensamblan templates y organismos con hooks
+├── services/         # llamadas a la API (fetch/clientes); sin React
+├── hooks/            # custom hooks (TanStack Query) que consumen los services
+└── ...               # i18n, rutas, utilidades
+```
+
+Reglas:
+- **Ningún componente llama a un service directamente.** Los componentes solo usan hooks; los hooks son los únicos que importan services.
+- Los atoms y molecules reciben todo por props; los organisms/pages son quienes usan hooks.
+- Los tipos y esquemas Zod vienen de `packages/shared`.
+- La UI se construye al final (después de backend y SDK). Las pantallas actuales (`App.tsx`, `AuthPage.tsx`, `auth-client.ts`) son provisionales y se reorganizarán con esta estructura.
+
 ## 3. Cómo funciona (resumen)
 
 ```
