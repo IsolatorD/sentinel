@@ -1,29 +1,6 @@
-import { ApiError } from "@/utils/apiError/apiError";
-import { authClient } from "./auth-client.js";
-
-export interface SessionUser {
-	id: string;
-	name: string;
-	email: string;
-	image?: string | null;
-}
-
-type BetterAuthError = {
-	message?: string;
-	status: number;
-	code?: string;
-} | null;
-
-function unwrap<T>(result: { data: T | null; error: BetterAuthError }): T {
-	if (result.error) {
-		throw new ApiError(
-			result.error.status,
-			result.error.message ?? "Request failed",
-			result.error.code,
-		);
-	}
-	return result.data as T;
-}
+import { authClient } from "@/services/authClient/authClient";
+import { unwrap } from "@/services/authService/authService.constants";
+import type { SessionUser } from "@/services/authService/authServiceInterface";
 
 export const authService = {
 	async getSession(): Promise<{ user: SessionUser } | null> {

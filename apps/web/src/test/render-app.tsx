@@ -5,11 +5,11 @@ import userEvent from "@testing-library/user-event";
 import { vi } from "vitest";
 import { createQueryClient } from "@/app/query-client";
 import { createAppRouter } from "@/app/router";
-import { authService } from "@/services/auth.service";
-import { configService } from "@/services/config.service";
-import { issuesService } from "@/services/issues.service";
-import { organizationsService } from "@/services/organizations.service";
-import { projectsService } from "@/services/projects.service";
+import { authService } from "@/services/authService/authService";
+import { configService } from "@/services/configService/configService";
+import { issuesService } from "@/services/issuesService/issuesService";
+import { organizationsService } from "@/services/organizationsService/organizationsService";
+import { projectsService } from "@/services/projectsService/projectsService";
 import * as fx from "./fixtures";
 
 /** Monta la aplicación real (router, caché, páginas) en una ruta; los servicios se simulan en cada test. */

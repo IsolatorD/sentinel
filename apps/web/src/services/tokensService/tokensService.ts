@@ -2,9 +2,8 @@ import {
 	apiTokenListDtoSchema,
 	createdApiTokenDtoSchema,
 } from "@sentinel/shared";
-import { http } from "./http.js";
-
-const base = (orgId: string) => `/api/organizations/${orgId}/tokens`;
+import { http } from "@/services/http/http";
+import { base } from "@/services/tokensService/tokensService.constants";
 
 export const tokensService = {
 	list: (orgId: string) => http(base(orgId), { schema: apiTokenListDtoSchema }),

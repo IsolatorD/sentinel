@@ -7,9 +7,8 @@ import {
 	type UpdateProjectKeyInput,
 } from "@sentinel/shared";
 import { z } from "zod";
-import { http } from "./http.js";
-
-const base = (orgId: string) => `/api/organizations/${orgId}/projects`;
+import { http } from "@/services/http/http";
+import { base } from "@/services/projectsService/projectsService.constants";
 
 export const projectsService = {
 	list: (orgId: string) =>

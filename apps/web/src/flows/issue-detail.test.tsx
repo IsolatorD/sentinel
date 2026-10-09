@@ -1,6 +1,6 @@
 import { screen, waitFor, within } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { issuesService } from "@/services/issues.service";
+import { issuesService } from "@/services/issuesService/issuesService";
 import * as fx from "@/test/fixtures";
 import {
 	ISSUE_PATH,
@@ -10,11 +10,11 @@ import {
 } from "@/test/render-app";
 import { ApiError } from "@/utils/apiError/apiError";
 
-vi.mock("@/services/auth.service");
-vi.mock("@/services/config.service");
-vi.mock("@/services/organizations.service");
-vi.mock("@/services/projects.service");
-vi.mock("@/services/issues.service");
+vi.mock("@/services/authService/authService");
+vi.mock("@/services/configService/configService");
+vi.mock("@/services/organizationsService/organizationsService");
+vi.mock("@/services/projectsService/projectsService");
+vi.mock("@/services/issuesService/issuesService");
 
 beforeEach(() => {
 	vi.resetAllMocks();

@@ -1,8 +1,9 @@
 import type { AxiosAdapter, InternalAxiosRequestConfig } from "axios";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import { z } from "zod";
+import { http } from "@/services/http/http";
+import { apiClient } from "@/services/http/http.constants";
 import { ApiError } from "@/utils/apiError/apiError";
-import { apiClient, http } from "./http";
 
 const original = apiClient.defaults.adapter;
 let requests: InternalAxiosRequestConfig[];

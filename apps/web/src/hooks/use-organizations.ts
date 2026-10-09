@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { organizationsService } from "@/services/organizations.service";
+import { organizationsService } from "@/services/organizationsService/organizationsService";
 import { queryKeys } from "./query-keys";
 
 export function useOrganizations() {

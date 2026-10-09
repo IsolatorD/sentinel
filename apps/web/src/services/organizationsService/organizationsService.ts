@@ -1,8 +1,8 @@
 import { z } from "zod";
+import { authClient } from "@/services/authClient/authClient";
 import { ApiError } from "@/utils/apiError/apiError";
 import { organizationSchema } from "@/utils/organization/organization.constants";
 import type { Organization } from "@/utils/organization/organizationInterface";
-import { authClient } from "./auth-client.js";
 
 export const organizationsService = {
 	async list(): Promise<Organization[]> {

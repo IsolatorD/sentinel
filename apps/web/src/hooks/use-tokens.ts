@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { tokensService } from "@/services/tokens.service";
+import { tokensService } from "@/services/tokensService/tokensService";
 import { queryKeys } from "./query-keys";
 
 export function useTokens(orgId: string | undefined) {

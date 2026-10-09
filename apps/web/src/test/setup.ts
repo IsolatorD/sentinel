@@ -2,7 +2,7 @@ import "@testing-library/jest-dom/vitest";
 import { cleanup } from "@testing-library/react";
 import { afterEach, beforeAll } from "vitest";
 import i18n from "@/i18n";
-import { apiClient } from "@/services/http";
+import { apiClient } from "@/services/http/http.constants";
 
 beforeAll(async () => {
 	// Las aserciones de los tests están en inglés, sin importar el idioma del entorno.

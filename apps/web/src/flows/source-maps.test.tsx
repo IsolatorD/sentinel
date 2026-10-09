@@ -1,18 +1,18 @@
 import { screen, waitFor, within } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { releasesService } from "@/services/releases.service";
-import { tokensService } from "@/services/tokens.service";
+import { releasesService } from "@/services/releasesService/releasesService";
+import { tokensService } from "@/services/tokensService/tokensService";
 import * as fx from "@/test/fixtures";
 import { ISSUE_PATH, mockHappyPath, renderApp } from "@/test/render-app";
 import { ApiError } from "@/utils/apiError/apiError";
 
-vi.mock("@/services/auth.service");
-vi.mock("@/services/config.service");
-vi.mock("@/services/organizations.service");
-vi.mock("@/services/projects.service");
-vi.mock("@/services/issues.service");
-vi.mock("@/services/releases.service");
-vi.mock("@/services/tokens.service");
+vi.mock("@/services/authService/authService");
+vi.mock("@/services/configService/configService");
+vi.mock("@/services/organizationsService/organizationsService");
+vi.mock("@/services/projectsService/projectsService");
+vi.mock("@/services/issuesService/issuesService");
+vi.mock("@/services/releasesService/releasesService");
+vi.mock("@/services/tokensService/tokensService");
 
 const RELEASES_PATH = "/acme/projects/storefront/releases";
 const TOKENS_PATH = "/acme/tokens";
@@ -246,7 +246,9 @@ describe("stack trace con código original", () => {
 	};
 
 	beforeEach(async () => {
-		const { issuesService } = await import("@/services/issues.service");
+		const { issuesService } = await import(
+			"@/services/issuesService/issuesService"
+		);
 		vi.mocked(issuesService.get).mockResolvedValue(
 			fx.issueDetail({
 				latestEvent: fx.event({ payload: symbolicated }),
@@ -288,7 +290,9 @@ describe("stack trace con código original", () => {
 	});
 
 	it("los frames sin source map no tienen contenido que abrir", async () => {
-		const { issuesService } = await import("@/services/issues.service");
+		const { issuesService } = await import(
+			"@/services/issuesService/issuesService"
+		);
 		vi.mocked(issuesService.get).mockResolvedValue(fx.issueDetail());
 		renderApp(ISSUE_PATH);
 		const blocks = await screen.findAllByTestId("exception-block");

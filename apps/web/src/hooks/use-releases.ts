@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { releasesService } from "@/services/releases.service";
+import { releasesService } from "@/services/releasesService/releasesService";
 import { queryKeys } from "./query-keys";
 
 interface Scope {

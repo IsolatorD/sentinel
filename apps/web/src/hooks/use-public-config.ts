@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { configService } from "@/services/config.service";
+import { configService } from "@/services/configService/configService";
 import { queryKeys } from "./query-keys";
 
 export function usePublicConfig() {

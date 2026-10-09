@@ -4,7 +4,7 @@ import {
 	useQuery,
 	useQueryClient,
 } from "@tanstack/react-query";
-import { authService } from "@/services/auth.service";
+import { authService } from "@/services/authService/authService";
 import { queryKeys } from "./query-keys";
 
 /** Opciones de la consulta de sesión; el router las usa para decidir el acceso a cada ruta. */

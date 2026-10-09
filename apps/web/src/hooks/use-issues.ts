@@ -5,7 +5,7 @@ import {
 	useQuery,
 	useQueryClient,
 } from "@tanstack/react-query";
-import { issuesService } from "@/services/issues.service";
+import { issuesService } from "@/services/issuesService/issuesService";
 import { queryKeys } from "./query-keys";
 
 interface Scope {

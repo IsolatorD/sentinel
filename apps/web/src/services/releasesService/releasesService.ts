@@ -4,13 +4,11 @@ import {
 	releaseDtoSchema,
 	releaseListDtoSchema,
 } from "@sentinel/shared";
-import { http } from "./http.js";
-
-const base = (orgId: string, projectId: string) =>
-	`/api/organizations/${orgId}/projects/${projectId}`;
-
-const releasePath = (orgId: string, projectId: string, version: string) =>
-	`${base(orgId, projectId)}/releases/${encodeURIComponent(version)}`;
+import { http } from "@/services/http/http";
+import {
+	base,
+	releasePath,
+} from "@/services/releasesService/releasesService.constants";
 
 export const releasesService = {
 	list: (orgId: string, projectId: string) =>

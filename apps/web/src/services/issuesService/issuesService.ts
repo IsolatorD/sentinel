@@ -7,10 +7,8 @@ import {
 	type ListIssuesQuery,
 	type UpdateIssueInput,
 } from "@sentinel/shared";
-import { http } from "./http.js";
-
-const base = (orgId: string, projectId: string) =>
-	`/api/organizations/${orgId}/projects/${projectId}/issues`;
+import { http } from "@/services/http/http";
+import { base } from "@/services/issuesService/issuesService.constants";
 
 export const issuesService = {
 	list: (orgId: string, projectId: string, query: Partial<ListIssuesQuery>) =>
