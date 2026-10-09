@@ -2,7 +2,19 @@ import { drizzle } from "drizzle-orm/node-postgres";
 import { Pool } from "pg";
 import * as schema from "./schema/index.js";
 
-export { and, desc, eq, sql, TransactionRollbackError } from "drizzle-orm";
+export {
+	and,
+	asc,
+	count,
+	countDistinct,
+	desc,
+	eq,
+	ilike,
+	inArray,
+	or,
+	sql,
+	TransactionRollbackError,
+} from "drizzle-orm";
 export * from "./schema/index.js";
 export { schema };
 

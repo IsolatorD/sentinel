@@ -10,8 +10,6 @@ import {
 } from "drizzle-orm/pg-core";
 import { project } from "./projects.js";
 
-export const ISSUE_STATUSES = ["unresolved", "resolved", "ignored"] as const;
-
 // Un issue agrupa todos los eventos con el mismo fingerprint dentro de un proyecto.
 export const issue = pgTable(
 	"issue",
@@ -36,6 +34,11 @@ export const issue = pgTable(
 	(t) => [
 		uniqueIndex("issue_project_fingerprint_idx").on(t.projectId, t.fingerprint),
 		index("issue_project_last_seen_idx").on(t.projectId, t.lastSeen),
+		index("issue_project_status_last_seen_idx").on(
+			t.projectId,
+			t.status,
+			t.lastSeen,
+		),
 	],
 );
 

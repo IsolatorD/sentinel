@@ -1,0 +1,1 @@
+CREATE INDEX "issue_project_status_last_seen_idx" ON "issue" USING btree ("project_id","status","last_seen");
