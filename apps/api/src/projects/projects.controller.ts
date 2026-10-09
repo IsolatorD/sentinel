@@ -11,6 +11,16 @@ import {
 	UseGuards,
 } from "@nestjs/common";
 import {
+	ApiBody,
+	ApiCreatedResponse,
+	ApiDefaultResponse,
+	ApiNoContentResponse,
+	ApiOkResponse,
+	ApiOperation,
+	ApiSecurity,
+	ApiTags,
+} from "@nestjs/swagger";
+import {
 	type CreateProjectInput,
 	type CreateProjectKeyInput,
 	createProjectKeySchema,
@@ -23,21 +33,37 @@ import {
 import { AuthGuard, type AuthSession } from "../auth/auth.guard.js";
 import { CurrentUser } from "../auth/current-user.decorator.js";
 import { ZodValidationPipe } from "../common/zod-validation.pipe.js";
+import { docs } from "../openapi/schemas.js";
 import { ProjectsService } from "./projects.service.js";
 
 type User = AuthSession["user"];
 
+@ApiTags("Projects")
+@ApiSecurity("session")
+@ApiDefaultResponse({
+	description:
+		"Error (401 sin sesión, 403 sin permisos, 404 si no existe o no pertenece a la organización)",
+	schema: docs.error,
+})
 @Controller("organizations/:orgId/projects")
 @UseGuards(AuthGuard)
 export class ProjectsController {
 	constructor(private readonly projects: ProjectsService) {}
 
 	@Get()
+	@ApiOperation({ summary: "Lista los proyectos de una organización" })
+	@ApiOkResponse({ schema: docs.projectList })
 	list(@CurrentUser() user: User, @Param("orgId") orgId: string) {
 		return this.projects.list(user.id, orgId);
 	}
 
 	@Post()
+	@ApiOperation({
+		summary: "Crea un proyecto (y su primera clave DSN)",
+		description: "Requiere rol owner o admin.",
+	})
+	@ApiBody({ schema: docs.createProject })
+	@ApiCreatedResponse({ schema: docs.project })
 	create(
 		@CurrentUser() user: User,
 		@Param("orgId") orgId: string,
@@ -47,6 +73,8 @@ export class ProjectsController {
 	}
 
 	@Get(":projectId")
+	@ApiOperation({ summary: "Detalle de un proyecto, con sus claves DSN" })
+	@ApiOkResponse({ schema: docs.project })
 	get(
 		@CurrentUser() user: User,
 		@Param("orgId") orgId: string,
@@ -56,6 +84,12 @@ export class ProjectsController {
 	}
 
 	@Patch(":projectId")
+	@ApiOperation({
+		summary: "Renombra un proyecto o cambia su plataforma",
+		description: "Requiere rol owner o admin.",
+	})
+	@ApiBody({ schema: docs.updateProject })
+	@ApiOkResponse({ schema: docs.project })
 	update(
 		@CurrentUser() user: User,
 		@Param("orgId") orgId: string,
@@ -67,6 +101,11 @@ export class ProjectsController {
 
 	@Delete(":projectId")
 	@HttpCode(204)
+	@ApiOperation({
+		summary: "Borra un proyecto con sus claves, issues y eventos",
+		description: "Requiere rol owner o admin.",
+	})
+	@ApiNoContentResponse()
 	async remove(
 		@CurrentUser() user: User,
 		@Param("orgId") orgId: string,
@@ -76,6 +115,12 @@ export class ProjectsController {
 	}
 
 	@Post(":projectId/keys")
+	@ApiOperation({
+		summary: "Crea una clave DSN",
+		description: "Requiere rol owner o admin.",
+	})
+	@ApiBody({ schema: docs.createKey })
+	@ApiCreatedResponse({ schema: docs.projectKey })
 	createKey(
 		@CurrentUser() user: User,
 		@Param("orgId") orgId: string,
@@ -87,6 +132,13 @@ export class ProjectsController {
 	}
 
 	@Patch(":projectId/keys/:keyId")
+	@ApiOperation({
+		summary: "Renombra o revoca una clave DSN",
+		description:
+			"Requiere rol owner o admin. `isActive: false` revoca la clave.",
+	})
+	@ApiBody({ schema: docs.updateKey })
+	@ApiOkResponse({ schema: docs.projectKey })
 	updateKey(
 		@CurrentUser() user: User,
 		@Param("orgId") orgId: string,
@@ -100,6 +152,11 @@ export class ProjectsController {
 
 	@Delete(":projectId/keys/:keyId")
 	@HttpCode(204)
+	@ApiOperation({
+		summary: "Borra una clave DSN",
+		description: "Requiere rol owner o admin.",
+	})
+	@ApiNoContentResponse()
 	async removeKey(
 		@CurrentUser() user: User,
 		@Param("orgId") orgId: string,

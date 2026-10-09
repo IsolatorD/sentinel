@@ -1,6 +1,7 @@
 import { Global, Inject, Module, type OnModuleDestroy } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { createDb } from "@sentinel/db";
+import type { ApiEnv } from "../config/env.js";
 
 export const DB = Symbol("DB");
 export const DB_POOL = Symbol("DB_POOL");
@@ -11,8 +12,8 @@ export const DB_POOL = Symbol("DB_POOL");
 		{
 			provide: DB_POOL,
 			inject: [ConfigService],
-			useFactory: (config: ConfigService) =>
-				createDb(config.getOrThrow<string>("DATABASE_URL")),
+			useFactory: (config: ConfigService<ApiEnv, true>) =>
+				createDb(config.get("DATABASE_URL", { infer: true })),
 		},
 		{
 			provide: DB,

@@ -82,6 +82,9 @@ export const ingestEventSchema = z.object({
 });
 export type IngestEvent = z.infer<typeof ingestEventSchema>;
 
+export const ingestResponseSchema = z.object({ id: z.string().uuid() });
+export type IngestResponse = z.infer<typeof ingestResponseSchema>;
+
 // Datos del job que la API encola y el worker procesa.
 export interface IngestJobData {
 	projectId: string;

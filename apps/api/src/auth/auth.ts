@@ -1,6 +1,7 @@
 import { type Database, schema } from "@sentinel/db";
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
+import { openAPI } from "better-auth/plugins";
 import { organization } from "better-auth/plugins/organization";
 
 export interface AuthOptions {
@@ -24,6 +25,7 @@ export function createAuth(opts: AuthOptions) {
 		// Google solo se activa si hay credenciales configuradas.
 		socialProviders: opts.google ? { google: opts.google } : {},
 		plugins: [
+			openAPI(),
 			organization({
 				creatorRole: "owner",
 			}),

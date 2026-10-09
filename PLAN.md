@@ -74,6 +74,14 @@ Reglas:
 - Los tipos y esquemas Zod vienen de `packages/shared`.
 - La UI se construye al final (después de backend y SDK). Las pantallas actuales (`App.tsx`, `AuthPage.tsx`, `auth-client.ts`) son provisionales y se reorganizarán con esta estructura.
 
+### 2.3 Arquitectura del backend
+
+Monolito modular (un módulo de NestJS por feature) con capas internas `controller → service → repository`, reglas puras en `domain/` y dependencias en un solo sentido. Un módulo solo habla con otro a través de su service exportado. Los repositorios son la única capa que usa Drizzle; el de eventos es una interfaz (`EventRepository`) para poder cambiar Postgres por un almacén columnar si hiciera falta.
+
+Transversal: entorno validado con Zod al arrancar, formato de error único, logs estructurados con `pino` (id de petición y datos sensibles redactados) y OpenAPI generado desde los esquemas Zod.
+
+Descartado por ahora: arquitectura hexagonal completa, DDD con agregados, CQRS/bus de eventos y microservicios. El diseño modular deja abierta la puerta (p. ej. `IngestModule` solo depende de la base de datos y de Redis).
+
 ## 3. Cómo funciona (resumen)
 
 ```

@@ -1,6 +1,7 @@
 import { Global, Inject, Module, type OnModuleDestroy } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { Redis } from "ioredis";
+import type { ApiEnv } from "../config/env.js";
 
 export const REDIS = Symbol("REDIS");
 
@@ -10,10 +11,10 @@ export const REDIS = Symbol("REDIS");
 		{
 			provide: REDIS,
 			inject: [ConfigService],
-			useFactory: (config: ConfigService) =>
+			useFactory: (config: ConfigService<ApiEnv, true>) =>
 				new Redis({
-					host: config.get<string>("REDIS_HOST", "localhost"),
-					port: Number(config.get<string>("REDIS_PORT", "6379")),
+					host: config.get("REDIS_HOST", { infer: true }),
+					port: config.get("REDIS_PORT", { infer: true }),
 				}),
 		},
 	],

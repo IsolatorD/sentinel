@@ -1,4 +1,5 @@
 import { All, Controller, Inject, Req, Res } from "@nestjs/common";
+import { ApiExcludeController } from "@nestjs/swagger";
 import type { FastifyReply, FastifyRequest } from "fastify";
 import { AUTH } from "./auth.constants.js";
 import type { Auth } from "./auth.js";
@@ -6,6 +7,7 @@ import { toWebHeaders } from "./web-headers.js";
 
 // Better Auth expone un handler Web estándar (Request -> Response).
 // Este controlador traduce entre Fastify y ese handler.
+@ApiExcludeController()
 @Controller("auth")
 export class AuthController {
 	constructor(@Inject(AUTH) private readonly auth: Auth) {}

@@ -57,3 +57,26 @@ La DSN tiene la forma `http://<clavePública>@host/<projectId>`; `PUBLIC_API_URL
 - **CORS:** abierto solo en la ruta de ingesta; el resto de la API acepta solo `WEB_ORIGIN`.
 
 Tests: `pnpm test` (hoy cubre el fingerprint).
+
+## Arquitectura del backend
+
+Monolito modular: un módulo de NestJS por feature y, dentro de cada uno, capas con dependencias en un solo sentido:
+
+```
+controller  →  service  →  repository  →  db
+(HTTP)         (reglas)     (Drizzle)
+```
+
+- **controller:** valida la entrada (Zod), llama al service y responde. No contiene lógica.
+- **service:** reglas de negocio y permisos. No conoce Drizzle.
+- **repository:** la única capa que habla con la base de datos.
+- **domain/:** funciones puras (slug, DSN, roles, fingerprint), probadas sin base de datos.
+- Un módulo solo usa a otro a través de su service exportado, nunca leyendo sus tablas.
+- En el worker, `EventRepository` es una interfaz: hoy la implementa Postgres y puede reemplazarse (p. ej. por ClickHouse) sin tocar la agrupación.
+
+## Configuración, errores y logs
+
+- **Entorno:** se valida con Zod al arrancar (`apps/*/src/config/env.ts`); si falta o es inválida una variable, el proceso falla con un mensaje claro. Ver `.env.example`.
+- **Errores:** toda la API responde con el mismo formato `{ statusCode, code, message, issues?, requestId }`.
+- **Logs:** JSON estructurado con `pino` (legible en desarrollo). Cada petición lleva un `x-request-id` (se respeta el entrante y se devuelve en la respuesta). Los headers sensibles y `sentinel_key` de la URL se redactan.
+- **Documentación:** OpenAPI generado desde los mismos esquemas Zod. UI en `/api/docs`, JSON en `/api/docs/openapi.json` y la referencia de Better Auth en `/api/auth/reference`. Se desactiva en producción salvo `ENABLE_DOCS=true`.

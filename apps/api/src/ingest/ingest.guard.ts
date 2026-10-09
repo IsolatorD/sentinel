@@ -4,14 +4,13 @@ import {
 	type ExecutionContext,
 	HttpException,
 	HttpStatus,
-	Inject,
 	Injectable,
 	UnauthorizedException,
 } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
-import { and, type Database, eq, projectKey } from "@sentinel/db";
 import type { FastifyReply, FastifyRequest } from "fastify";
-import { DB } from "../database/database.module.js";
+import type { ApiEnv } from "../config/env.js";
+import { ProjectsService } from "../projects/projects.service.js";
 import { RateLimiterService } from "./rate-limiter.service.js";
 
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
@@ -27,13 +26,13 @@ export class IngestGuard implements CanActivate {
 	private readonly eventsPerMinute: number;
 
 	constructor(
-		@Inject(DB) private readonly db: Database,
+		private readonly projects: ProjectsService,
 		private readonly limiter: RateLimiterService,
-		config: ConfigService,
+		config: ConfigService<ApiEnv, true>,
 	) {
-		this.eventsPerMinute = Number(
-			config.get<string>("INGEST_RATE_LIMIT_PER_MINUTE", "600"),
-		);
+		this.eventsPerMinute = config.get("INGEST_RATE_LIMIT_PER_MINUTE", {
+			infer: true,
+		});
 	}
 
 	async canActivate(context: ExecutionContext): Promise<boolean> {
@@ -54,7 +53,7 @@ export class IngestGuard implements CanActivate {
 		const valid =
 			key !== undefined &&
 			KEY.test(key) &&
-			(await this.isValidKey(projectId, key));
+			(await this.projects.isIngestKeyValid(projectId, key));
 
 		if (!valid) {
 			// Las claves inválidas se frenan por IP; una clave válida nunca se bloquea.
@@ -75,21 +74,6 @@ export class IngestGuard implements CanActivate {
 		if (!result.allowed) this.tooMany(reply, result.retryAfterSeconds);
 
 		return true;
-	}
-
-	private async isValidKey(projectId: string, publicKey: string) {
-		const [row] = await this.db
-			.select({ id: projectKey.id })
-			.from(projectKey)
-			.where(
-				and(
-					eq(projectKey.projectId, projectId),
-					eq(projectKey.publicKey, publicKey),
-					eq(projectKey.isActive, true),
-				),
-			)
-			.limit(1);
-		return Boolean(row);
 	}
 
 	private tooMany(reply: FastifyReply, retryAfterSeconds: number): never {

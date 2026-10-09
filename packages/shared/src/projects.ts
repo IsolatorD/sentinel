@@ -46,22 +46,24 @@ export const updateProjectKeySchema = z
 	});
 export type UpdateProjectKeyInput = z.infer<typeof updateProjectKeySchema>;
 
-export interface ProjectKeyDto {
-	id: string;
-	projectId: string;
-	label: string;
-	publicKey: string;
-	isActive: boolean;
-	dsn: string;
-	createdAt: string;
-}
+export const projectKeyDtoSchema = z.object({
+	id: z.string().uuid(),
+	projectId: z.string().uuid(),
+	label: z.string(),
+	publicKey: z.string(),
+	isActive: z.boolean(),
+	dsn: z.string(),
+	createdAt: z.string().datetime(),
+});
+export type ProjectKeyDto = z.infer<typeof projectKeyDtoSchema>;
 
-export interface ProjectDto {
-	id: string;
-	organizationId: string;
-	name: string;
-	slug: string;
-	platform: string;
-	createdAt: string;
-	keys?: ProjectKeyDto[];
-}
+export const projectDtoSchema = z.object({
+	id: z.string().uuid(),
+	organizationId: z.string(),
+	name: z.string(),
+	slug: z.string(),
+	platform: z.string(),
+	createdAt: z.string().datetime(),
+	keys: z.array(projectKeyDtoSchema).optional(),
+});
+export type ProjectDto = z.infer<typeof projectDtoSchema>;

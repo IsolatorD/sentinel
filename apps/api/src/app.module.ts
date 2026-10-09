@@ -1,6 +1,11 @@
 import { Module } from "@nestjs/common";
-import { ConfigModule } from "@nestjs/config";
+import { ConfigModule, ConfigService } from "@nestjs/config";
+import { APP_FILTER } from "@nestjs/core";
+import { LoggerModule } from "nestjs-pino";
 import { AuthModule } from "./auth/auth.module.js";
+import { AllExceptionsFilter } from "./common/all-exceptions.filter.js";
+import { buildLoggerParams } from "./common/logging.js";
+import { type ApiEnv, validateApiEnv } from "./config/env.js";
 import { DatabaseModule } from "./database/database.module.js";
 import { HealthModule } from "./health/health.module.js";
 import { IngestModule } from "./ingest/ingest.module.js";
@@ -10,7 +15,19 @@ import { RedisModule } from "./redis/redis.module.js";
 
 @Module({
 	imports: [
-		ConfigModule.forRoot({ isGlobal: true, envFilePath: ["../../.env"] }),
+		ConfigModule.forRoot({
+			isGlobal: true,
+			envFilePath: ["../../.env"],
+			validate: validateApiEnv,
+		}),
+		LoggerModule.forRootAsync({
+			inject: [ConfigService],
+			useFactory: (config: ConfigService<ApiEnv, true>) =>
+				buildLoggerParams({
+					nodeEnv: config.get("NODE_ENV", { infer: true }),
+					level: config.get("LOG_LEVEL", { infer: true }),
+				}),
+		}),
 		DatabaseModule,
 		RedisModule,
 		AuthModule,
@@ -19,5 +36,6 @@ import { RedisModule } from "./redis/redis.module.js";
 		ProjectsModule,
 		IngestModule,
 	],
+	providers: [{ provide: APP_FILTER, useClass: AllExceptionsFilter }],
 })
 export class AppModule {}

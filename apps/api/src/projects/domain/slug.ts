@@ -15,13 +15,3 @@ export function slugify(input: string): string {
 export function withSuffix(slug: string): string {
 	return `${slug}-${randomBytes(2).toString("hex")}`;
 }
-
-export function generatePublicKey(): string {
-	return randomBytes(16).toString("hex");
-}
-
-// Drizzle envuelve los errores de pg; el código SQLSTATE puede estar en `cause`.
-export function isUniqueViolation(error: unknown): boolean {
-	const e = error as { code?: string; cause?: { code?: string } };
-	return e?.code === "23505" || e?.cause?.code === "23505";
-}
