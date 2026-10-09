@@ -237,3 +237,12 @@ Otras cabeceras: `X-Sentinel-Event`, `X-Sentinel-Delivery` (id del envío, útil
 - Solo en desarrollo, `ALLOW_PRIVATE_WEBHOOKS=true` permite destinos locales (los e2e lo usan).
 - Las URLs de Slack/webhook se guardan completas pero la API solo las devuelve enmascaradas. Gestionar canales y reglas requiere rol owner o admin; cualquier miembro puede verlas.
 - Los avisos están en inglés por ahora (el servidor no conoce el idioma de cada destinatario).
+
+## Colaboración
+
+- **Responsable**: cualquier miembro puede asignar un issue a otro miembro de la organización (o dejarlo sin asignar) desde su cabecera. El listado se filtra por *Asignados a mí*, *Sin asignar* o una persona (`?assignee=me|unassigned|<id>`).
+- **Actividad**: cada issue tiene una pestaña con sus **comentarios** y el registro de los cambios (quién lo resolvió, reabrió, ignoró o asignó, con su release). Los comentarios los escribe cualquier miembro; solo su autor los edita, y su autor o un owner/admin los borra. El registro de cambios no se edita.
+- **Miembros** (`/:org/members`): lista de personas con su rol; owners y admins invitan por correo, cambian roles (`member`/`admin`), quitan miembros y reenvían o cancelan invitaciones pendientes. El owner no se puede degradar ni quitar desde aquí.
+- **Invitaciones por correo**: se envía un enlace (`/accept-invitation/<id>`) a la dirección invitada. Si esa persona no tiene sesión, pasa por el login (o el registro) y **vuelve al enlace** (`?redirect=`, solo rutas internas). La invitación solo la puede aceptar la cuenta con ese correo.
+
+El correo no lo envía la API sino el worker, a través de una cola (`emails`): así hay un único lugar con acceso al SMTP y los fallos se reintentan sin bloquear la petición.
