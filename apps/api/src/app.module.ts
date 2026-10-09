@@ -6,6 +6,7 @@ import { AuthModule } from "./auth/auth.module.js";
 import { AllExceptionsFilter } from "./common/all-exceptions.filter.js";
 import { buildLoggerParams } from "./common/logging.js";
 import { type ApiEnv, validateApiEnv } from "./config/env.js";
+import { PublicConfigModule } from "./config/public-config.module.js";
 import { DatabaseModule } from "./database/database.module.js";
 import { HealthModule } from "./health/health.module.js";
 import { IngestModule } from "./ingest/ingest.module.js";
@@ -33,6 +34,7 @@ import { RedisModule } from "./redis/redis.module.js";
 		RedisModule,
 		AuthModule,
 		HealthModule,
+		PublicConfigModule,
 		OrganizationsModule,
 		ProjectsModule,
 		IngestModule,

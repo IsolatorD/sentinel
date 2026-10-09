@@ -1,4 +1,4 @@
-import { errorResponseSchema } from "@sentinel/shared";
+import { errorResponseSchema, publicConfigSchema } from "@sentinel/shared";
 import { describe, expect, it } from "vitest";
 import { PASSWORD, Session } from "../support/api-client.js";
 import { api } from "../support/factories.js";
@@ -144,6 +144,18 @@ describe("convenciones de la API", () => {
 			},
 		);
 		expect(res.status).toBe(204);
+	});
+});
+
+describe("configuración pública", () => {
+	it("informa qué proveedores de login hay, sin exponer secretos", async () => {
+		const res = await api().get("/api/config");
+		expect(res.status).toBe(200);
+		// El servidor de pruebas no tiene credenciales de Google.
+		expect(publicConfigSchema.parse(res.json)).toEqual({
+			authProviders: { google: false },
+		});
+		expect(res.text).not.toMatch(/secret|client/i);
 	});
 });
 

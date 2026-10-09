@@ -12,6 +12,7 @@ import {
 	issueListDtoSchema,
 	projectDtoSchema,
 	projectKeyDtoSchema,
+	publicConfigSchema,
 	updateIssueSchema,
 	updateProjectKeySchema,
 	updateProjectSchema,
@@ -23,6 +24,7 @@ import { jsonSchema } from "./zod-schema.js";
 export const docs = {
 	error: jsonSchema(errorResponseSchema),
 	health: jsonSchema(healthResponseSchema),
+	publicConfig: jsonSchema(publicConfigSchema),
 	project: jsonSchema(projectDtoSchema),
 	projectList: jsonSchema(z.array(projectDtoSchema)),
 	projectKey: jsonSchema(projectKeyDtoSchema),
