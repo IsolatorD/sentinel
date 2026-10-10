@@ -2,7 +2,7 @@
 
 SDK de Sentinel para navegadores. Captura errores y los envía a un servidor Sentinel.
 
-- Sin dependencias en tiempo de ejecución. ~7.7 KB comprimido (bundle para `<script>`).
+- Sin dependencias en tiempo de ejecución. ~11 KB comprimido (bundle para `<script>`).
 - Nunca lanza ni rompe la app anfitriona.
 - Privacidad por defecto: no envía el texto de los elementos clickeados y quita la query y el hash de las URLs.
 
@@ -56,8 +56,41 @@ Con solo llamar a `init`, el SDK captura `window.onerror` y `unhandledrejection`
 | `captureGlobalErrors` | `true` | Captura errores no manejados. |
 | `breadcrumbs` | todos | `false`, o `{ console, clicks, fetch, xhr, navigation }`. |
 | `sendFullUrl` | `false` | Si es `true`, envía la URL con query y hash. |
+| `tracesSampleRate` | `0` | Fracción de transacciones de rendimiento que se registran (0 a 1). Con 0 el rendimiento está apagado; con un valor mayor se miden solas las cargas de página y las navegaciones. |
+| `tracing` | todo | `false`, o `{ pageload, navigation, http, webVitals }` para elegir qué se mide solo. |
+| `tracePropagationTargets` | mismo origen | A qué URLs se añade la cabecera `traceparent`. |
+| `maxSpans` | `100` | Máximo de spans por transacción (hasta 200). |
+| `beforeSendTransaction(tx)` | — | Modifica la transacción o devuelve `null` para descartarla. |
 | `enabled` | `true` | Apaga el SDK sin quitar el código. |
 | `debug` | `false` | Mensajes del SDK en la consola. |
+
+## Rendimiento (transacciones y spans)
+
+Una **transacción** es una unidad de trabajo medida (una carga de página, una navegación, una operación tuya); sus **spans** son los tramos que la componen. Con `tracesSampleRate > 0` el SDK mide solo:
+
+- **Carga de página** (`pageload`): desde que empieza la navegación hasta que la página se asienta (evento `load` y 1 s sin actividad, máximo 15 s). Lleva los Web Vitals **FCP, LCP, CLS, INP y TTFB**.
+- **Navegaciones** sin recarga (`pushState`, `popstate`): una transacción por pantalla, que se cierra al navegar de nuevo. Cambiar solo la query o el hash no cuenta.
+- **Peticiones `fetch`/XHR** como spans `http.client` (`GET /api/items`, sin query) dentro de la transacción en curso. Cada una lleva la cabecera `traceparent` (W3C) para que tu backend continúe la traza; por defecto solo al mismo origen, porque a otro obliga a una petición previa CORS (`tracePropagationTargets` para ampliarlo).
+
+Para medir tu propio código:
+
+```ts
+const tx = Sentinel.startTransaction({ name: "importar-csv", op: "task" });
+
+await Sentinel.trace("parse", "leer el archivo", async () => {
+	/* ... */
+});
+const span = Sentinel.startSpan("db.query", "guardar filas");
+/* ... */
+span?.end();
+
+tx?.setMeasurement("rows", 1200);
+tx?.finish();
+```
+
+`trace(op, descripción, fn)` mide una función (síncrona o async) y marca el span con error si lanza. Sin una transacción en curso, `startSpan` y `trace` no registran nada. Los errores capturados durante una transacción llevan su `trace_id` en `contexts.trace`.
+
+Las transacciones se envían a `POST <host>/api/<projectId>/transactions` con las mismas garantías que los eventos (reintentos, `sendBeacon`, 429).
 
 ## Cómo envía
 

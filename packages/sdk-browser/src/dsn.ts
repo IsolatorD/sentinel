@@ -3,6 +3,8 @@ export interface ParsedDsn {
 	projectId: string;
 	/** URL a la que se envían los eventos. */
 	endpoint: string;
+	/** URL a la que se envían las transacciones (rendimiento). */
+	transactionsEndpoint: string;
 }
 
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
@@ -31,5 +33,6 @@ export function parseDsn(dsn: string): ParsedDsn | null {
 		publicKey: publicKey.toLowerCase(),
 		projectId,
 		endpoint: `${url.protocol}//${url.host}${basePath}/api/${projectId}/events`,
+		transactionsEndpoint: `${url.protocol}//${url.host}${basePath}/api/${projectId}/transactions`,
 	};
 }

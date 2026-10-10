@@ -53,6 +53,37 @@ export interface SentinelEvent {
 	extra?: Record<string, unknown>;
 }
 
+export interface SentinelSpan {
+	span_id: string;
+	parent_span_id?: string;
+	op: string;
+	description?: string;
+	start_timestamp: string | number;
+	duration_ms: number;
+	status?: string;
+	data?: Record<string, unknown>;
+}
+
+/** Transacción de rendimiento; refleja `ingestTransactionSchema` del servidor. */
+export interface SentinelTransaction {
+	transaction_id?: string;
+	trace_id: string;
+	span_id: string;
+	parent_span_id?: string;
+	name: string;
+	op?: string;
+	timestamp?: string | number;
+	duration_ms: number;
+	status?: string;
+	platform?: string;
+	release?: string;
+	environment?: string;
+	user?: User;
+	tags?: Record<string, string>;
+	measurements?: Record<string, { value: number; unit?: string }>;
+	spans?: SentinelSpan[];
+}
+
 /** Opciones por captura. */
 export interface CaptureHint {
 	level?: Level;
@@ -77,6 +108,17 @@ export interface BreadcrumbOptions {
 	navigation?: boolean;
 }
 
+export interface TracingOptions {
+	/** Mide la carga de página (con sus Web Vitals). Por defecto true. */
+	pageload?: boolean;
+	/** Mide los cambios de URL sin recarga (apps de una sola página). Por defecto true. */
+	navigation?: boolean;
+	/** Crea un span por cada petición `fetch`/XHR. Por defecto true. */
+	http?: boolean;
+	/** Mide FCP, LCP, CLS, INP y TTFB en la carga de página. Por defecto true. */
+	webVitals?: boolean;
+}
+
 export interface SentinelOptions {
 	/** DSN del proyecto: `https://<clave>@<host>/<projectId>`. */
 	dsn: string;
@@ -84,6 +126,24 @@ export interface SentinelOptions {
 	environment?: string;
 	/** Fracción de eventos que se envían (0 a 1). Por defecto 1. */
 	sampleRate?: number;
+	/**
+	 * Fracción de transacciones que se registran (0 a 1). Por defecto 0: el rendimiento es opt-in.
+	 * Con un valor mayor que 0 se miden automáticamente las cargas de página y las navegaciones.
+	 */
+	tracesSampleRate?: number;
+	/** Qué se mide automáticamente cuando `tracesSampleRate` es mayor que 0. */
+	tracing?: TracingOptions | boolean;
+	/**
+	 * A qué URLs se añade la cabecera `traceparent` para continuar la traza en tu backend.
+	 * Por defecto solo al mismo origen (en otros orígenes obliga a una petición previa CORS).
+	 */
+	tracePropagationTargets?: Array<string | RegExp>;
+	/** Máximo de spans por transacción (hasta 200). Por defecto 100. */
+	maxSpans?: number;
+	/** Última oportunidad de modificar o descartar (null) una transacción. */
+	beforeSendTransaction?: (
+		transaction: SentinelTransaction,
+	) => SentinelTransaction | null;
 	/** Máximo de breadcrumbs por evento (hasta 100). Por defecto 50. */
 	maxBreadcrumbs?: number;
 	/** Máximo de eventos por minuto desde esta página. Por defecto 30. */

@@ -5,6 +5,7 @@ export {
 	type ErrorBoundaryProps,
 	type FallbackProps,
 } from "./error-boundary";
+export { Profiler, type ProfilerProps, withProfiler } from "./profiler";
 export {
 	type RootErrorInfo,
 	type RootOptions,

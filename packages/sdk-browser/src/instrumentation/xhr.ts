@@ -1,5 +1,5 @@
 import { stripQuery } from "../url";
-import type { AddBreadcrumb, Uninstall } from "./types";
+import type { AddBreadcrumb, StartHttpSpan, Uninstall } from "./types";
 
 interface TrackedXhr extends XMLHttpRequest {
 	__sentinel?: { method: string; url: string; started?: number };
@@ -8,6 +8,7 @@ interface TrackedXhr extends XMLHttpRequest {
 export function installXhr(
 	add: AddBreadcrumb,
 	isOwnUrl: (url: string) => boolean,
+	startSpan?: StartHttpSpan,
 ): Uninstall {
 	if (typeof XMLHttpRequest === "undefined") return () => {};
 	const proto = XMLHttpRequest.prototype;
@@ -41,7 +42,14 @@ export function installXhr(
 		const info = this.__sentinel;
 		if (info && !isOwnUrl(info.url)) {
 			info.started = Date.now();
+			let handle: ReturnType<StartHttpSpan> | undefined;
+			try {
+				handle = startSpan?.({ method: info.method, url: info.url });
+				for (const [name, value] of Object.entries(handle?.headers ?? {}))
+					this.setRequestHeader(name, value);
+			} catch {}
 			this.addEventListener("loadend", () => {
+				handle?.end(this.status || undefined);
 				try {
 					add({
 						category: "xhr",

@@ -1,4 +1,7 @@
 import { SentinelClient } from "./client";
+import { Span } from "./tracing/span";
+import type { StartTransactionContext } from "./tracing/tracer";
+import type { Transaction } from "./tracing/transaction";
 import type {
 	Breadcrumb,
 	CaptureHint,
@@ -8,6 +11,9 @@ import type {
 } from "./types";
 
 export { SentinelClient } from "./client";
+export type { Span } from "./tracing/span";
+export type { StartTransactionContext } from "./tracing/tracer";
+export type { Measurement, Transaction } from "./tracing/transaction";
 export type {
 	Breadcrumb,
 	BreadcrumbOptions,
@@ -16,7 +22,10 @@ export type {
 	Level,
 	SentinelEvent,
 	SentinelOptions,
+	SentinelSpan,
+	SentinelTransaction,
 	StackFrame,
+	TracingOptions,
 	User,
 } from "./types";
 export { SDK_VERSION } from "./version";
@@ -76,6 +85,34 @@ export function setContext(
 
 export function setExtra(key: string, value: unknown): void {
 	client?.setExtra(key, value);
+}
+
+/** Empieza una transacción manual. Con el SDK sin iniciar, devuelve `undefined`. */
+export function startTransaction(
+	context: StartTransactionContext,
+): Transaction | undefined {
+	return client?.startTransaction(context);
+}
+
+/** Span dentro de la transacción en curso. Con el SDK sin iniciar, devuelve `undefined`. */
+export function startSpan(
+	op: string,
+	description?: string,
+	data?: Record<string, unknown>,
+	startTimestamp?: number,
+): Span | undefined {
+	return client?.startSpan(op, description, data, startTimestamp);
+}
+
+/** Mide una función (síncrona o async). Con el SDK sin iniciar, simplemente la ejecuta. */
+export function trace<T>(
+	op: string,
+	description: string | undefined,
+	fn: (span: Span) => T,
+): T {
+	return client
+		? client.trace(op, description, fn)
+		: fn(new Span("noop", undefined, "", 0, () => 0));
 }
 
 export async function flush(timeoutMs?: number): Promise<boolean> {

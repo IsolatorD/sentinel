@@ -10,6 +10,7 @@ describe("parseDsn", () => {
 			publicKey: KEY,
 			projectId: PID,
 			endpoint: `https://api.example.com/api/${PID}/events`,
+			transactionsEndpoint: `https://api.example.com/api/${PID}/transactions`,
 		});
 	});
 

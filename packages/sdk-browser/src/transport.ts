@@ -1,7 +1,9 @@
-import type { SentinelEvent } from "./types";
+import type { SentinelEvent, SentinelTransaction } from "./types";
 
 export interface TransportOptions {
 	endpoint: string;
+	/** Destino de las transacciones; sin él, solo se envían eventos. */
+	transactionsEndpoint?: string;
 	publicKey: string;
 	/** Inyectable para pruebas. Por defecto `fetch` global. */
 	fetchImpl?: typeof fetch;
@@ -21,7 +23,7 @@ export class Transport {
 	private pausedUntil = 0;
 	private inflight = new Set<Promise<boolean>>();
 	/** Cuerpos esperando un reintento; si la página se cierra, se mandan con sendBeacon. */
-	private waiting = new Set<string>();
+	private waiting = new Set<{ url: string; body: string }>();
 
 	constructor(private readonly options: TransportOptions) {
 		this.fetchImpl =
@@ -33,7 +35,19 @@ export class Transport {
 
 	/** Envía un evento. Resuelve true si el servidor lo aceptó. Nunca rechaza. */
 	send(event: SentinelEvent): Promise<boolean> {
-		const promise = this.deliver(JSON.stringify(event)).catch(() => false);
+		return this.enqueue(this.options.endpoint, event);
+	}
+
+	/** Envía una transacción (rendimiento). Mismas garantías que `send`. */
+	sendTransaction(transaction: SentinelTransaction): Promise<boolean> {
+		const url = this.options.transactionsEndpoint;
+		return url ? this.enqueue(url, transaction) : Promise.resolve(false);
+	}
+
+	private enqueue(url: string, payload: unknown): Promise<boolean> {
+		const promise = this.deliver(url, JSON.stringify(payload)).catch(
+			() => false,
+		);
 		this.inflight.add(promise);
 		promise.finally(() => this.inflight.delete(promise));
 		return promise;
@@ -56,11 +70,10 @@ export class Transport {
 			typeof navigator.sendBeacon !== "function"
 		)
 			return;
-		const url = `${this.options.endpoint}?sentinel_key=${this.options.publicKey}`;
-		for (const body of this.waiting) {
+		for (const { url, body } of this.waiting) {
 			try {
 				navigator.sendBeacon(
-					url,
+					`${url}?sentinel_key=${this.options.publicKey}`,
 					new Blob([body], { type: "application/json" }),
 				);
 			} catch {}
@@ -68,7 +81,11 @@ export class Transport {
 		this.waiting.clear();
 	}
 
-	private async deliver(body: string, attempt = 0): Promise<boolean> {
+	private async deliver(
+		url: string,
+		body: string,
+		attempt = 0,
+	): Promise<boolean> {
 		if (!this.fetchImpl) return false;
 		if (Date.now() < this.pausedUntil) {
 			this.options.onDebug?.("event dropped: sending is paused (rate limited)");
@@ -76,7 +93,7 @@ export class Transport {
 		}
 
 		try {
-			const res = await this.fetchImpl(this.options.endpoint, {
+			const res = await this.fetchImpl(url, {
 				method: "POST",
 				headers: {
 					"Content-Type": "application/json",
@@ -117,9 +134,10 @@ export class Transport {
 		}
 		const delay =
 			this.retryDelays[Math.min(attempt, this.retryDelays.length - 1)];
-		this.waiting.add(body);
+		const pending = { url, body };
+		this.waiting.add(pending);
 		await new Promise((resolve) => setTimeout(resolve, delay));
-		if (!this.waiting.delete(body)) return false; // ya se mandó con sendBeacon
-		return this.deliver(body, attempt + 1);
+		if (!this.waiting.delete(pending)) return false; // ya se mandó con sendBeacon
+		return this.deliver(url, body, attempt + 1);
 	}
 }

@@ -2,6 +2,7 @@
 import { SentinelClient } from "@sentinel/browser";
 import { eventDetailDtoSchema } from "@sentinel/shared";
 import { afterEach, describe, expect, it } from "vitest";
+import { scalar } from "../support/db.js";
 import { eventually } from "../support/eventually.js";
 import { createTenant, type Tenant } from "../support/factories.js";
 
@@ -24,6 +25,43 @@ afterEach(async () => {
 });
 
 describe("SDK de navegador contra la API real", () => {
+	it("una transacción medida con el SDK llega, se procesa y queda guardada con sus spans", async () => {
+		const t = await createTenant();
+		const sdk = newClient(t, {
+			release: "9.9.9",
+			tracesSampleRate: 1,
+			tracing: { pageload: false, navigation: false, http: false },
+		});
+		const tx = sdk.startTransaction({ name: "/importar", op: "task" });
+		await sdk.trace("parse", "csv", async () => {
+			await new Promise((r) => setTimeout(r, 15));
+		});
+		tx?.setMeasurement("rows", 120);
+		tx?.finish();
+		await sdk.flush();
+
+		await eventually(async () =>
+			expect(
+				await scalar(
+					"select count(*) from perf_transaction where project_id = $1 and name = '/importar' and release = '9.9.9'",
+					[t.projectId],
+				),
+			).toBe(1),
+		);
+		expect(
+			await scalar(
+				"select count(*) from perf_span s join perf_transaction x on x.id = s.transaction_id where x.project_id = $1 and s.op = 'parse' and s.description = 'csv'",
+				[t.projectId],
+			),
+		).toBe(1);
+		expect(
+			await scalar(
+				"select (measurements->'rows'->>'value')::float from perf_transaction where project_id = $1",
+				[t.projectId],
+			),
+		).toBe(120);
+	});
+
 	it("captureException llega, se procesa y queda como issue con su stacktrace", async () => {
 		const t = await createTenant();
 		const sdk = newClient(t, { release: "9.9.9", environment: "e2e" });

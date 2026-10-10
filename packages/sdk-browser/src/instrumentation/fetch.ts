@@ -1,5 +1,5 @@
 import { stripQuery } from "../url";
-import type { AddBreadcrumb, Uninstall } from "./types";
+import type { AddBreadcrumb, StartHttpSpan, Uninstall } from "./types";
 
 function requestInfo(input: RequestInfo | URL, init?: RequestInit) {
 	let url = "";
@@ -17,6 +17,7 @@ function requestInfo(input: RequestInfo | URL, init?: RequestInit) {
 export function installFetch(
 	add: AddBreadcrumb,
 	isOwnUrl: (url: string) => boolean,
+	startSpan?: StartHttpSpan,
 ): Uninstall {
 	if (typeof window === "undefined" || typeof window.fetch !== "function")
 		return () => {};
@@ -31,7 +32,26 @@ export function installFetch(
 			info = undefined;
 		}
 		const started = Date.now();
-		const promise = original.call(this ?? window, input, init);
+		let handle: ReturnType<StartHttpSpan> | undefined;
+		try {
+			handle = info && startSpan?.(info);
+		} catch {}
+		let args: [RequestInfo | URL, RequestInit | undefined] = [input, init];
+		if (handle?.headers) {
+			try {
+				// Los headers de `init` reemplazan a los del Request, así que se combinan a mano.
+				const headers = new Headers(
+					init?.headers ??
+						(typeof Request !== "undefined" && input instanceof Request
+							? input.headers
+							: undefined),
+				);
+				for (const [name, value] of Object.entries(handle.headers))
+					if (!headers.has(name)) headers.set(name, value);
+				args = [input, { ...init, headers }];
+			} catch {}
+		}
+		const promise = original.call(this ?? window, ...args);
 		if (!info) return promise;
 
 		const { url, method } = info;
@@ -43,6 +63,7 @@ export function installFetch(
 		});
 		promise.then(
 			(res) => {
+				handle?.end(res.status);
 				try {
 					add({
 						category: "fetch",
@@ -53,6 +74,7 @@ export function installFetch(
 				} catch {}
 			},
 			(error) => {
+				handle?.end(undefined);
 				try {
 					add({
 						category: "fetch",

@@ -63,6 +63,20 @@ Usar `ErrorBoundary` y `reactRootOptions()` a la vez es seguro: cada error se en
 
 `reactRootOptions(callback)` acepta un callback que se invoca tras cada envío con `(error, info, eventId)`.
 
+## `Profiler` (rendimiento)
+
+Con `tracesSampleRate` activo, mide cuánto tarda en montarse una parte del árbol (del primer render al commit) y lo registra como un span `ui.react.mount` de la transacción en curso, normalmente la carga de página o la navegación:
+
+```tsx
+<Sentinel.Profiler name="Checkout">
+	<Checkout />
+</Sentinel.Profiler>
+
+const Cart = Sentinel.withProfiler(CartView); // el nombre sale del componente
+```
+
+Sin transacción en curso no hace nada. Solo mide el montaje, no cada actualización.
+
 ## Notas
 
 - Un `beforeCapture`, `onError` o callback que lance una excepción nunca impide el envío ni rompe el fallback.

@@ -1,7 +1,11 @@
 import { stripQuery } from "../url";
 import type { AddBreadcrumb, Uninstall } from "./types";
 
-export function installNavigation(add: AddBreadcrumb): Uninstall {
+/** `onChange` avisa de cada cambio de URL (lo usa el tracing para abrir una transacción de navegación). */
+export function installNavigation(
+	add: AddBreadcrumb,
+	onChange?: (from: string, to: string) => void,
+): Uninstall {
 	if (typeof window === "undefined" || typeof history === "undefined")
 		return () => {};
 
@@ -11,7 +15,9 @@ export function installNavigation(add: AddBreadcrumb): Uninstall {
 			const to = stripQuery(location.href);
 			if (to === from) return;
 			add({ category: "navigation", type: "navigation", data: { from, to } });
+			const previous = from;
 			from = to;
+			onChange?.(previous, to);
 		} catch {}
 	};
 
