@@ -38,6 +38,35 @@ export function scriptTagSnippet({
 	].join("\n");
 }
 
+/** Instalación en Python: captura errores y mide cada petición de ASGI/WSGI (FastAPI, Flask, Django...). */
+export function pythonSnippet({
+	dsn,
+	release = "1.0.0",
+	environment = "production",
+}: SnippetOptions) {
+	return {
+		install: "pip install sentinel-sdk",
+		code: [
+			"import sentinel_sdk",
+			"",
+			"# Antes de crear la aplicación: captura los errores sin controlar y mide el rendimiento.",
+			"sentinel_sdk.init(",
+			`    "${dsn}",`,
+			`    release="${release}",`,
+			`    environment="${environment}",`,
+			"    traces_sample_rate=1.0,",
+			")",
+			"",
+			"# FastAPI / Starlette (ASGI):",
+			"app = sentinel_sdk.SentinelAsgiMiddleware(app)",
+			"",
+			"# Flask: sentinel_sdk.setup_flask(app)",
+			"# Django: añade SentinelDjangoMiddleware a MIDDLEWARE y envuelve la aplicación WSGI",
+			"# Cualquier otra aplicación WSGI: sentinel_sdk.SentinelWsgiMiddleware(app)",
+		].join("\n"),
+	};
+}
+
 /** Instalación en Node.js: captura errores del proceso y mide cada petición que atiende el servidor. */
 export function nodeSnippet({
 	dsn,

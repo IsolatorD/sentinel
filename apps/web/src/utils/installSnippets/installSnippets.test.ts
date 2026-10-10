@@ -3,6 +3,7 @@ import {
 	httpSnippet,
 	nodeSnippet,
 	npmSnippet,
+	pythonSnippet,
 	reactSnippet,
 	scriptTagSnippet,
 } from "./installSnippets";
@@ -31,6 +32,15 @@ describe("install snippets", () => {
 		expect(snippet.code).toContain(`dsn: "${dsn}"`);
 		expect(snippet.code).toContain("tracesSampleRate");
 		expect(snippet.code).toContain("Sentinel.close()");
+	});
+
+	it("Python usa sentinel-sdk con los middlewares ASGI y WSGI", () => {
+		const snippet = pythonSnippet({ dsn });
+		expect(snippet.install).toBe("pip install sentinel-sdk");
+		expect(snippet.code).toContain(`"${dsn}"`);
+		expect(snippet.code).toContain("SentinelAsgiMiddleware");
+		expect(snippet.code).toContain("setup_flask");
+		expect(snippet.code).toContain("traces_sample_rate");
 	});
 
 	it("sin SDK se envía a la API con la clave y el proyecto de la DSN", () => {

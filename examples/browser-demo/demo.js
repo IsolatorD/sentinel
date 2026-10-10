@@ -30,7 +30,7 @@ $("init").addEventListener("click", () => {
 		// Rendimiento: mide la carga de página, las navegaciones y cada fetch/XHR.
 		tracesSampleRate: 1,
 		// El backend de examples/node-demo: aquí también se envía `traceparent`.
-		tracePropagationTargets: ["localhost:5601"],
+		tracePropagationTargets: ["localhost:5601", "localhost:5602"],
 		tags: { app: "browser-demo" },
 	});
 	log(
@@ -152,6 +152,21 @@ $("perf-backend").addEventListener("click", async () => {
 		log(`backend Node -> ${res.status} (la traza continúa allí)`);
 	} catch {
 		log("no se pudo llamar al backend: ¿arrancaste examples/node-demo?");
+	}
+	tx?.finish();
+});
+
+$("perf-backend-python").addEventListener("click", async () => {
+	// Lo mismo, contra el backend de examples/python-demo (Flask con sentinel-sdk).
+	const tx = Sentinel.startTransaction({
+		name: "/pedido-python",
+		op: "navigation",
+	});
+	try {
+		const res = await fetch("http://localhost:5602/api/orders/42");
+		log(`backend Python -> ${res.status} (la traza continúa allí)`);
+	} catch {
+		log("no se pudo llamar al backend: ¿arrancaste examples/python-demo?");
 	}
 	tx?.finish();
 });

@@ -25,7 +25,8 @@ pnpm dev          # api (3000), worker y web (5173)
 - `packages/sdk-browser` — SDK de navegador (`@sentinel/browser`)
 - `packages/sdk-react` — SDK de React (`@sentinel/react`)
 - `packages/sdk-node` — SDK de Node.js (`@sentinel/node`)
-- `examples/browser-demo`, `examples/node-demo` — páginas y servidor para probar los SDK; juntos muestran una traza que cruza del navegador al backend
+- `packages/sdk-python` — SDK de Python (`sentinel-sdk`), con su propio entorno y tests en pytest
+- `examples/browser-demo`, `examples/node-demo`, `examples/python-demo` — página y servidores para probar los SDK; juntos muestran una traza que cruza del navegador al backend
 - `packages/db` — esquema Drizzle y migraciones (Postgres)
 - `packages/shared` — esquemas Zod y tipos compartidos
 
@@ -220,6 +221,12 @@ Es una red de seguridad, no un sustituto de no enviar datos sensibles: el SDK ya
 `packages/sdk-node` (`@sentinel/node`) captura los errores del proceso (`uncaughtException`, `unhandledRejection`), mide cada petición que atiende un servidor `http`/`https` (y con él Express, Fastify o Nest) y las peticiones salientes (`http`, `https`, `fetch`), y **continúa la traza que llega del navegador** en la cabecera `traceparent`: la transacción del frontend y la del backend comparten `trace_id`. Un error capturado durante una petición lleva el `trace_id` de su transacción. Ver su [README](packages/sdk-node/README.md).
 
 Los tres SDK comparten `packages/sdk-core`: el cliente (alcance, filtros, muestreo, deduplicación), el transporte con reintentos, la normalización de eventos y el tracing. Cada plataforma aporta lo suyo: el navegador, la carga de página, Web Vitals y la navegación; Node, `AsyncLocalStorage` para tener una transacción por petición y la instrumentación de `http`.
+
+## SDK de Python
+
+`packages/sdk-python` (`sentinel-sdk`) hace en Python lo que el de Node: captura los errores sin controlar (con su stack, el código fuente alrededor de cada línea y la cadena de causas), mide cada petición de una aplicación **ASGI** (FastAPI, Starlette...) o **WSGI** (Flask, Django...), mide `requests` y `httpx`, y continúa la traza que llega del navegador. No tiene dependencias. Ver su [README](packages/sdk-python/README.md).
+
+Es un paquete aparte (Python, con su `pyproject.toml` y su entorno virtual: `pnpm --filter @sentinel/python setup`). Para no divergir del servidor, sus tests validan cada payload contra el **JSON Schema generado desde los esquemas Zod** de ingesta (`packages/shared/src/json-schemas.ts`), y un test de `shared` falla si ese JSON se desactualiza.
 
 ## Alertas
 

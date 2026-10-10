@@ -12,6 +12,7 @@ import {
 	httpSnippet,
 	nodeSnippet,
 	npmSnippet,
+	pythonSnippet,
 	reactSnippet,
 	scriptTagSnippet,
 } from "@/utils/installSnippets/installSnippets";
@@ -31,7 +32,9 @@ export function InstallInstructions({
 			? reactSnippet({ dsn })
 			: platform === "node"
 				? nodeSnippet({ dsn })
-				: npmSnippet({ dsn });
+				: platform === "python"
+					? pythonSnippet({ dsn })
+					: npmSnippet({ dsn });
 
 	return (
 		<div data-testid="install-instructions" data-platform={platform}>
@@ -59,7 +62,7 @@ export function InstallInstructions({
 			<p className="mb-3 text-sm text-muted">
 				{t(`settings.install.hint.${platform}`)}
 			</p>
-			{tab === "npm" ? (
+			{tab === "npm" || tab === "pip" ? (
 				<div key={`npm-${platform}`} className="animate-fade-in space-y-3">
 					<CodeBlock title={t("settings.install.install")} code={npm.install} />
 					<CodeBlock title={t("settings.install.configure")} code={npm.code} />

@@ -848,6 +848,7 @@ export const en = {
 			description: "Use one of these snippets in your app.",
 			npm: "npm",
 			script: "Script tag",
+			pip: "pip",
 			http: "HTTP API",
 			install: "Install",
 			configure: "Configure",
@@ -860,7 +861,7 @@ export const en = {
 				"react-native":
 					"There is no React Native SDK yet. Send events straight to the ingest API.",
 				python:
-					"There is no Python SDK yet. Send events straight to the ingest API.",
+					"The Python SDK captures uncaught errors and measures every request your ASGI or WSGI app handles (FastAPI, Flask, Django...), continuing traces that start in the browser.",
 				other:
 					"Send events to the ingest API from any language. You can change the platform in the settings above.",
 			},

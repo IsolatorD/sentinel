@@ -858,6 +858,7 @@ export const es: Deep<Translations> = {
 			description: "Usa uno de estos fragmentos en tu app.",
 			npm: "npm",
 			script: "Etiqueta script",
+			pip: "pip",
 			http: "API HTTP",
 			install: "Instalación",
 			configure: "Configuración",
@@ -870,7 +871,7 @@ export const es: Deep<Translations> = {
 				"react-native":
 					"Todavía no hay un SDK de React Native. Envía los eventos directamente a la API de ingesta.",
 				python:
-					"Todavía no hay un SDK de Python. Envía los eventos directamente a la API de ingesta.",
+					"El SDK de Python captura los errores no controlados y mide cada petición que atiende tu aplicación ASGI o WSGI (FastAPI, Flask, Django...), continuando las trazas que empiezan en el navegador.",
 				other:
 					"Envía los eventos a la API de ingesta desde cualquier lenguaje. Puedes cambiar la plataforma en los ajustes de arriba.",
 			},

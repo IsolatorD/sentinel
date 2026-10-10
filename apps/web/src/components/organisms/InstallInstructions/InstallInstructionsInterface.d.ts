@@ -1,4 +1,4 @@
-export type Method = "npm" | "script" | "http";
+export type Method = "npm" | "pip" | "script" | "http";
 
 export interface InstallInstructionsProps {
 	dsn: string;
