@@ -18,6 +18,7 @@ export const es: Record<MessageCode, string> = {
 	ORGANIZATION_NOT_FOUND: "No se encontró la organización",
 	PROJECT_NOT_FOUND: "No se encontró el proyecto",
 	ISSUE_NOT_FOUND: "No se encontró el issue",
+	TRANSACTION_NOT_FOUND: "No se encontró la transacción",
 	EVENT_NOT_FOUND: "No se encontró el evento",
 	RELEASE_NOT_FOUND: "No se encontró la release",
 	KEY_NOT_FOUND: "No se encontró la clave",

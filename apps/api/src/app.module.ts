@@ -14,6 +14,7 @@ import { HealthModule } from "./health/health.module.js";
 import { IngestModule } from "./ingest/ingest.module.js";
 import { IssuesModule } from "./issues/issues.module.js";
 import { OrganizationsModule } from "./organizations/organizations.module.js";
+import { PerformanceModule } from "./performance/performance.module.js";
 import { PreferencesModule } from "./preferences/preferences.module.js";
 import { ProjectsModule } from "./projects/projects.module.js";
 import { RedisModule } from "./redis/redis.module.js";
@@ -44,6 +45,7 @@ import { TokensModule } from "./tokens/tokens.module.js";
 		ProjectsModule,
 		IngestModule,
 		IssuesModule,
+		PerformanceModule,
 		ReleasesModule,
 		AlertsModule,
 		PreferencesModule,

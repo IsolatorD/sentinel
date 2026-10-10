@@ -9,6 +9,7 @@ export * from "./issues.js";
 export * from "./locale.js";
 export * from "./messages/index.js";
 export * from "./network.js";
+export * from "./performance.js";
 export * from "./preferences.js";
 export * from "./projects.js";
 export * from "./public-config.js";

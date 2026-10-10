@@ -102,6 +102,19 @@ Parámetros del listado: `status` (`unresolved` por defecto, `resolved`, `ignore
 
 `GET /api/organizations/:orgId/projects/:projectId/stats?period=` (proyecto) y `…/issues/:issueId/stats?period=` (issue) devuelven una serie **continua**, con los intervalos vacíos a cero, en UTC: `24h` por hora, `7d` cada 6 horas y `30d` por día. Cada punto trae `events` y `users` (usuarios distintos); la respuesta incluye `totalEvents`. El listado de issues añade `trends`: las últimas 24 h por hora de cada issue de la página, para el mini gráfico de cada fila. La agrupación la hace Postgres con `date_bin`, apoyada en los índices `(issue_id, timestamp)` y `(project_id, timestamp)`.
 
+## API de rendimiento
+
+Requiere sesión; cualquier miembro puede leer. Cuelga de un proyecto: `/api/organizations/:orgId/projects/:projectId/performance`. Todos los endpoints aceptan `period` (`24h` por defecto, `7d`, `30d`), `environment` y `release`.
+
+| Método | Ruta | |
+|---|---|---|
+| GET | `/transactions` | transacciones agrupadas por nombre: ocurrencias, p50/p95/p99 de la duración, tasa de errores y throughput (por minuto). Admite `q`, `sort` (`count`, `p50`, `p95`, `errorRate`, `tpm`, `lastSeen`), `order`, `limit`, `offset` |
+| GET | `/overview` | resumen del periodo, serie continua con p50/p95 por intervalo y Web Vitals valorados. Con `name`, solo de esa transacción |
+| GET | `/samples?name=` | ejemplos de una transacción: `sort=slowest` (por defecto) o `recent` |
+| GET | `/samples/:transactionId` | una transacción con sus spans, ordenados por inicio y con su nivel de anidación, listos para la cascada |
+
+Los percentiles se calculan en Postgres con `percentile_cont`. La serie usa los mismos intervalos que los gráficos de issues (`date_bin`, en UTC): `24h` por hora, `7d` cada 6 horas, `30d` por día. De los Web Vitals se da el **percentil 75**, que es el que valora Google, con los umbrales bueno / necesita mejorar / malo (LCP 2,5 s / 4 s, CLS 0,1 / 0,25, INP 200 / 500 ms, FCP 1,8 / 3 s, TTFB 0,8 / 1,8 s); solo aparecen los que se llegaron a medir.
+
 ## Pruebas
 
 | Comando | Qué ejecuta | Necesita |
