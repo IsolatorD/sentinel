@@ -36,6 +36,8 @@ function spanPayload(span: Span): SentinelSpan {
 
 /** Datos que no son de la transacción sino del cliente (release, usuario...). */
 export interface PayloadContext {
+	/** `javascript` (navegador) o `node`. */
+	platform: string;
 	release?: string;
 	environment?: string;
 	user?: SentinelTransaction["user"];
@@ -57,7 +59,7 @@ export function transactionPayload(
 		timestamp: new Date(tx.startMs).toISOString(),
 		duration_ms: Math.max(0, tx.durationMs),
 		status: clip(tx.status, 255),
-		platform: "javascript",
+		platform: context.platform,
 		release: context.release,
 		environment: context.environment,
 		...(context.user &&

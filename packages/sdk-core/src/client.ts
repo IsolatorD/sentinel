@@ -273,6 +273,7 @@ export class CoreClient<O extends CoreOptions = CoreOptions> {
 		try {
 			if (!this.transport) return;
 			let payload = transactionPayload(tx, {
+				platform: this.platform.name,
 				release: this.options.release,
 				environment: this.options.environment,
 				user: this.scope.user,

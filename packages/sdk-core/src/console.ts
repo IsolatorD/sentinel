@@ -1,6 +1,8 @@
-import { stringify } from "@sentinel/core";
-import type { Level } from "../types";
-import type { AddBreadcrumb, Uninstall } from "./types";
+import type { Uninstall } from "./client";
+import { stringify } from "./normalize";
+import type { Breadcrumb, Level } from "./types";
+
+export type AddBreadcrumb = (crumb: Breadcrumb) => void;
 
 const LEVELS: Record<string, Level> = {
 	log: "info",

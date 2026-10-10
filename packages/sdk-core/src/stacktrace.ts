@@ -41,7 +41,8 @@ export function isInApp(
 	pageOrigin?: string,
 ): boolean {
 	if (!filename) return false;
-	if (filename.startsWith("<") || filename.startsWith("[native")) return false;
+	// Código nativo, eval y los módulos internos de Node (`node:internal/...`).
+	if (/^(?:<|\[native|node:)/.test(filename)) return false;
 	if (/node_modules/.test(filename)) return false;
 	if (/^(?:chrome|moz|safari|webkit)(?:-web)?-?extension:/i.test(filename))
 		return false;

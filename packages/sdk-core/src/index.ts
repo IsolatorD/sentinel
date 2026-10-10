@@ -6,6 +6,7 @@ export {
 	type Platform,
 	type Uninstall,
 } from "./client";
+export { type AddBreadcrumb, installConsole, originalConsole } from "./console";
 export { type ParsedDsn, parseDsn } from "./dsn";
 export { exceptionFromUnknown } from "./exception";
 export { safeSerialize, stringify } from "./normalize";
