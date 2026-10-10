@@ -156,7 +156,16 @@ Reglas de alerta (nuevo issue, regresión, umbral de frecuencia), canales email 
 - Fuera de la fase, para más adelante: alertas de rendimiento, SDK de servidor que continúe la traza (`traceparent`), particionado por fecha y retención.
 
 **Fase 5 — Más plataformas y pulido**
-SDK Node ✅ (`@sentinel/node`, sobre el núcleo común `@sentinel/core`: errores del proceso, transacciones por petición con `AsyncLocalStorage`, spans de `http`/`https`/`fetch`, continuación de la traza vía `traceparent`, integraciones de Express y Fastify). SDK Python ✅ (`sentinel-sdk`: ASGI, WSGI, Flask, Django, `requests`/`httpx`, validado contra el JSON Schema de los esquemas Zod). SDK React Native ✅ (`@sentinel/react-native`: `ErrorUtils`, Hermes, arranque, navegación, XHR, simbolización con source maps del bundle). Pendientes de la fase: retención configurable, cuotas, dashboard de estadísticas, documentación pública y landing. Retención configurable, cuotas, dashboard de estadísticas, documentación pública y landing de portfolio.
+
+*Hecho: SDK para más plataformas*
+- ✅ **SDK de Node** (`@sentinel/node`, sobre el núcleo común `@sentinel/core`): errores del proceso, transacciones por petición con `AsyncLocalStorage`, spans de `http`/`https`/`fetch`, continuación de la traza vía `traceparent`, integraciones de Express y Fastify.
+- ✅ **SDK de Python** (`sentinel-sdk`): ASGI, WSGI, Flask, Django, `requests`/`httpx`; validado contra el JSON Schema generado de los esquemas Zod.
+- ✅ **SDK de React Native** (`@sentinel/react-native`): `ErrorUtils`, Hermes, arranque, navegación, XHR, simbolización con los source maps del bundle.
+
+*Pendiente*
+- **Landing del proyecto**: la página pública de Sentinel y punto de entrada a todo lo demás: qué es, qué resuelve, capturas, las funciones (errores, rendimiento, trazas, alertas, source maps, colaboración), los SDK con su instalación, cómo está construido (arquitectura) y cómo ejecutarlo, y los enlaces a la API (`/api/docs`) y a la aplicación (iniciar sesión / crear cuenta). Es la landing *de Sentinel*; la web personal con todos los proyectos del autor es otro proyecto y queda fuera de este.
+- **Documentación pública**: guías por SDK y por tema (instalación, source maps, alertas, trazas) accesibles desde la landing.
+- **Retención configurable** (borrado de eventos y transacciones antiguos por proyecto), **cuotas** y **dashboard de estadísticas**.
 
 ## 7. Despliegue (recomendación)
 

@@ -1,5 +1,8 @@
 {
 	"$schema": "https://turbo.build/schema.json",
+	// `pnpm dev` levanta una tarea persistente por paquete (apps y SDK en modo watch): con el límite por
+	// defecto (10) turbo se niega a arrancar. Debe ser mayor que el número de paquetes con `dev`.
+	"concurrency": "20",
 	"tasks": {
 		"build": { "dependsOn": ["^build"], "outputs": ["dist/**"] },
 		"dev": { "dependsOn": ["^build"], "cache": false, "persistent": true },
