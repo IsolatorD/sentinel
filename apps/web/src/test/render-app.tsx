@@ -10,6 +10,7 @@ import { authService } from "@/services/authService/authService";
 import { configService } from "@/services/configService/configService";
 import { issuesService } from "@/services/issuesService/issuesService";
 import { organizationsService } from "@/services/organizationsService/organizationsService";
+import { performanceService } from "@/services/performanceService/performanceService";
 import { preferencesService } from "@/services/preferencesService/preferencesService";
 import { projectsService } from "@/services/projectsService/projectsService";
 import { statsService } from "@/services/statsService/statsService";
@@ -55,6 +56,12 @@ export function mockHappyPath() {
 	}));
 	vi.mocked(projectsService.list).mockResolvedValue([fx.project]);
 	vi.mocked(projectsService.get).mockResolvedValue(fx.project);
+	vi.mocked(performanceService.transactions).mockResolvedValue(
+		fx.transactionList(),
+	);
+	vi.mocked(performanceService.overview).mockResolvedValue(fx.overview());
+	vi.mocked(performanceService.samples).mockResolvedValue(fx.sampleList());
+	vi.mocked(performanceService.sample).mockResolvedValue(fx.sampleDetail());
 	vi.mocked(statsService.project).mockResolvedValue(fx.stats());
 	vi.mocked(statsService.issue).mockResolvedValue(fx.stats());
 	vi.mocked(issuesService.list).mockResolvedValue(fx.issueList());

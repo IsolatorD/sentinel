@@ -1,4 +1,10 @@
-import { ISSUE_SORTS, ISSUE_STATUSES, levelSchema } from "@sentinel/shared";
+import {
+	ISSUE_SORTS,
+	ISSUE_STATUSES,
+	levelSchema,
+	STATS_PERIODS,
+	TRANSACTION_SORTS,
+} from "@sentinel/shared";
 import { z } from "zod";
 
 export const PAGE_SIZE = 25;
@@ -45,3 +51,44 @@ export const alertsSearchInputSchema = z.object({
 });
 
 export const ALERTS_SEARCH_DEFAULTS = { tab: "rules", page: 1 } as const;
+
+const periodInput = z.enum(STATS_PERIODS).optional().catch(undefined);
+const filterInput = z
+	.string()
+	.trim()
+	.min(1)
+	.max(256)
+	.optional()
+	.catch(undefined);
+
+/** Lista de transacciones de la pantalla de rendimiento. */
+export const performanceSearchInputSchema = z.object({
+	period: periodInput,
+	environment: filterInput,
+	release: filterInput,
+	q: z.string().trim().min(1).max(200).optional().catch(undefined),
+	sort: z.enum(TRANSACTION_SORTS).optional().catch(undefined),
+	order: z.enum(["asc", "desc"]).optional().catch(undefined),
+	page: z.coerce.number().int().min(1).optional().catch(undefined),
+});
+
+export const PERFORMANCE_SEARCH_DEFAULTS = {
+	period: "24h",
+	sort: "count",
+	order: "desc",
+	page: 1,
+} as const;
+
+/** Detalle de una transacción (por nombre) con sus ejemplos. */
+export const transactionSearchInputSchema = z.object({
+	name: z.string().trim().min(1).max(2048).optional().catch(undefined),
+	period: periodInput,
+	environment: filterInput,
+	release: filterInput,
+	samples: z.enum(["slowest", "recent"]).optional().catch(undefined),
+});
+
+export const TRANSACTION_SEARCH_DEFAULTS = {
+	period: "24h",
+	samples: "slowest",
+} as const;

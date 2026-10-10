@@ -4,9 +4,14 @@ import type {
 	IssueDetailDto,
 	IssueDto,
 	IssueListDto,
+	PerformanceOverviewDto,
 	ProjectDto,
 	ProjectKeyDto,
+	SampleDetailDto,
+	SampleListDto,
 	StatsDto,
+	TransactionGroupDto,
+	TransactionListDto,
 } from "@sentinel/shared";
 
 const NOW = Date.now();
@@ -207,5 +212,116 @@ export const stats = (
 		events: n,
 		users: Math.min(n, 2),
 	})),
+	...over,
+});
+
+export const transactionGroup = (
+	over: Partial<TransactionGroupDto> = {},
+): TransactionGroupDto => ({
+	name: "/checkout",
+	op: "pageload",
+	count: 120,
+	p50: 640,
+	p95: 2400,
+	p99: 4100,
+	errorRate: 0.05,
+	tpm: 0.083,
+	lastSeen: ago(3),
+	...over,
+});
+
+export const transactionList = (
+	items: TransactionGroupDto[] = [
+		transactionGroup(),
+		transactionGroup({ name: "/home", count: 40, p50: 300, errorRate: 0 }),
+	],
+	total = items.length,
+): TransactionListDto => ({ items, total, limit: 25, offset: 0 });
+
+export const overview = (
+	over: Partial<PerformanceOverviewDto> = {},
+): PerformanceOverviewDto => ({
+	period: "24h",
+	bucketMinutes: 60,
+	from: "2026-10-08T16:00:00.000Z",
+	to: "2026-10-09T15:42:00.000Z",
+	summary: {
+		count: 160,
+		p50: 520,
+		p95: 2400,
+		p99: 4100,
+		errorRate: 0.0375,
+		tpm: 0.111,
+	},
+	vitals: {
+		lcp: { p75: 2100, samples: 150, rating: "good" },
+		cls: { p75: 0.3, samples: 90, rating: "poor" },
+	},
+	points: [0, 1, 2, 3].map((i) => ({
+		start: new Date(Date.UTC(2026, 9, 9, 12 + i)).toISOString(),
+		count: i === 1 ? 0 : 40,
+		errors: i === 3 ? 2 : 0,
+		p50: i === 1 ? null : 500 + i * 20,
+		p95: i === 1 ? null : 2000 + i * 100,
+	})),
+	...over,
+});
+
+export const sample = (over: Partial<SampleListDto["items"][number]> = {}) => ({
+	id: "5a3f8f8e-1111-4a2b-8c3d-aaaaaaaaaaaa",
+	traceId: "4bf92f3577b34da6a3ce929d0e0e4736",
+	timestamp: ago(5),
+	durationMs: 3800,
+	status: "ok",
+	release: "2.4.0",
+	environment: "production",
+	user: "user_103",
+	...over,
+});
+
+export const sampleList = (
+	items: SampleListDto["items"] = [
+		sample(),
+		sample({ id: "5a3f8f8e-2222-4a2b-8c3d-bbbbbbbbbbbb", durationMs: 900 }),
+	],
+): SampleListDto => ({ items });
+
+export const sampleDetail = (
+	over: Partial<SampleDetailDto> = {},
+): SampleDetailDto => ({
+	...sample(),
+	name: "/checkout",
+	op: "pageload",
+	spanId: "00f067aa0ba902b7",
+	platform: "javascript",
+	measurements: {
+		lcp: { value: 2100, unit: "millisecond" },
+		cls: { value: 0.3 },
+	},
+	tags: {},
+	spans: [
+		{
+			spanId: "b9c7c989f97918e1",
+			parentSpanId: "00f067aa0ba902b7",
+			op: "http.client",
+			description: "GET /api/cart",
+			offsetMs: 100,
+			durationMs: 1200,
+			status: "ok",
+			depth: 1,
+			data: null,
+		},
+		{
+			spanId: "a1a1a1a1a1a1a1a1",
+			parentSpanId: "b9c7c989f97918e1",
+			op: "db.query",
+			description: "select 1",
+			offsetMs: 200,
+			durationMs: 300,
+			status: "internal_error",
+			depth: 2,
+			data: null,
+		},
+	],
 	...over,
 });

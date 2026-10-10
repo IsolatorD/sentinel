@@ -98,6 +98,7 @@ export const es: Deep<Translations> = {
 	},
 	nav: {
 		issues: "Issues",
+		performance: "Rendimiento",
 		projects: "Proyectos",
 		releases: "Releases",
 		members: "Miembros",
@@ -134,6 +135,105 @@ export const es: Deep<Translations> = {
 		},
 		open: "Ver issues",
 		loadError: "No se pudieron cargar los proyectos.",
+	},
+	performance: {
+		title: "Rendimiento",
+		subtitle:
+			"Qué tan rápida es tu app para usuarios reales: tiempos de carga, peticiones lentas y Web Vitals. Se activa en el SDK con tracesSampleRate.",
+		filters: { search: "Buscar transacciones" },
+		summary: {
+			transactions: "Transacciones",
+			p50: "p50",
+			p95: "p95",
+			p99: "p99",
+			errorRate: "Tasa de errores",
+			throughput: "Throughput",
+			perMinute: "{{value}} / min",
+		},
+		overview: {
+			empty: "No hay transacciones en este periodo.",
+			loadError: "No se pudieron cargar los datos de rendimiento.",
+		},
+		chart: {
+			label: "Latencia en el tiempo",
+			p50: "Mediana (p50)",
+			p95: "p95",
+			tooltip: "{{count}} transacciones · p50 {{p50}} · p95 {{p95}}",
+		},
+		vitals: {
+			title: "Web Vitals",
+			subtitle:
+				"El percentil 75 de las cargas de página reales, valorado con los umbrales de Google.",
+			names: {
+				lcp: "Largest Contentful Paint",
+				cls: "Cumulative Layout Shift",
+				inp: "Interaction to Next Paint",
+				fcp: "First Contentful Paint",
+				ttfb: "Time to First Byte",
+			},
+			rating: {
+				good: "Bueno",
+				"needs-improvement": "Mejorable",
+				poor: "Malo",
+			},
+			samples_one: "{{formatted}} medición",
+			samples_other: "{{formatted}} mediciones",
+		},
+		table: {
+			columns: {
+				name: "Transacción",
+				count: "Cantidad",
+				p50: "p50",
+				p95: "p95",
+				errorRate: "Errores",
+				tpm: "Por min",
+				lastSeen: "Última vez",
+			},
+			loadError: "No se pudieron cargar las transacciones.",
+			empty: {
+				title: "Todavía no hay transacciones",
+				description:
+					"Activa el rendimiento en el SDK (tracesSampleRate) y aparecerán aquí a medida que se carguen las páginas.",
+			},
+			emptyFiltered: {
+				title: "Ninguna transacción coincide",
+				description: "Prueba otro periodo o quita algún filtro.",
+			},
+		},
+		transaction: {
+			back: "Todas las transacciones",
+			samples: "Ejemplos",
+			slowest: "Más lentas",
+			recent: "Más recientes",
+		},
+		samples: {
+			columns: {
+				when: "Cuándo",
+				duration: "Duración",
+				status: "Estado",
+				release: "Release",
+				environment: "Entorno",
+			},
+			loadError: "No se pudieron cargar los ejemplos.",
+			empty: "No hay ejemplos en este periodo",
+			emptyHint: "Elige un periodo más largo o quita los filtros.",
+		},
+		sample: {
+			back: "Volver a la transacción",
+			loadError: "No se pudo cargar esta transacción.",
+			duration: "Duración",
+			status: "Estado",
+			op: "Tipo",
+			user: "Usuario",
+			platform: "Plataforma",
+			traceId: "Traza",
+			measurements: "Mediciones",
+			waterfall: "Cascada",
+			spans_one: "{{count}} span",
+			spans_other: "{{count}} spans",
+			noSpans:
+				"Esta transacción no tiene spans: solo se midió su duración total.",
+		},
 	},
 	trend: {
 		projectTitle: "Eventos",
@@ -461,6 +561,20 @@ export const es: Deep<Translations> = {
 			list: {
 				title: "Tus issues",
 				body: "Cada fila es un error con todas sus ocurrencias agrupadas. Haz clic en uno para ver su stack trace, a quién afecta y qué lo provocó.",
+			},
+		},
+		performance: {
+			overview: {
+				title: "Qué tan rápida es",
+				body: "La mediana (p50) es lo que siente una visita típica; el p95 es lo que sufre 1 de cada 20, la más lenta. Fíjate en la distancia entre ambas.",
+			},
+			vitals: {
+				title: "Web Vitals",
+				body: "Las medidas de Google sobre la experiencia real. Verde es bueno, amarillo mejorable y rojo perjudica a tus usuarios (y tu posicionamiento).",
+			},
+			table: {
+				title: "Transacciones",
+				body: "Cada página u operación, con sus percentiles y su tasa de errores. Ordena por p95 para encontrar las más lentas y abre una para ver una cascada de en qué se fue el tiempo.",
 			},
 		},
 		issueDetail: {

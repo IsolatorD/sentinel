@@ -2,7 +2,12 @@ import { z } from "zod";
 import { SUPPORTED_LOCALES } from "./locale.js";
 
 export const THEME_PREFERENCES = ["system", "light", "dark"] as const;
-export const TOUR_IDS = ["welcome", "issues", "issueDetail"] as const;
+export const TOUR_IDS = [
+	"welcome",
+	"issues",
+	"issueDetail",
+	"performance",
+] as const;
 
 export const preferencesDtoSchema = z.object({
 	/** `null` mientras la persona no haya elegido: se usa el idioma del navegador. */

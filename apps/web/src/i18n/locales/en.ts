@@ -94,6 +94,7 @@ export const en = {
 	},
 	nav: {
 		issues: "Issues",
+		performance: "Performance",
 		projects: "Projects",
 		releases: "Releases",
 		members: "Members",
@@ -130,6 +131,105 @@ export const en = {
 		},
 		open: "Open issues",
 		loadError: "Could not load the projects.",
+	},
+	performance: {
+		title: "Performance",
+		subtitle:
+			"How fast your app is for real users: load times, slow requests and Web Vitals. Turn it on in the SDK with tracesSampleRate.",
+		filters: { search: "Search transactions" },
+		summary: {
+			transactions: "Transactions",
+			p50: "p50",
+			p95: "p95",
+			p99: "p99",
+			errorRate: "Error rate",
+			throughput: "Throughput",
+			perMinute: "{{value}} / min",
+		},
+		overview: {
+			empty: "No transactions in this period.",
+			loadError: "Couldn't load the performance data.",
+		},
+		chart: {
+			label: "Latency over time",
+			p50: "Median (p50)",
+			p95: "p95",
+			tooltip: "{{count}} transactions · p50 {{p50}} · p95 {{p95}}",
+		},
+		vitals: {
+			title: "Web Vitals",
+			subtitle:
+				"The 75th percentile of real page loads, rated with Google's thresholds.",
+			names: {
+				lcp: "Largest Contentful Paint",
+				cls: "Cumulative Layout Shift",
+				inp: "Interaction to Next Paint",
+				fcp: "First Contentful Paint",
+				ttfb: "Time to First Byte",
+			},
+			rating: {
+				good: "Good",
+				"needs-improvement": "Needs improvement",
+				poor: "Poor",
+			},
+			samples_one: "{{formatted}} measurement",
+			samples_other: "{{formatted}} measurements",
+		},
+		table: {
+			columns: {
+				name: "Transaction",
+				count: "Count",
+				p50: "p50",
+				p95: "p95",
+				errorRate: "Errors",
+				tpm: "Per min",
+				lastSeen: "Last seen",
+			},
+			loadError: "Couldn't load the transactions.",
+			empty: {
+				title: "No transactions yet",
+				description:
+					"Enable performance in the SDK (tracesSampleRate) and they will show up here as pages load.",
+			},
+			emptyFiltered: {
+				title: "No transactions match",
+				description: "Try another period or remove some filters.",
+			},
+		},
+		transaction: {
+			back: "All transactions",
+			samples: "Examples",
+			slowest: "Slowest",
+			recent: "Most recent",
+		},
+		samples: {
+			columns: {
+				when: "When",
+				duration: "Duration",
+				status: "Status",
+				release: "Release",
+				environment: "Environment",
+			},
+			loadError: "Couldn't load the examples.",
+			empty: "No examples in this period",
+			emptyHint: "Pick a longer period or remove the filters.",
+		},
+		sample: {
+			back: "Back to the transaction",
+			loadError: "Couldn't load this transaction.",
+			duration: "Duration",
+			status: "Status",
+			op: "Type",
+			user: "User",
+			platform: "Platform",
+			traceId: "Trace",
+			measurements: "Measurements",
+			waterfall: "Waterfall",
+			spans_one: "{{count}} span",
+			spans_other: "{{count}} spans",
+			noSpans:
+				"This transaction has no spans: only its total duration was measured.",
+		},
 	},
 	trend: {
 		projectTitle: "Events",
@@ -453,6 +553,20 @@ export const en = {
 			list: {
 				title: "Your issues",
 				body: "Each row is an error with all its occurrences grouped. Click one to see its stack trace, who is affected and what led to it.",
+			},
+		},
+		performance: {
+			overview: {
+				title: "How fast it is",
+				body: "The median (p50) is what a typical visit feels like; p95 is what the slowest 1 in 20 suffers. Watch the gap between them.",
+			},
+			vitals: {
+				title: "Web Vitals",
+				body: "Google's measures of real user experience. Green is good, yellow needs work, red hurts your users (and your search ranking).",
+			},
+			table: {
+				title: "Transactions",
+				body: "Every page or operation, with its percentiles and error rate. Sort by p95 to find the slowest, and open one to see a waterfall of what took the time.",
 			},
 		},
 		issueDetail: {

@@ -40,6 +40,20 @@ export const queryKeys = {
 		projectId: string,
 		query: Partial<ListIssuesQuery>,
 	) => [...queryKeys.issues(orgId, projectId), "list", query] as const,
+	performance: (orgId: string, projectId: string) =>
+		["orgs", orgId, "projects", projectId, "performance"] as const,
+	performanceTransactions: (orgId: string, projectId: string, query: object) =>
+		[
+			...queryKeys.performance(orgId, projectId),
+			"transactions",
+			query,
+		] as const,
+	performanceOverview: (orgId: string, projectId: string, query: object) =>
+		[...queryKeys.performance(orgId, projectId), "overview", query] as const,
+	performanceSamples: (orgId: string, projectId: string, query: object) =>
+		[...queryKeys.performance(orgId, projectId), "samples", query] as const,
+	performanceSample: (orgId: string, projectId: string, id: string) =>
+		[...queryKeys.performance(orgId, projectId), "sample", id] as const,
 	projectStats: (orgId: string, projectId: string, period: string) =>
 		["orgs", orgId, "projects", projectId, "stats", period] as const,
 	issueStats: (

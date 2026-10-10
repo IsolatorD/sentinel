@@ -2,6 +2,8 @@ import type {
 	ISSUE_SORTS,
 	ISSUE_STATUSES,
 	levelSchema,
+	StatsPeriod,
+	TRANSACTION_SORTS,
 } from "@sentinel/shared";
 import type { z } from "zod";
 import type {
@@ -34,4 +36,22 @@ export interface IssueSearch {
 export interface AlertsSearch {
 	tab: (typeof ALERT_TABS)[number];
 	page: number;
+}
+
+export interface PerformanceSearch {
+	period: StatsPeriod;
+	environment?: string;
+	release?: string;
+	q?: string;
+	sort: (typeof TRANSACTION_SORTS)[number];
+	order: "asc" | "desc";
+	page: number;
+}
+
+export interface TransactionSearch {
+	name?: string;
+	period: StatsPeriod;
+	environment?: string;
+	release?: string;
+	samples: "slowest" | "recent";
 }

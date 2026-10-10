@@ -101,6 +101,23 @@ describe("recorridos guiados", () => {
 		expect(started("org-switcher")).toBe(false);
 	});
 
+	it("la pantalla de rendimiento explica el resumen, los Web Vitals y la tabla", async () => {
+		markSeen("welcome");
+		renderApp("/acme/projects/storefront/performance");
+		await waitFor(() => expect(started("performance-overview")).toBe(true), {
+			timeout: 3000,
+		});
+		const tour = calls().find(
+			(o) => o.steps[0].target === "performance-overview",
+		);
+		expect(tour?.steps.map((s) => s.target)).toEqual([
+			"performance-overview",
+			"web-vitals",
+			"transactions-table",
+		]);
+		expect(tour?.steps[0].title).toBe("How fast it is");
+	});
+
 	it("el detalle de un issue explica cabecera, responsable, pestañas y stack trace", async () => {
 		markSeen("welcome", "issues");
 		renderApp(ISSUE_PATH);

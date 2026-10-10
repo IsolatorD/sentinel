@@ -2,6 +2,7 @@ import {
 	Bell,
 	Bug,
 	FolderKanban,
+	Gauge,
 	KeyRound,
 	Rocket,
 	Settings,
@@ -52,6 +53,17 @@ export function Sidebar() {
 								activeOptions={{ exact: false }}
 							>
 								{t("nav.issues")}
+							</SidebarLink>
+							<SidebarLink
+								icon={Gauge}
+								to="/$orgSlug/projects/$projectSlug/performance"
+								params={{
+									orgSlug: organization.slug,
+									projectSlug: project.slug,
+								}}
+								activeOptions={{ exact: false }}
+							>
+								{t("nav.performance")}
 							</SidebarLink>
 							<SidebarLink
 								icon={Rocket}

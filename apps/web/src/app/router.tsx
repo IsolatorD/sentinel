@@ -21,17 +21,22 @@ import { NotFoundPage } from "@/pages/NotFoundPage/NotFoundPage";
 import { OnboardingPage } from "@/pages/OnboardingPage/OnboardingPage";
 import { OrgHomePage } from "@/pages/OrgHomePage/OrgHomePage";
 import { OrgLayoutPage } from "@/pages/OrgLayoutPage/OrgLayoutPage";
+import { PerformancePage } from "@/pages/PerformancePage/PerformancePage";
 import { ProjectSettingsPage } from "@/pages/ProjectSettingsPage/ProjectSettingsPage";
 import { ProjectsPage } from "@/pages/ProjectsPage/ProjectsPage";
 import { RegisterPage } from "@/pages/RegisterPage/RegisterPage";
 import { ReleasesPage } from "@/pages/ReleasesPage/ReleasesPage";
+import { SamplePage } from "@/pages/SamplePage/SamplePage";
 import { TokensPage } from "@/pages/TokensPage/TokensPage";
+import { TransactionPage } from "@/pages/TransactionPage/TransactionPage";
 import { VerifyEmailPage } from "@/pages/VerifyEmailPage/VerifyEmailPage";
 import { safeRedirect } from "@/utils/redirect/redirect";
 import {
 	alertsSearchInputSchema,
 	issueSearchInputSchema,
 	issuesSearchInputSchema,
+	performanceSearchInputSchema,
+	transactionSearchInputSchema,
 } from "@/utils/searchParams/searchParams.constants";
 import {
 	parseVerifiedSearch,
@@ -180,6 +185,25 @@ const releasesRoute = createRoute({
 	path: "releases",
 	component: ReleasesPage,
 });
+const performanceRoute = createRoute({
+	getParentRoute: () => projectRoute,
+	path: "performance",
+	validateSearch: (search: Record<string, unknown>) =>
+		performanceSearchInputSchema.parse(search),
+	component: PerformancePage,
+});
+const transactionRoute = createRoute({
+	getParentRoute: () => projectRoute,
+	path: "performance/transaction",
+	validateSearch: (search: Record<string, unknown>) =>
+		transactionSearchInputSchema.parse(search),
+	component: TransactionPage,
+});
+const sampleRoute = createRoute({
+	getParentRoute: () => projectRoute,
+	path: "performance/samples/$sampleId",
+	component: SamplePage,
+});
 const alertsRoute = createRoute({
 	getParentRoute: () => projectRoute,
 	path: "alerts",
@@ -210,6 +234,9 @@ const routeTree = rootRoute.addChildren([
 				projectRoute.addChildren([
 					issuesRoute,
 					issueRoute,
+					performanceRoute,
+					transactionRoute,
+					sampleRoute,
 					releasesRoute,
 					alertsRoute,
 					settingsRoute,

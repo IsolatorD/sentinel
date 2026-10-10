@@ -4,11 +4,17 @@ import {
 	ISSUES_SEARCH_DEFAULTS,
 	issueSearchInputSchema,
 	issuesSearchInputSchema,
+	PERFORMANCE_SEARCH_DEFAULTS,
+	performanceSearchInputSchema,
+	TRANSACTION_SEARCH_DEFAULTS,
+	transactionSearchInputSchema,
 } from "@/utils/searchParams/searchParams.constants";
 import type {
 	AlertsSearch,
 	IssueSearch,
 	IssuesSearch,
+	PerformanceSearch,
+	TransactionSearch,
 } from "@/utils/searchParams/searchParamsInterface";
 
 /** Lee los parámetros de la URL (cualquier cosa) y devuelve valores válidos con sus defaults. */
@@ -37,6 +43,30 @@ export function resolveAlertsSearch(raw: unknown): AlertsSearch {
 	return {
 		tab: input.tab ?? ALERTS_SEARCH_DEFAULTS.tab,
 		page: input.page ?? ALERTS_SEARCH_DEFAULTS.page,
+	};
+}
+
+export function resolvePerformanceSearch(raw: unknown): PerformanceSearch {
+	const input = performanceSearchInputSchema.parse(raw ?? {});
+	return {
+		period: input.period ?? PERFORMANCE_SEARCH_DEFAULTS.period,
+		environment: input.environment,
+		release: input.release,
+		q: input.q,
+		sort: input.sort ?? PERFORMANCE_SEARCH_DEFAULTS.sort,
+		order: input.order ?? PERFORMANCE_SEARCH_DEFAULTS.order,
+		page: input.page ?? PERFORMANCE_SEARCH_DEFAULTS.page,
+	};
+}
+
+export function resolveTransactionSearch(raw: unknown): TransactionSearch {
+	const input = transactionSearchInputSchema.parse(raw ?? {});
+	return {
+		name: input.name,
+		period: input.period ?? TRANSACTION_SEARCH_DEFAULTS.period,
+		environment: input.environment,
+		release: input.release,
+		samples: input.samples ?? TRANSACTION_SEARCH_DEFAULTS.samples,
 	};
 }
 

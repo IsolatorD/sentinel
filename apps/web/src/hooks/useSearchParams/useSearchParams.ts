@@ -6,15 +6,21 @@ import {
 	resolveAlertsSearch,
 	resolveIssueSearch,
 	resolveIssuesSearch,
+	resolvePerformanceSearch,
+	resolveTransactionSearch,
 } from "@/utils/searchParams/searchParams";
 import {
 	ALERTS_SEARCH_DEFAULTS,
 	ISSUES_SEARCH_DEFAULTS,
+	PERFORMANCE_SEARCH_DEFAULTS,
+	TRANSACTION_SEARCH_DEFAULTS,
 } from "@/utils/searchParams/searchParams.constants";
 import type {
 	AlertsSearch,
 	IssueSearch,
 	IssuesSearch,
+	PerformanceSearch,
+	TransactionSearch,
 } from "@/utils/searchParams/searchParamsInterface";
 
 // La URL es la fuente de verdad del estado de la pantalla (filtros, página, evento elegido):
@@ -68,6 +74,46 @@ export function useAlertsSearch() {
 				to: ".",
 				search: (prev: Record<string, unknown>) =>
 					omitDefaults({ ...prev, ...patch }, ALERTS_SEARCH_DEFAULTS),
+				replace: true,
+			}),
+		[navigate],
+	);
+	return { search, update };
+}
+
+export function usePerformanceSearch() {
+	const raw = useSearch({ strict: false });
+	const navigate = useNavigate();
+	const search = useMemo(() => resolvePerformanceSearch(raw), [raw]);
+	const update = useCallback(
+		(
+			patch: Partial<PerformanceSearch>,
+			options: { resetPage?: boolean } = {},
+		) =>
+			navigate({
+				to: ".",
+				search: (prev: Record<string, unknown>) =>
+					omitDefaults(
+						{ ...prev, ...patch, ...(options.resetPage ? { page: 1 } : {}) },
+						PERFORMANCE_SEARCH_DEFAULTS,
+					),
+				replace: true,
+			}),
+		[navigate],
+	);
+	return { search, update };
+}
+
+export function useTransactionSearch() {
+	const raw = useSearch({ strict: false });
+	const navigate = useNavigate();
+	const search = useMemo(() => resolveTransactionSearch(raw), [raw]);
+	const update = useCallback(
+		(patch: Partial<TransactionSearch>) =>
+			navigate({
+				to: ".",
+				search: (prev: Record<string, unknown>) =>
+					omitDefaults({ ...prev, ...patch }, TRANSACTION_SEARCH_DEFAULTS),
 				replace: true,
 			}),
 		[navigate],

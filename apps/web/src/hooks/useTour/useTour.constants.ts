@@ -45,6 +45,26 @@ export const TOURS = {
 			side: "top",
 		},
 	],
+	performance: [
+		{
+			target: "performance-overview",
+			title: "tour.performance.overview.title",
+			body: "tour.performance.overview.body",
+			side: "bottom",
+		},
+		{
+			target: "web-vitals",
+			title: "tour.performance.vitals.title",
+			body: "tour.performance.vitals.body",
+			side: "top",
+		},
+		{
+			target: "transactions-table",
+			title: "tour.performance.table.title",
+			body: "tour.performance.table.body",
+			side: "top",
+		},
+	],
 	issueDetail: [
 		{
 			target: "issue-header",

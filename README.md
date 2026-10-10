@@ -139,7 +139,7 @@ pnpm seed:demo           # puebla una organización de demostración con 72 even
 
 La semilla crea el usuario `demo@sentinel.dev` (contraseña `demo-password-123`, solo para desarrollo local). Variables opcionales del servidor de desarrollo: `VITE_API_TARGET` (por defecto `http://localhost:3000`) y `VITE_PORT`.
 
-**Pantallas:** acceso y registro (email y Google si está configurado), onboarding guiado (organización → proyecto → instalación del SDK con la DSN), proyectos, issues, detalle de un issue (con navegación entre eventos) y configuración del proyecto (claves DSN, instalación, zona de peligro).
+**Pantallas:** acceso y registro (email y Google si está configurado), onboarding guiado (organización → proyecto → instalación del SDK con la DSN), proyectos, issues, detalle de un issue (con navegación entre eventos) configuración del proyecto (claves DSN, instalación según la plataforma, zona de peligro) y **rendimiento** (transacciones agrupadas con p50/p95/p99, errores y throughput, gráfico de latencia, Web Vitals valorados y, por cada ejemplo, la cascada de spans). Cada issue y el proyecto tienen además su gráfico de tendencia.
 
 **Arquitectura** (atómica, ver `PLAN.md` §2.2): `components/{atoms,molecules,organisms,templates}`, `pages/`, `services/` (única capa que llama a la API, validando con los esquemas de `shared`) y `hooks/` (TanStack Query sobre los services). Ningún componente ni página importa un service; un test lo verifica en cada ejecución. El estado de la pantalla (filtros, página, pestaña, evento elegido) vive en la URL.
 
@@ -154,7 +154,7 @@ components/atoms/Button/
 
 Los subcomponentes que solo usa su padre van anidados (`organisms/Sidebar/OrgSwitcher/`); los exportados y reutilizables, al lado de los demás. Las funciones de ayuda globales están en `utils/`. Los imports usan la ruta completa (`@/components/atoms/Button/Button`), sin `index.ts`. El cliente HTTP es axios (`services/http`).
 
-Rutas: `/login`, `/register`, `/onboarding`, `/:org/projects`, `/:org/projects/:proyecto/issues`, `/:org/projects/:proyecto/issues/:issue`, `/:org/projects/:proyecto/settings`.
+Rutas: `/login`, `/register`, `/onboarding`, `/:org/projects`, `/:org/projects/:proyecto/issues`, `/:org/projects/:proyecto/issues/:issue`, `/:org/projects/:proyecto/settings`, `/:org/projects/:proyecto/performance` (con `performance/transaction?name=` y `performance/samples/:id`).
 
 ## Releases y regresiones
 
