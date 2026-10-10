@@ -5,6 +5,7 @@ import { DeleteProjectSection } from "@/components/organisms/DeleteProjectSectio
 import { InstallInstructions } from "@/components/organisms/InstallInstructions/InstallInstructions";
 import { ProjectGeneralForm } from "@/components/organisms/ProjectGeneralForm/ProjectGeneralForm";
 import { ProjectKeysManager } from "@/components/organisms/ProjectKeysManager/ProjectKeysManager";
+import { ProjectLimitsForm } from "@/components/organisms/ProjectLimitsForm/ProjectLimitsForm";
 import { PageTemplate } from "@/components/templates/PageTemplate/PageTemplate";
 import { useProject } from "@/hooks/useProjects/useProjects";
 import { useCurrentProject } from "@/hooks/useScope/useScope";
@@ -28,6 +29,7 @@ export function ProjectSettingsContent() {
 				<div className="space-y-5">
 					<ProjectGeneralForm project={project} orgId={organization.id} />
 					<ProjectKeysManager project={project} orgId={organization.id} />
+					<ProjectLimitsForm project={project} orgId={organization.id} />
 					{firstActive && (
 						<Section title={t("settings.install.title")}>
 							<p className="mb-4 text-sm text-muted">

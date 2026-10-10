@@ -4,6 +4,7 @@ import { ConfigService } from "@nestjs/config";
 import { EVENTS_QUEUE, TRANSACTIONS_QUEUE } from "@sentinel/shared";
 import type { ApiEnv } from "../config/env.js";
 import { ProjectsModule } from "../projects/projects.module.js";
+import { QuotaModule } from "../quota/quota.module.js";
 import { IngestController } from "./ingest.controller.js";
 import { IngestGuard } from "./ingest.guard.js";
 import { IngestService } from "./ingest.service.js";
@@ -14,6 +15,7 @@ import { TransactionsService } from "./transactions.service.js";
 @Module({
 	imports: [
 		ProjectsModule,
+		QuotaModule,
 		BullModule.forRootAsync({
 			inject: [ConfigService],
 			useFactory: (config: ConfigService<ApiEnv, true>) => ({

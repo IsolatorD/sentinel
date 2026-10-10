@@ -4,6 +4,7 @@ import { describe, expect, it, vi } from "vitest";
 import type { ApiEnv } from "../config/env.js";
 import { OrgAccessService } from "../organizations/org-access.service.js";
 import type { OrganizationsRepository } from "../organizations/organizations.repository.js";
+import type { QuotaService } from "../quota/quota.service.js";
 import {
 	type KeyRow,
 	type ProjectRow,
@@ -19,6 +20,9 @@ const projectRow = (over: Partial<ProjectRow> = {}): ProjectRow => ({
 	name: "Mi App",
 	slug: "mi-app",
 	platform: "javascript",
+	retentionDays: 90,
+	monthlyEventQuota: null,
+	monthlyTransactionQuota: null,
 	createdAt: now,
 	...over,
 });
@@ -42,7 +46,8 @@ function setup(
 	const config = {
 		get: () => "http://localhost:3000",
 	} as unknown as ConfigService<ApiEnv, true>;
-	return new ProjectsService(repo as ProjectsRepository, access, config);
+	const quota = { invalidate: vi.fn() } as unknown as QuotaService;
+	return new ProjectsService(repo as ProjectsRepository, access, quota, config);
 }
 
 describe("ProjectsService", () => {

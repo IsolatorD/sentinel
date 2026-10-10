@@ -71,6 +71,13 @@
 			"when": 1791600597634,
 			"tag": "0009_dazzling_synch",
 			"breakpoints": true
+		},
+		{
+			"idx": 10,
+			"version": "7",
+			"when": 1791649190065,
+			"tag": "0010_loud_sauron",
+			"breakpoints": true
 		}
 	]
 }

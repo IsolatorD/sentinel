@@ -9,6 +9,7 @@ export const es: Record<MessageCode, string> = {
 	INVALID_JSON: "El cuerpo no es un JSON válido",
 	INTERNAL_ERROR: "Error interno del servidor",
 	TOO_MANY_REQUESTS: "Demasiadas peticiones",
+	QUOTA_EXCEEDED: "Este proyecto alcanzó su cuota mensual",
 	PAYLOAD_TOO_LARGE: "La petición es demasiado grande",
 	UNSUPPORTED_MEDIA_TYPE: "Tipo de contenido no soportado",
 	INSUFFICIENT_PERMISSIONS: "No tienes permisos suficientes",

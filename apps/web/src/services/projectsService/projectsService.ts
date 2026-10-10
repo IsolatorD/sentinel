@@ -5,6 +5,7 @@ import {
 	projectKeyDtoSchema,
 	type UpdateProjectInput,
 	type UpdateProjectKeyInput,
+	usageDtoSchema,
 } from "@sentinel/shared";
 import { z } from "zod";
 import { http } from "@/services/http/http";
@@ -26,6 +27,9 @@ export const projectsService = {
 			body: input,
 			schema: projectDtoSchema,
 		}),
+
+	usage: (orgId: string, projectId: string) =>
+		http(`${base(orgId)}/${projectId}/usage`, { schema: usageDtoSchema }),
 
 	remove: (orgId: string, projectId: string) =>
 		http(`${base(orgId)}/${projectId}`, { method: "DELETE" }),

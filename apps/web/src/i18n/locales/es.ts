@@ -1167,6 +1167,30 @@ export const es: Deep<Translations> = {
 			deleteConfirm:
 				"¿Eliminar esta clave? Las apps que la usan dejarán de enviar eventos.",
 		},
+		limits: {
+			title: "Datos y límites",
+			thisMonth: "Este mes",
+			events: "Eventos",
+			transactions: "Transacciones",
+			usedNoLimit: "{{used}} (sin límite)",
+			usedOfQuota: "{{used}} de {{quota}}",
+			resets: "Los contadores se reinician el {{date}} (UTC).",
+			retention: "Retención de datos",
+			retentionHint:
+				"Los eventos y transacciones más antiguos se borran cada noche. Los issues sin nada dentro de este periodo se van con ellos.",
+			days: "{{count}} días",
+			eventQuota: "Límite mensual de eventos",
+			transactionQuota: "Límite mensual de transacciones",
+			quotaHint:
+				"Déjalo vacío para no poner límite. Al superarlo se rechaza lo nuevo hasta que se reinicie el mes.",
+			noLimit: "Sin límite",
+			invalidQuota: "Escribe un número entero de al menos 1, o déjalo vacío.",
+			saved: "Límites guardados.",
+			exceeded: "Este proyecto alcanzó su límite mensual de {{what}}.",
+			exceededHint:
+				"Lo nuevo se rechaza hasta el {{date}}, o hasta que subas el límite.",
+			manage: "Gestionar límites",
+		},
 		install: {
 			title: "Instala el SDK",
 			description: "Usa uno de estos fragmentos en tu app.",

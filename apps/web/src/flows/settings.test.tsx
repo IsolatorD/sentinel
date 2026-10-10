@@ -136,7 +136,9 @@ describe("configuración del proyecto", () => {
 		await user.clear(name);
 		await user.type(name, "Tienda");
 		await user.selectOptions(screen.getByLabelText("Platform"), "node");
-		await user.click(screen.getByRole("button", { name: "Save changes" }));
+		await user.click(
+			screen.getAllByRole("button", { name: "Save changes" })[0],
+		);
 
 		expect(projectsService.update).toHaveBeenCalledWith(
 			"org-1",
@@ -149,7 +151,9 @@ describe("configuración del proyecto", () => {
 	it("no permite guardar un nombre vacío", async () => {
 		const { user } = renderApp(SETTINGS_PATH);
 		await user.clear(await screen.findByLabelText("Project name"));
-		await user.click(screen.getByRole("button", { name: "Save changes" }));
+		await user.click(
+			screen.getAllByRole("button", { name: "Save changes" })[0],
+		);
 		expect(
 			await screen.findByText("This field is required."),
 		).toBeInTheDocument();
@@ -162,7 +166,9 @@ describe("configuración del proyecto", () => {
 		);
 		const { user } = renderApp(SETTINGS_PATH);
 		await screen.findByLabelText("Project name");
-		await user.click(screen.getByRole("button", { name: "Save changes" }));
+		await user.click(
+			screen.getAllByRole("button", { name: "Save changes" })[0],
+		);
 		expect(
 			await screen.findByText(
 				"Only owners and admins can change these settings.",

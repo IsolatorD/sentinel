@@ -47,6 +47,7 @@ import {
 	updateProjectKeySchema,
 	updateProjectSchema,
 	updateRuleSchema,
+	usageDtoSchema,
 } from "@sentinel/shared";
 import { z } from "zod";
 import { jsonSchema } from "./zod-schema.js";
@@ -59,6 +60,7 @@ export const docs = {
 	sampleList: jsonSchema(sampleListDtoSchema),
 	sampleDetail: jsonSchema(sampleDetailDtoSchema),
 	trace: jsonSchema(traceDtoSchema),
+	usage: jsonSchema(usageDtoSchema),
 	preferences: jsonSchema(preferencesDtoSchema),
 	updatePreferences: jsonSchema(updatePreferencesSchema, "input"),
 	activity: jsonSchema(activityDtoSchema),

@@ -56,6 +56,7 @@ export function mockHappyPath() {
 	}));
 	vi.mocked(projectsService.list).mockResolvedValue([fx.project]);
 	vi.mocked(projectsService.get).mockResolvedValue(fx.project);
+	vi.mocked(projectsService.usage).mockResolvedValue(fx.usage());
 	vi.mocked(performanceService.transactions).mockResolvedValue(
 		fx.transactionList(),
 	);

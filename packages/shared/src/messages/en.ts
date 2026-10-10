@@ -12,6 +12,7 @@ export const en = {
 	INVALID_JSON: "Invalid JSON body",
 	INTERNAL_ERROR: "Internal server error",
 	TOO_MANY_REQUESTS: "Too many requests",
+	QUOTA_EXCEEDED: "This project reached its monthly quota",
 	PAYLOAD_TOO_LARGE: "The request is too large",
 	UNSUPPORTED_MEDIA_TYPE: "Unsupported media type",
 	INSUFFICIENT_PERMISSIONS: "Insufficient permissions",

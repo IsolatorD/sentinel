@@ -1155,6 +1155,30 @@ export const en = {
 			dsn: "DSN",
 			deleteConfirm: "Delete this key? Apps using it will stop sending events.",
 		},
+		limits: {
+			title: "Data and limits",
+			thisMonth: "This month",
+			events: "Events",
+			transactions: "Transactions",
+			usedNoLimit: "{{used}} (no limit)",
+			usedOfQuota: "{{used}} of {{quota}}",
+			resets: "Counters reset on {{date}} (UTC).",
+			retention: "Data retention",
+			retentionHint:
+				"Events and transactions older than this are deleted every night. Issues with nothing left in this period go with them.",
+			days: "{{count}} days",
+			eventQuota: "Monthly events limit",
+			transactionQuota: "Monthly transactions limit",
+			quotaHint:
+				"Leave empty for no limit. Past the limit, new data is rejected until the month resets.",
+			noLimit: "No limit",
+			invalidQuota: "Enter a whole number of at least 1, or leave it empty.",
+			saved: "Limits saved.",
+			exceeded: "This project reached its monthly limit of {{what}}.",
+			exceededHint:
+				"New data is being rejected until {{date}}, or until you raise the limit.",
+			manage: "Manage limits",
+		},
 		install: {
 			title: "Install the SDK",
 			description: "Use one of these snippets in your app.",

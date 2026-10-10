@@ -20,6 +20,7 @@ import { type IngestEvent, ingestEventSchema } from "@sentinel/shared";
 import type { FastifyRequest } from "fastify";
 import { ZodValidationPipe } from "../common/zod-validation.pipe.js";
 import { docs } from "../openapi/schemas.js";
+import { CountsAgainstQuota, QuotaGuard } from "../quota/quota.guard.js";
 import { IngestGuard } from "./ingest.guard.js";
 import { IngestService } from "./ingest.service.js";
 
@@ -32,11 +33,12 @@ import { IngestService } from "./ingest.service.js";
 	schema: docs.error,
 })
 @Controller(":projectId/events")
-@UseGuards(IngestGuard)
+@UseGuards(IngestGuard, QuotaGuard)
 export class IngestController {
 	constructor(private readonly ingest: IngestService) {}
 
 	@Post()
+	@CountsAgainstQuota("events")
 	@HttpCode(202)
 	@ApiOperation({
 		summary: "Envía un evento (error o mensaje)",

@@ -89,3 +89,17 @@ export function useDeleteKey(orgId: string, projectId: string) {
 			client.invalidateQueries({ queryKey: queryKeys.projects(orgId) }),
 	});
 }
+
+/** Lo ingerido este mes frente a los límites del proyecto. Se refresca cada minuto. */
+export function useUsage(
+	orgId: string | undefined,
+	projectId: string | undefined,
+) {
+	return useQuery({
+		queryKey: queryKeys.usage(orgId ?? "", projectId ?? ""),
+		queryFn: () => projectsService.usage(orgId as string, projectId as string),
+		enabled: Boolean(orgId && projectId),
+		staleTime: 30_000,
+		refetchInterval: 60_000,
+	});
+}

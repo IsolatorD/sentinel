@@ -10,6 +10,7 @@ import type {
 } from "@sentinel/shared";
 import type { ApiEnv } from "../config/env.js";
 import { OrgAccessService } from "../organizations/org-access.service.js";
+import { QuotaService } from "../quota/quota.service.js";
 import { buildDsn } from "./domain/dsn.js";
 import { generatePublicKey } from "./domain/public-key.js";
 import { slugify, withSuffix } from "./domain/slug.js";
@@ -29,6 +30,7 @@ export class ProjectsService {
 	constructor(
 		private readonly projects: ProjectsRepository,
 		private readonly access: OrgAccessService,
+		private readonly quota: QuotaService,
 		config: ConfigService<ApiEnv, true>,
 	) {
 		this.publicApiUrl = config.get("PUBLIC_API_URL", { infer: true });
@@ -91,6 +93,8 @@ export class ProjectsService {
 		await this.access.assert(userId, orgId, "admin");
 		const row = await this.projects.update(orgId, projectId, input);
 		if (!row) throw new NotFoundException({ reason: "PROJECT_NOT_FOUND" });
+		// Los límites nuevos valen desde ya, sin esperar a que caduque la caché de la ingesta.
+		this.quota.invalidate(projectId);
 		return this.toProjectDto(row);
 	}
 
@@ -181,6 +185,9 @@ export class ProjectsService {
 			name: row.name,
 			slug: row.slug,
 			platform: row.platform,
+			retentionDays: row.retentionDays,
+			monthlyEventQuota: row.monthlyEventQuota,
+			monthlyTransactionQuota: row.monthlyTransactionQuota,
 			createdAt: row.createdAt.toISOString(),
 			...(keys && { keys: keys.map((k) => this.toKeyDto(k)) }),
 		};

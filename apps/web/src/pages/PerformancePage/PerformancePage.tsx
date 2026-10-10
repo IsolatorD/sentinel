@@ -1,6 +1,7 @@
 import { useTranslation } from "react-i18next";
 import { PerformanceFilters } from "@/components/organisms/PerformanceFilters/PerformanceFilters";
 import { PerformanceOverview } from "@/components/organisms/PerformanceOverview/PerformanceOverview";
+import { QuotaBanner } from "@/components/organisms/QuotaBanner/QuotaBanner";
 import { TransactionsTable } from "@/components/organisms/TransactionsTable/TransactionsTable";
 import { PageTemplate } from "@/components/templates/PageTemplate/PageTemplate";
 import { useTransactions } from "@/hooks/usePerformance/usePerformance";
@@ -21,6 +22,7 @@ export function PerformancePage() {
 			<PageTemplate title={t("performance.title")} description={project?.name}>
 				<div className="space-y-4">
 					<p className="text-sm text-muted">{t("performance.subtitle")}</p>
+					<QuotaBanner />
 					<PerformanceFilters />
 					<PerformanceOverview
 						query={{

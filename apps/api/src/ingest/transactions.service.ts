@@ -8,6 +8,7 @@ import {
 	type TransactionJobData,
 } from "@sentinel/shared";
 import type { Queue } from "bullmq";
+import { QuotaService } from "../quota/quota.service.js";
 import { normalizeEventId } from "./ingest.service.js";
 
 @Injectable()
@@ -15,6 +16,7 @@ export class TransactionsService {
 	constructor(
 		@InjectQueue(TRANSACTIONS_QUEUE)
 		private readonly queue: Queue<TransactionJobData>,
+		private readonly quota: QuotaService,
 	) {}
 
 	async enqueue(
@@ -43,6 +45,7 @@ export class TransactionsService {
 				removeOnFail: { age: 7 * 24 * 3_600 },
 			},
 		);
+		await this.quota.record(projectId, "transactions");
 		return transactionId;
 	}
 }

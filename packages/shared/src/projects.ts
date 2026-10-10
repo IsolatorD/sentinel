@@ -15,6 +15,13 @@ export type Platform = z.infer<typeof platformSchema>;
 const nameSchema = z.string().trim().min(1).max(80);
 const labelSchema = z.string().trim().min(1).max(60);
 
+/** Días que se conservan los eventos y las transacciones de un proyecto. */
+export const RETENTION_OPTIONS = [30, 90, 180, 365] as const;
+export const DEFAULT_RETENTION_DAYS = 90;
+
+/** Un límite mensual: un entero positivo, o `null` para quitarlo. */
+const quotaSchema = z.number().int().min(1).max(1_000_000_000).nullable();
+
 export const createProjectSchema = z.object({
 	name: nameSchema,
 	platform: platformSchema.default("javascript"),
@@ -25,8 +32,14 @@ export const updateProjectSchema = z
 	.object({
 		name: nameSchema.optional(),
 		platform: platformSchema.optional(),
+		retentionDays: z
+			.number()
+			.refine((v) => (RETENTION_OPTIONS as readonly number[]).includes(v))
+			.optional(),
+		monthlyEventQuota: quotaSchema.optional(),
+		monthlyTransactionQuota: quotaSchema.optional(),
 	})
-	.refine((v) => v.name !== undefined || v.platform !== undefined, {
+	.refine((v) => Object.values(v).some((field) => field !== undefined), {
 		message: "Provide at least one field to update",
 	});
 export type UpdateProjectInput = z.infer<typeof updateProjectSchema>;
@@ -63,7 +76,32 @@ export const projectDtoSchema = z.object({
 	name: z.string(),
 	slug: z.string(),
 	platform: z.string(),
+	retentionDays: z.number().int(),
+	monthlyEventQuota: z.number().int().nullable(),
+	monthlyTransactionQuota: z.number().int().nullable(),
 	createdAt: z.string().datetime(),
 	keys: z.array(projectKeyDtoSchema).optional(),
 });
 export type ProjectDto = z.infer<typeof projectDtoSchema>;
+
+// ---------- Uso mensual y cuotas ----------
+
+export const QUOTA_KINDS = ["events", "transactions"] as const;
+export type QuotaKind = (typeof QUOTA_KINDS)[number];
+
+const usageEntrySchema = z.object({
+	/** Lo ingerido en lo que va del mes. */
+	used: z.number().int(),
+	/** El límite mensual del proyecto, o `null` si no tiene. */
+	quota: z.number().int().nullable(),
+});
+
+export const usageDtoSchema = z.object({
+	/** El mes en curso (UTC), `AAAA-MM`. */
+	month: z.string().regex(/^\d{4}-\d{2}$/),
+	/** Cuándo se reinician los contadores (primer instante del mes siguiente). */
+	resetsAt: z.string().datetime(),
+	events: usageEntrySchema,
+	transactions: usageEntrySchema,
+});
+export type UsageDto = z.infer<typeof usageDtoSchema>;

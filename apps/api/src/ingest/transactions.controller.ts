@@ -23,6 +23,7 @@ import {
 import type { FastifyRequest } from "fastify";
 import { ZodValidationPipe } from "../common/zod-validation.pipe.js";
 import { docs } from "../openapi/schemas.js";
+import { CountsAgainstQuota, QuotaGuard } from "../quota/quota.guard.js";
 import { IngestGuard } from "./ingest.guard.js";
 import { TransactionsService } from "./transactions.service.js";
 
@@ -35,11 +36,12 @@ import { TransactionsService } from "./transactions.service.js";
 	schema: docs.error,
 })
 @Controller(":projectId/transactions")
-@UseGuards(IngestGuard)
+@UseGuards(IngestGuard, QuotaGuard)
 export class TransactionsController {
 	constructor(private readonly transactions: TransactionsService) {}
 
 	@Post()
+	@CountsAgainstQuota("transactions")
 	@HttpCode(202)
 	@ApiOperation({
 		summary: "Envía una transacción (medida de rendimiento) con sus spans",

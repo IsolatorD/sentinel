@@ -7,6 +7,8 @@ export const queryKeys = {
 	preferences: ["preferences"] as const,
 	organizations: ["organizations"] as const,
 	projects: (orgId: string) => ["orgs", orgId, "projects"] as const,
+	usage: (orgId: string, projectId: string) =>
+		["orgs", orgId, "projects", projectId, "usage"] as const,
 	project: (orgId: string, projectId: string) =>
 		["orgs", orgId, "projects", projectId] as const,
 	releases: (orgId: string, projectId: string) =>

@@ -8,6 +8,7 @@ import {
 	scrubEvent,
 } from "@sentinel/shared";
 import type { Queue } from "bullmq";
+import { QuotaService } from "../quota/quota.service.js";
 
 // Acepta UUID con o sin guiones y lo devuelve en formato canónico.
 export function normalizeEventId(raw: string | undefined): string | undefined {
@@ -20,6 +21,7 @@ export function normalizeEventId(raw: string | undefined): string | undefined {
 export class IngestService {
 	constructor(
 		@InjectQueue(EVENTS_QUEUE) private readonly queue: Queue<IngestJobData>,
+		private readonly quota: QuotaService,
 	) {}
 
 	async enqueue(
@@ -48,6 +50,8 @@ export class IngestService {
 				removeOnFail: { age: 7 * 24 * 3_600 },
 			},
 		);
+		// Solo cuenta lo que se aceptó: un evento inválido (400) o rechazado (429) no gasta cuota.
+		await this.quota.record(projectId, "events");
 		return eventId;
 	}
 }

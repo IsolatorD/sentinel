@@ -234,7 +234,18 @@ describe("avisos de éxito", () => {
 			es,
 		);
 		expect(Object.keys(res.json).sort()).toEqual(
-			["createdAt", "id", "keys", "name", "organizationId", "platform", "slug"]
+			[
+				"createdAt",
+				"id",
+				"keys",
+				"monthlyEventQuota",
+				"monthlyTransactionQuota",
+				"name",
+				"organizationId",
+				"platform",
+				"retentionDays",
+				"slug",
+			]
 				.filter((k) => k in res.json)
 				.sort(),
 		);

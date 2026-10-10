@@ -81,7 +81,16 @@ export class ProjectsRepository {
 	async update(
 		organizationId: string,
 		projectId: string,
-		patch: { name?: string; platform?: string },
+		patch: Partial<
+			Pick<
+				ProjectRow,
+				| "name"
+				| "platform"
+				| "retentionDays"
+				| "monthlyEventQuota"
+				| "monthlyTransactionQuota"
+			>
+		>,
 	): Promise<ProjectRow | undefined> {
 		const [row] = await this.db
 			.update(project)

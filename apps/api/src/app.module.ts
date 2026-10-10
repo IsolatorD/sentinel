@@ -17,6 +17,7 @@ import { OrganizationsModule } from "./organizations/organizations.module.js";
 import { PerformanceModule } from "./performance/performance.module.js";
 import { PreferencesModule } from "./preferences/preferences.module.js";
 import { ProjectsModule } from "./projects/projects.module.js";
+import { QuotaModule } from "./quota/quota.module.js";
 import { RedisModule } from "./redis/redis.module.js";
 import { ReleasesModule } from "./releases/releases.module.js";
 import { TokensModule } from "./tokens/tokens.module.js";
@@ -46,6 +47,7 @@ import { TokensModule } from "./tokens/tokens.module.js";
 		IngestModule,
 		IssuesModule,
 		PerformanceModule,
+		QuotaModule,
 		ReleasesModule,
 		AlertsModule,
 		PreferencesModule,

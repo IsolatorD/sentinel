@@ -7,6 +7,7 @@ export * from "./health.js";
 export * from "./ingest.js";
 export * from "./issues.js";
 export * from "./locale.js";
+export * from "./maintenance.js";
 export * from "./messages/index.js";
 export * from "./network.js";
 export * from "./performance.js";

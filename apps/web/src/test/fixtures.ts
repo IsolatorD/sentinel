@@ -13,6 +13,7 @@ import type {
 	TraceDto,
 	TransactionGroupDto,
 	TransactionListDto,
+	UsageDto,
 } from "@sentinel/shared";
 
 const NOW = Date.now();
@@ -43,6 +44,9 @@ export const project: ProjectDto = {
 	name: "Storefront",
 	slug: "storefront",
 	platform: "react",
+	retentionDays: 90,
+	monthlyEventQuota: null,
+	monthlyTransactionQuota: null,
 	createdAt: ago(600),
 	keys: [key],
 };
@@ -385,5 +389,14 @@ export const trace = (over: Partial<TraceDto> = {}): TraceDto => ({
 			spanId: null,
 		},
 	],
+	...over,
+});
+
+/** Uso del mes: sin límites y con poco consumo, salvo lo que se indique. */
+export const usage = (over: Partial<UsageDto> = {}): UsageDto => ({
+	month: "2026-10",
+	resetsAt: "2026-11-01T00:00:00.000Z",
+	events: { used: 1_284, quota: null },
+	transactions: { used: 5_320, quota: null },
 	...over,
 });
