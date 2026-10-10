@@ -1,0 +1,155 @@
+{
+	"$schema": "https://json-schema.org/draft/2020-12/schema",
+	"type": "object",
+	"properties": {
+		"transaction_id": {
+			"type": "string",
+			"pattern": "^[0-9a-f]{8}-?[0-9a-f]{4}-?[0-9a-f]{4}-?[0-9a-f]{4}-?[0-9a-f]{12}$"
+		},
+		"trace_id": {
+			"type": "string",
+			"pattern": "^[0-9a-f]{32}$"
+		},
+		"span_id": {
+			"type": "string",
+			"pattern": "^[0-9a-f]{16}$"
+		},
+		"parent_span_id": {
+			"type": "string",
+			"pattern": "^[0-9a-f]{16}$"
+		},
+		"name": {
+			"type": "string",
+			"minLength": 1,
+			"maxLength": 2048
+		},
+		"op": {
+			"default": "pageload",
+			"type": "string",
+			"maxLength": 256
+		},
+		"timestamp": {
+			"type": ["string", "number"]
+		},
+		"duration_ms": {
+			"type": "number",
+			"minimum": 0
+		},
+		"status": {
+			"default": "ok",
+			"type": "string",
+			"maxLength": 256
+		},
+		"platform": {
+			"type": "string",
+			"maxLength": 256
+		},
+		"release": {
+			"type": "string",
+			"maxLength": 256
+		},
+		"environment": {
+			"type": "string",
+			"maxLength": 256
+		},
+		"user": {
+			"type": "object",
+			"properties": {
+				"id": {
+					"type": "string",
+					"maxLength": 256
+				},
+				"email": {
+					"type": "string",
+					"maxLength": 256
+				},
+				"username": {
+					"type": "string",
+					"maxLength": 256
+				},
+				"ip_address": {
+					"type": "string",
+					"maxLength": 256
+				}
+			}
+		},
+		"tags": {
+			"type": "object",
+			"propertyNames": {
+				"type": "string",
+				"maxLength": 64
+			},
+			"additionalProperties": {
+				"type": "string",
+				"maxLength": 512
+			}
+		},
+		"measurements": {
+			"type": "object",
+			"propertyNames": {
+				"type": "string",
+				"maxLength": 32
+			},
+			"additionalProperties": {
+				"type": "object",
+				"properties": {
+					"value": {
+						"type": "number"
+					},
+					"unit": {
+						"type": "string",
+						"maxLength": 16
+					}
+				},
+				"required": ["value"]
+			}
+		},
+		"spans": {
+			"default": [],
+			"maxItems": 200,
+			"type": "array",
+			"items": {
+				"type": "object",
+				"properties": {
+					"span_id": {
+						"type": "string",
+						"pattern": "^[0-9a-f]{16}$"
+					},
+					"parent_span_id": {
+						"type": "string",
+						"pattern": "^[0-9a-f]{16}$"
+					},
+					"op": {
+						"type": "string",
+						"maxLength": 256
+					},
+					"description": {
+						"type": "string",
+						"maxLength": 2048
+					},
+					"start_timestamp": {
+						"type": ["string", "number"]
+					},
+					"duration_ms": {
+						"type": "number",
+						"minimum": 0
+					},
+					"status": {
+						"type": "string",
+						"maxLength": 256
+					},
+					"data": {
+						"type": "object",
+						"propertyNames": {
+							"type": "string",
+							"maxLength": 64
+						},
+						"additionalProperties": {}
+					}
+				},
+				"required": ["span_id", "op", "start_timestamp", "duration_ms"]
+			}
+		}
+	},
+	"required": ["trace_id", "span_id", "name", "duration_ms"]
+}

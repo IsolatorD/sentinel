@@ -373,6 +373,8 @@ importers:
         specifier: ^4.6.5
         version: 4.6.5
 
+  packages/sdk-python: {}
+
   packages/sdk-react:
     devDependencies:
       '@sentinel/browser':

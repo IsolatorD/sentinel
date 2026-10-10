@@ -1,0 +1,11 @@
+{
+	"name": "@sentinel/python",
+	"version": "0.1.0",
+	"private": true,
+	"description": "Sentinel SDK for Python (sentinel-sdk). Esta cápsula solo enchufa sus scripts al monorepo; el código es Python.",
+	"scripts": {
+		"setup": "python3 -m venv .venv && .venv/bin/pip install -q --upgrade pip && .venv/bin/pip install -q -e \".[dev]\"",
+		"test": "sh -c 'if [ -x .venv/bin/python ]; then .venv/bin/python -m pytest -q; else echo \"sentinel-sdk (Python): sin entorno virtual, se omiten sus tests. Ejecuta: pnpm --filter @sentinel/python setup\"; fi'",
+		"typecheck": "sh -c 'if [ -x .venv/bin/python ]; then .venv/bin/python -m compileall -q src tests; else echo \"sentinel-sdk (Python): sin entorno virtual, se omite\"; fi'"
+	}
+}

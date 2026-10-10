@@ -20,10 +20,11 @@
 		}
 	},
 	"scripts": {
-		"build": "tsup src/index.ts src/source-maps.ts src/scrub.ts --format esm --dts --clean",
+		"build": "tsup src/index.ts src/source-maps.ts src/scrub.ts src/json-schemas.ts --format esm --dts --clean",
 		"dev": "tsup src/index.ts src/source-maps.ts src/scrub.ts --format esm --dts --watch",
 		"typecheck": "tsc --noEmit",
-		"test": "vitest run"
+		"test": "vitest run",
+		"export:schemas": "node scripts/export-json-schemas.mjs"
 	},
 	"dependencies": {
 		"zod": "^4.6.5"
