@@ -5,6 +5,7 @@ import { CodeBlock } from "@/components/molecules/CodeBlock/CodeBlock";
 import { Section } from "@/components/molecules/Section/Section";
 import { BreadcrumbList } from "@/components/organisms/BreadcrumbList/BreadcrumbList";
 import { EventContext } from "@/components/organisms/EventContext/EventContext";
+import { EventTraceLink } from "@/components/organisms/EventTraceLink/EventTraceLink";
 import { StackTrace } from "@/components/organisms/StackTrace/StackTrace";
 import { parseEventPayload } from "@/utils/eventView/eventView";
 
@@ -43,7 +44,8 @@ export function IssueEventDetails({ event }: { event: EventDetailDto }) {
 					<BreadcrumbList breadcrumbs={view.breadcrumbs ?? []} />
 				</Section>
 			</div>
-			<aside>
+			<aside className="space-y-4">
+				{event.traceId && <EventTraceLink traceId={event.traceId} />}
 				<EventContext view={view} />
 			</aside>
 		</div>

@@ -218,6 +218,19 @@ export const es: Deep<Translations> = {
 			empty: "No hay ejemplos en este periodo",
 			emptyHint: "Elige un periodo más largo o quita los filtros.",
 		},
+		trace: {
+			title: "Traza",
+			subtitle:
+				"Todo lo que pasó durante una misma petición, entre el navegador y tus servidores, y los errores que causó.",
+			back: "Rendimiento",
+			timeline: "Línea de tiempo",
+			total: "Total: {{value}}",
+			errors: "Errores en esta traza",
+			noErrors: "No se capturó ningún error durante esta traza.",
+			errorsIn_one: "{{count}} error",
+			errorsIn_other: "{{count}} errores",
+			loadError: "No se pudo cargar esta traza.",
+		},
 		sample: {
 			back: "Volver a la transacción",
 			loadError: "No se pudo cargar esta transacción.",
@@ -231,6 +244,12 @@ export const es: Deep<Translations> = {
 			waterfall: "Cascada",
 			spans_one: "{{count}} span",
 			spans_other: "{{count}} spans",
+			trace: {
+				title: "Traza",
+				summary:
+					"{{transactions}} transacciones y {{errors}} errores en la misma traza.",
+				view: "Ver traza",
+			},
 			noSpans:
 				"Esta transacción no tiene spans: solo se midió su duración total.",
 		},
@@ -320,6 +339,12 @@ export const es: Deep<Translations> = {
 		loadError: "No se pudieron cargar los issues.",
 	},
 	issue: {
+		trace: {
+			title: "Traza",
+			description:
+				"Este error ocurrió durante una petición con traza. Mira qué más pasó en ella.",
+			view: "Ver traza",
+		},
 		back: "Volver a los issues",
 		actions: {
 			resolve: "Resolver",

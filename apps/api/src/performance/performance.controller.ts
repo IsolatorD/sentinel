@@ -20,6 +20,7 @@ import {
 	listTransactionsQuerySchema,
 	type OverviewQuery,
 	overviewQuerySchema,
+	traceIdParamSchema,
 } from "@sentinel/shared";
 import { AuthGuard, type AuthSession } from "../auth/auth.guard.js";
 import { CurrentUser } from "../auth/current-user.decorator.js";
@@ -87,6 +88,24 @@ export class PerformanceController {
 		query: ListSamplesQuery,
 	) {
 		return this.performance.samples(user.id, orgId, projectId, query);
+	}
+
+	@Get("traces/:traceId")
+	@ApiOperation({
+		summary:
+			"Una traza completa: las transacciones de cada servicio y los errores ocurridos",
+		description:
+			"Une lo que el navegador y el backend midieron con el mismo `trace_id`, y los errores capturados durante la traza.",
+	})
+	@ApiOkResponse({ schema: docs.trace })
+	trace(
+		@CurrentUser() user: User,
+		@Param("orgId") orgId: string,
+		@Param("projectId", ParseUUIDPipe) projectId: string,
+		@Param("traceId", new ZodValidationPipe(traceIdParamSchema))
+		traceId: string,
+	) {
+		return this.performance.trace(user.id, orgId, projectId, traceId);
 	}
 
 	@Get("samples/:transactionId")

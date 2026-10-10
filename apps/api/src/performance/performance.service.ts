@@ -8,6 +8,7 @@ import {
 	type SampleDetailDto,
 	type SampleListDto,
 	type StatsPeriod,
+	type TraceDto,
 	type TransactionListDto,
 } from "@sentinel/shared";
 import { bucketRange } from "../issues/stats/stats.domain.js";
@@ -147,6 +148,49 @@ export class PerformanceService {
 			measurements: row.measurements,
 			tags: row.tags,
 			spans: buildWaterfall(row.timestamp.getTime(), spans),
+		};
+	}
+
+	/** Todo lo que pasó en una traza: las transacciones de cada servicio y los errores. */
+	async trace(
+		userId: string,
+		orgId: string,
+		projectId: string,
+		traceId: string,
+	): Promise<TraceDto> {
+		await this.authorize(userId, orgId, projectId);
+		const id = traceId.toLowerCase();
+		const [transactions, events] = await Promise.all([
+			this.repo.traceTransactions(projectId, id),
+			this.repo.traceEvents(projectId, id),
+		]);
+		if (transactions.length === 0 && events.length === 0)
+			throw new NotFoundException({ reason: "TRACE_NOT_FOUND" });
+		return {
+			traceId: id,
+			transactions: transactions.map((t) => ({
+				id: t.id,
+				name: t.name,
+				op: t.op,
+				status: t.status,
+				platform: t.platform,
+				timestamp: t.timestamp.toISOString(),
+				durationMs: t.durationMs,
+				spanId: t.spanId,
+				parentSpanId: t.parentSpanId,
+				parentTransactionId: t.parentTransactionId,
+				release: t.release,
+				environment: t.environment,
+			})),
+			events: events.map((e) => ({
+				id: e.id,
+				issueId: e.issueId,
+				issueTitle: e.issueTitle,
+				level: e.level,
+				timestamp: e.timestamp.toISOString(),
+				platform: e.platform,
+				spanId: e.spanId,
+			})),
 		};
 	}
 

@@ -64,6 +64,13 @@
 			"when": 1791595961249,
 			"tag": "0008_fair_alex_power",
 			"breakpoints": true
+		},
+		{
+			"idx": 9,
+			"version": "7",
+			"when": 1791600597634,
+			"tag": "0009_dazzling_synch",
+			"breakpoints": true
 		}
 	]
 }

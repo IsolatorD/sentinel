@@ -14,6 +14,8 @@ export interface NewEvent {
 	environment?: string;
 	platform?: string;
 	userIdentifier?: string;
+	/** Traza de la transacción en curso al capturar el evento, si la había. */
+	traceId?: string;
 	payload: IngestEvent & { _client: { ip?: string; userAgent?: string } };
 }
 

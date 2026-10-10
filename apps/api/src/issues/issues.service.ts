@@ -64,6 +64,7 @@ const toEventSummary = (row: EventRow): EventSummaryDto => ({
 	environment: row.environment,
 	platform: row.platform,
 	userIdentifier: row.userIdentifier,
+	traceId: row.traceId,
 });
 
 const toEventDetail = (row: EventRow): EventDetailDto => ({

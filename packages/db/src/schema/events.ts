@@ -81,6 +81,8 @@ export const event = pgTable(
 		environment: text("environment"),
 		platform: text("platform"),
 		userIdentifier: text("user_identifier"),
+		// Traza (32 hex) a la que pertenecía la transacción en curso cuando se capturó: enlaza error y rendimiento.
+		traceId: text("trace_id"),
 		payload: jsonb("payload").notNull(),
 	},
 	(t) => [
@@ -91,5 +93,6 @@ export const event = pgTable(
 		index("event_issue_release_idx").on(t.issueId, t.release),
 		index("event_project_environment_idx").on(t.projectId, t.environment),
 		index("event_project_release_idx").on(t.projectId, t.release),
+		index("event_project_trace_idx").on(t.projectId, t.traceId),
 	],
 );

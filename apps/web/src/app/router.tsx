@@ -28,6 +28,7 @@ import { RegisterPage } from "@/pages/RegisterPage/RegisterPage";
 import { ReleasesPage } from "@/pages/ReleasesPage/ReleasesPage";
 import { SamplePage } from "@/pages/SamplePage/SamplePage";
 import { TokensPage } from "@/pages/TokensPage/TokensPage";
+import { TracePage } from "@/pages/TracePage/TracePage";
 import { TransactionPage } from "@/pages/TransactionPage/TransactionPage";
 import { VerifyEmailPage } from "@/pages/VerifyEmailPage/VerifyEmailPage";
 import { safeRedirect } from "@/utils/redirect/redirect";
@@ -204,6 +205,11 @@ const sampleRoute = createRoute({
 	path: "performance/samples/$sampleId",
 	component: SamplePage,
 });
+const traceRoute = createRoute({
+	getParentRoute: () => projectRoute,
+	path: "performance/traces/$traceId",
+	component: TracePage,
+});
 const alertsRoute = createRoute({
 	getParentRoute: () => projectRoute,
 	path: "alerts",
@@ -237,6 +243,7 @@ const routeTree = rootRoute.addChildren([
 					performanceRoute,
 					transactionRoute,
 					sampleRoute,
+					traceRoute,
 					releasesRoute,
 					alertsRoute,
 					settingsRoute,

@@ -52,6 +52,8 @@ export const queryKeys = {
 		[...queryKeys.performance(orgId, projectId), "overview", query] as const,
 	performanceSamples: (orgId: string, projectId: string, query: object) =>
 		[...queryKeys.performance(orgId, projectId), "samples", query] as const,
+	performanceTrace: (orgId: string, projectId: string, traceId: string) =>
+		[...queryKeys.performance(orgId, projectId), "trace", traceId] as const,
 	performanceSample: (orgId: string, projectId: string, id: string) =>
 		[...queryKeys.performance(orgId, projectId), "sample", id] as const,
 	projectStats: (orgId: string, projectId: string, period: string) =>

@@ -123,7 +123,10 @@ Requiere sesión; cualquier miembro puede leer. Cuelga de un proyecto: `/api/org
 | GET | `/transactions` | transacciones agrupadas por nombre: ocurrencias, p50/p95/p99 de la duración, tasa de errores y throughput (por minuto). Admite `q`, `sort` (`count`, `p50`, `p95`, `errorRate`, `tpm`, `lastSeen`), `order`, `limit`, `offset` |
 | GET | `/overview` | resumen del periodo, serie continua con p50/p95 por intervalo y Web Vitals valorados. Con `name`, solo de esa transacción |
 | GET | `/samples?name=` | ejemplos de una transacción: `sort=slowest` (por defecto) o `recent` |
+| GET | `/traces/:traceId` | una **traza completa**: las transacciones de cada servicio (cada una con la transacción de la que cuelga) y los errores capturados durante ella |
 | GET | `/samples/:transactionId` | una transacción con sus spans, ordenados por inicio y con su nivel de anidación, listos para la cascada |
+
+**Error ↔ traza:** cuando un SDK captura un error durante una transacción, el evento lleva `contexts.trace` (`trace_id` y `span_id`) y el worker guarda el `trace_id` en la columna `event.trace_id` (indexada). Con eso, el detalle de un error enlaza a su traza, y la traza muestra a la vez lo que midieron el navegador y el backend (anidados: el servidor cuelga del span de `fetch` que lo llamó) y los errores que hubo en cada lado. El detalle de una transacción también avisa si su traza tiene más servicios o errores.
 
 Los percentiles se calculan en Postgres con `percentile_cont`. La serie usa los mismos intervalos que los gráficos de issues (`date_bin`, en UTC): `24h` por hora, `7d` cada 6 horas, `30d` por día. De los Web Vitals se da el **percentil 75**, que es el que valora Google, con los umbrales bueno / necesita mejorar / malo (LCP 2,5 s / 4 s, CLS 0,1 / 0,25, INP 200 / 500 ms, FCP 1,8 / 3 s, TTFB 0,8 / 1,8 s); solo aparecen los que se llegaron a medir.
 

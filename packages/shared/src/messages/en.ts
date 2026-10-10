@@ -22,6 +22,7 @@ export const en = {
 	PROJECT_NOT_FOUND: "Project not found",
 	ISSUE_NOT_FOUND: "Issue not found",
 	TRANSACTION_NOT_FOUND: "Transaction not found",
+	TRACE_NOT_FOUND: "Trace not found",
 	EVENT_NOT_FOUND: "Event not found",
 	RELEASE_NOT_FOUND: "Release not found",
 	KEY_NOT_FOUND: "Key not found",

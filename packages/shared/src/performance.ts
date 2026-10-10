@@ -176,3 +176,50 @@ export const sampleDetailDtoSchema = sampleDtoSchema.extend({
 	spans: z.array(waterfallSpanSchema),
 });
 export type SampleDetailDto = z.infer<typeof sampleDetailDtoSchema>;
+
+// ---------- Traza completa (una petición que cruza varios servicios) ----------
+
+export const traceTransactionSchema = z.object({
+	id: z.string().uuid(),
+	name: z.string(),
+	op: z.string(),
+	status: z.string(),
+	platform: z.string().nullable(),
+	timestamp: z.string().datetime(),
+	durationMs: z.number(),
+	spanId: z.string(),
+	/** Span del servicio que la originó (la transacción del navegador que hizo la petición). */
+	parentSpanId: z.string().nullable(),
+	/** La transacción de esta traza a la que pertenece ese span (para anidarlas), si se conoce. */
+	parentTransactionId: z.string().uuid().nullable(),
+	release: z.string().nullable(),
+	environment: z.string().nullable(),
+});
+export type TraceTransaction = z.infer<typeof traceTransactionSchema>;
+
+/** Un error ocurrido durante la traza. */
+export const traceEventSchema = z.object({
+	id: z.string().uuid(),
+	issueId: z.string().uuid(),
+	issueTitle: z.string(),
+	level: z.string(),
+	timestamp: z.string().datetime(),
+	platform: z.string().nullable(),
+	/** Span de la transacción en curso cuando se capturó, si el SDK lo envió. */
+	spanId: z.string().nullable(),
+});
+export type TraceEvent = z.infer<typeof traceEventSchema>;
+
+export const traceDtoSchema = z.object({
+	traceId: z.string(),
+	/** Ordenadas por inicio. */
+	transactions: z.array(traceTransactionSchema),
+	/** Errores capturados durante la traza, ordenados por fecha. */
+	events: z.array(traceEventSchema),
+});
+export type TraceDto = z.infer<typeof traceDtoSchema>;
+
+export const TRACE_ID_PATTERN = /^[0-9a-f]{32}$/i;
+
+/** Parámetro de ruta `:traceId`. */
+export const traceIdParamSchema = z.string().regex(TRACE_ID_PATTERN);

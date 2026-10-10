@@ -1,8 +1,18 @@
 import { Injectable } from "@nestjs/common";
-import type { IngestJobData } from "@sentinel/shared";
+import type { IngestEvent, IngestJobData } from "@sentinel/shared";
 import { analyzeEvent, parseEventTimestamp } from "./domain/fingerprint.js";
 import { EventRepository, type SaveResult } from "./event.repository.js";
 import { SymbolicatorService } from "./symbolicator.service.js";
+
+const TRACE_ID = /^[0-9a-f]{32}$/i;
+
+/** El SDK pone `contexts.trace.trace_id` cuando captura durante una transacción; solo se acepta un id válido. */
+function traceIdOf(contexts: IngestEvent["contexts"]): string | undefined {
+	const id = contexts?.trace?.trace_id;
+	return typeof id === "string" && TRACE_ID.test(id)
+		? id.toLowerCase()
+		: undefined;
+}
 
 @Injectable()
 export class EventsService {
@@ -38,6 +48,7 @@ export class EventsService {
 				ev.user?.username ??
 				ev.user?.ip_address ??
 				client.ip,
+			traceId: traceIdOf(ev.contexts),
 			payload: { ...ev, _client: client },
 		});
 	}

@@ -214,6 +214,19 @@ export const en = {
 			empty: "No examples in this period",
 			emptyHint: "Pick a longer period or remove the filters.",
 		},
+		trace: {
+			title: "Trace",
+			subtitle:
+				"Everything that happened during one request, across the browser and your servers, and the errors it caused.",
+			back: "Performance",
+			timeline: "Timeline",
+			total: "Total: {{value}}",
+			errors: "Errors in this trace",
+			noErrors: "No errors were captured during this trace.",
+			errorsIn_one: "{{count}} error",
+			errorsIn_other: "{{count}} errors",
+			loadError: "Couldn't load this trace.",
+		},
 		sample: {
 			back: "Back to the transaction",
 			loadError: "Couldn't load this transaction.",
@@ -227,6 +240,12 @@ export const en = {
 			waterfall: "Waterfall",
 			spans_one: "{{count}} span",
 			spans_other: "{{count}} spans",
+			trace: {
+				title: "Trace",
+				summary:
+					"{{transactions}} transactions and {{errors}} errors in the same trace.",
+				view: "View trace",
+			},
 			noSpans:
 				"This transaction has no spans: only its total duration was measured.",
 		},
@@ -316,6 +335,12 @@ export const en = {
 		loadError: "Could not load the issues.",
 	},
 	issue: {
+		trace: {
+			title: "Trace",
+			description:
+				"This error happened during a traced request. See what else happened in it.",
+			view: "View trace",
+		},
 		back: "Back to issues",
 		actions: {
 			resolve: "Resolve",

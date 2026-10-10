@@ -622,8 +622,118 @@ if (ONLY !== "events") {
 	}
 }
 
+// ---------- trazas que cruzan del navegador al backend, con un error ----------
+// Cada una: la transacción del navegador, la del backend (que continúa desde una petición suya) y un error en
+// cada lado enlazado a su traza. Se ven desde el detalle del error y desde Rendimiento.
+let sentTraces = 0;
+if (ONLY !== "events") {
+	for (let i = 0; i < 6; i++) {
+		const trace = hex(32);
+		const browserSpan = hex(16);
+		const fetchSpan = hex(16);
+		const serverSpan = hex(16);
+		const start = Date.now() - (i + 1) * 40 * 60_000;
+		const post = (path, body) =>
+			fetch(`${API}/api/${project.id}/${path}`, {
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json",
+					"X-Sentinel-Key": key.publicKey,
+				},
+				body: JSON.stringify(body),
+			});
+		const responses = [
+			await post("transactions", {
+				trace_id: trace,
+				span_id: browserSpan,
+				name: "/checkout",
+				op: "pageload",
+				platform: "javascript",
+				timestamp: new Date(start).toISOString(),
+				duration_ms: 2400,
+				release: "2.4.0",
+				environment: "production",
+				spans: [
+					{
+						span_id: fetchSpan,
+						parent_span_id: browserSpan,
+						op: "http.client",
+						description: "POST /api/orders",
+						start_timestamp: new Date(start + 600).toISOString(),
+						duration_ms: 1500,
+						status: "internal_error",
+					},
+				],
+			}),
+			await post("transactions", {
+				trace_id: trace,
+				span_id: serverSpan,
+				parent_span_id: fetchSpan,
+				name: "POST /api/orders",
+				op: "http.server",
+				platform: "node",
+				timestamp: new Date(start + 700).toISOString(),
+				duration_ms: 1300,
+				status: "internal_error",
+				release: "2.4.0",
+				environment: "production",
+				spans: [
+					{
+						span_id: hex(16),
+						parent_span_id: serverSpan,
+						op: "db.query",
+						description: "insert into orders",
+						start_timestamp: new Date(start + 760).toISOString(),
+						duration_ms: 900,
+					},
+				],
+			}),
+			await post("events", {
+				timestamp: new Date(start + 2000).toISOString(),
+				level: "error",
+				platform: "node",
+				release: "2.4.0",
+				environment: "production",
+				contexts: { trace: { trace_id: trace, span_id: serverSpan } },
+				exception: {
+					values: [
+						{
+							type: "PaymentError",
+							value: "Payment gateway rejected the order",
+							stacktrace: { frames: [app("orders.js", "chargeCard", 88)] },
+						},
+					],
+				},
+			}),
+			await post("events", {
+				timestamp: new Date(start + 2300).toISOString(),
+				level: "error",
+				platform: "javascript",
+				release: "2.4.0",
+				environment: "production",
+				contexts: { trace: { trace_id: trace, span_id: browserSpan } },
+				exception: {
+					values: [
+						{
+							type: "Error",
+							value: "Order request failed with status 500",
+							stacktrace: {
+								frames: [app("checkout.a91f33c0.js", "submitOrder", 61)],
+							},
+						},
+					],
+				},
+			}),
+		];
+		if (responses.some((r) => r.status !== 202))
+			throw new Error("la ingesta de una traza de demostración falló");
+		sentTraces++;
+		await new Promise((r) => setTimeout(r, 450)); // 4 envíos por traza: dentro del límite por minuto
+	}
+}
+
 console.log(
-	`\nDatos de demostración listos (${sent} eventos, ${sentTransactions} transacciones).`,
+	`\nDatos de demostración listos (${sent} eventos, ${sentTransactions} transacciones, ${sentTraces} trazas enlazadas a errores).`,
 );
 console.log(`  Usuario:  ${EMAIL}`);
 console.log(`  Password: ${PASSWORD}`);

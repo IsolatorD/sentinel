@@ -54,6 +54,7 @@ const eventRow = (over: Partial<EventRow> = {}): EventRow => ({
 	environment: "prod",
 	platform: "javascript",
 	userIdentifier: "u1",
+	traceId: null,
 	payload: { exception: { values: [] } },
 	...over,
 });

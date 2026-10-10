@@ -102,6 +102,27 @@ describe("EventsService.store", () => {
 		}
 	});
 
+	it("guarda la traza del contexto del SDK, en minúsculas y solo si es válida", async () => {
+		const trace = "4BF92F3577B34DA6A3CE929D0E0E4736";
+		const cases: Array<
+			[Record<string, Record<string, unknown>> | undefined, string | undefined]
+		> = [
+			[
+				{ trace: { trace_id: trace, span_id: "00f067aa0ba902b7" } },
+				trace.toLowerCase(),
+			],
+			[{ trace: { trace_id: "no-es-hex" } }, undefined],
+			[{ trace: { trace_id: 42 } }, undefined],
+			[{ browser: { name: "Chrome" } }, undefined],
+			[undefined, undefined],
+		];
+		for (const [contexts, expected] of cases) {
+			const { service, saved } = setup();
+			await service.store(job({ contexts }));
+			expect(saved[0].traceId).toBe(expected);
+		}
+	});
+
 	it("guarda el payload completo junto con los datos del cliente", async () => {
 		const { service, saved } = setup();
 		await service.store(

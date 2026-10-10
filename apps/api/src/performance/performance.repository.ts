@@ -78,6 +78,25 @@ const SORT_SQL: Record<ListTransactionsQuery["sort"], string> = {
 	lastSeen: "last_seen",
 };
 
+export interface TraceTransactionRow extends SampleRow {
+	name: string;
+	op: string;
+	platform: string | null;
+	spanId: string;
+	parentSpanId: string | null;
+	parentTransactionId: string | null;
+}
+
+export interface TraceEventRow {
+	id: string;
+	issueId: string;
+	issueTitle: string;
+	level: string;
+	timestamp: Date;
+	platform: string | null;
+	spanId: string | null;
+}
+
 type Row = Record<string, unknown>;
 
 // Única capa que conoce Drizzle/SQL para el rendimiento.
@@ -230,6 +249,62 @@ export class PerformanceRepository {
 			measurements: (r.measurements ?? {}) as SampleDetailRow["measurements"],
 			tags: (r.tags ?? {}) as Record<string, string>,
 		};
+	}
+
+	/** Todas las transacciones de una traza (varios servicios), por orden de inicio. */
+	async traceTransactions(
+		projectId: string,
+		traceId: string,
+	): Promise<TraceTransactionRow[]> {
+		const result = await this.db.execute(sql`
+			select x.id::text, x.trace_id, x.span_id, x.parent_span_id, x.name, x.op, x.platform, x."timestamp",
+			       x.duration_ms, x.status, x.release, x.environment, x.user_identifier,
+			       -- El padre puede ser otra transacción (su span raíz) o un span dentro de ella (una petición saliente).
+			       coalesce(
+			         (select p.id from perf_transaction p
+			           where p.project_id = x.project_id and p.trace_id = x.trace_id
+			             and p.span_id = x.parent_span_id and p.id <> x.id limit 1),
+			         (select s.transaction_id from perf_span s
+			           join perf_transaction p on p.id = s.transaction_id
+			           where p.project_id = x.project_id and p.trace_id = x.trace_id
+			             and s.span_id = x.parent_span_id limit 1)
+			       )::text as parent_transaction_id
+			from perf_transaction x
+			where x.project_id = ${projectId} and x.trace_id = ${traceId}
+			order by x."timestamp" asc, x.duration_ms desc
+			limit 200`);
+		return (result.rows as Row[]).map((r) => ({
+			...toSample(r),
+			name: r.name as string,
+			op: r.op as string,
+			platform: (r.platform as string | null) ?? null,
+			spanId: r.span_id as string,
+			parentSpanId: (r.parent_span_id as string | null) ?? null,
+			parentTransactionId: (r.parent_transaction_id as string | null) ?? null,
+		}));
+	}
+
+	/** Los errores capturados durante la traza, con el título de su issue. */
+	async traceEvents(
+		projectId: string,
+		traceId: string,
+	): Promise<TraceEventRow[]> {
+		const result = await this.db.execute(sql`
+			select e.id::text, e.issue_id::text, i.title as issue_title, e.level, e."timestamp", e.platform,
+			       e.payload->'contexts'->'trace'->>'span_id' as span_id
+			from event e join issue i on i.id = e.issue_id
+			where e.project_id = ${projectId} and e.trace_id = ${traceId}
+			order by e."timestamp" asc
+			limit 100`);
+		return (result.rows as Row[]).map((r) => ({
+			id: r.id as string,
+			issueId: r.issue_id as string,
+			issueTitle: r.issue_title as string,
+			level: r.level as string,
+			timestamp: new Date(r.timestamp as Date | string),
+			platform: (r.platform as string | null) ?? null,
+			spanId: (r.span_id as string | null) ?? null,
+		}));
 	}
 
 	async spans(transactionId: string): Promise<SpanRow[]> {

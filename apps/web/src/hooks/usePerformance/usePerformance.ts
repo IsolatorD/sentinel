@@ -79,3 +79,22 @@ export function useSample(scope: Scope, transactionId: string | undefined) {
 		enabled: Boolean(orgId && projectId && transactionId),
 	});
 }
+
+/** Una traza completa (las transacciones de cada servicio y los errores ocurridos durante ella). */
+export function useTrace(scope: Scope, traceId: string | undefined) {
+	const { orgId, projectId } = scope;
+	return useQuery({
+		queryKey: queryKeys.performanceTrace(
+			orgId ?? "",
+			projectId ?? "",
+			traceId ?? "",
+		),
+		queryFn: () =>
+			performanceService.trace(
+				orgId as string,
+				projectId as string,
+				traceId as string,
+			),
+		enabled: Boolean(orgId && projectId && traceId),
+	});
+}

@@ -152,7 +152,8 @@ Reglas de alerta (nuevo issue, regresión, umbral de frecuencia), canales email 
 - C. ✅ API de consulta: transacciones agrupadas con p50/p95/p99, errores y throughput; resumen con serie temporal; Web Vitals valorados (p75); ejemplos y cascada de spans.
 - D. ✅ UI: pantalla «Rendimiento» (tabla, gráfico de latencia, Web Vitals), detalle de transacción y de ejemplo con la cascada, recorrido guiado.
 - E. ✅ Semilla y demo con transacciones, documentación.
-- Fuera de la fase, para más adelante: alertas de rendimiento, enlazar un error con su traza en la UI (el `trace_id` ya se guarda), SDK de servidor que continúe la traza (`traceparent`), particionado por fecha y retención.
+- ✅ después de la fase: error ↔ traza enlazados en la UI (`event.trace_id`, `GET /performance/traces/:id`, página de traza con línea de tiempo entre servicios y errores).
+- Fuera de la fase, para más adelante: alertas de rendimiento, SDK de servidor que continúe la traza (`traceparent`), particionado por fecha y retención.
 
 **Fase 5 — Más plataformas y pulido**
 SDK Node ✅ (`@sentinel/node`, sobre el núcleo común `@sentinel/core`: errores del proceso, transacciones por petición con `AsyncLocalStorage`, spans de `http`/`https`/`fetch`, continuación de la traza vía `traceparent`, integraciones de Express y Fastify). Pendiente: React Native, Python. Retención configurable, cuotas, dashboard de estadísticas, documentación pública y landing de portfolio.

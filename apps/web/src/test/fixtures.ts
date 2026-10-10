@@ -10,6 +10,7 @@ import type {
 	SampleDetailDto,
 	SampleListDto,
 	StatsDto,
+	TraceDto,
 	TransactionGroupDto,
 	TransactionListDto,
 } from "@sentinel/shared";
@@ -175,6 +176,7 @@ export const event = (over: Partial<EventDetailDto> = {}): EventDetailDto => ({
 	environment: "production",
 	platform: "javascript",
 	userIdentifier: "user_103",
+	traceId: null,
 	payload: eventPayload,
 	...over,
 });
@@ -321,6 +323,66 @@ export const sampleDetail = (
 			status: "internal_error",
 			depth: 2,
 			data: null,
+		},
+	],
+	...over,
+});
+
+export const TRACE_ID = "4bf92f3577b34da6a3ce929d0e0e4736";
+export const BROWSER_TX = "5a3f8f8e-aaaa-4a2b-8c3d-aaaaaaaaaaaa";
+export const SERVER_TX = "5a3f8f8e-bbbb-4a2b-8c3d-bbbbbbbbbbbb";
+
+/** Una traza que cruza del navegador al backend: el servidor cuelga de la petición del navegador. */
+export const trace = (over: Partial<TraceDto> = {}): TraceDto => ({
+	traceId: TRACE_ID,
+	transactions: [
+		{
+			id: BROWSER_TX,
+			name: "/checkout",
+			op: "pageload",
+			status: "ok",
+			platform: "javascript",
+			timestamp: "2026-10-09T12:00:00.000Z",
+			durationMs: 1000,
+			spanId: "00f067aa0ba902b7",
+			parentSpanId: null,
+			parentTransactionId: null,
+			release: "2.4.0",
+			environment: "production",
+		},
+		{
+			id: SERVER_TX,
+			name: "POST /api/orders",
+			op: "http.server",
+			status: "internal_error",
+			platform: "node",
+			timestamp: "2026-10-09T12:00:00.300Z",
+			durationMs: 400,
+			spanId: "b9c7c989f97918e1",
+			parentSpanId: "a1b2c3d4e5f60718",
+			parentTransactionId: BROWSER_TX,
+			release: "2.4.0",
+			environment: "production",
+		},
+	],
+	events: [
+		{
+			id: "e1e1e1e1-1111-4a2b-8c3d-aaaaaaaaaaaa",
+			issueId: "a1",
+			issueTitle: "PaymentError: card declined",
+			level: "error",
+			timestamp: "2026-10-09T12:00:00.500Z",
+			platform: "node",
+			spanId: "b9c7c989f97918e1",
+		},
+		{
+			id: "e2e2e2e2-2222-4a2b-8c3d-bbbbbbbbbbbb",
+			issueId: "a2",
+			issueTitle: "TypeError: x is undefined",
+			level: "fatal",
+			timestamp: "2026-10-09T12:00:00.900Z",
+			platform: "javascript",
+			spanId: null,
 		},
 	],
 	...over,

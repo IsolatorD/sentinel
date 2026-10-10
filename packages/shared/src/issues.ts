@@ -123,6 +123,8 @@ export const eventSummaryDtoSchema = z.object({
 	environment: z.string().nullable(),
 	platform: z.string().nullable(),
 	userIdentifier: z.string().nullable(),
+	/** Traza (32 hex) de la transacción en curso cuando se capturó, si la había. */
+	traceId: z.string().nullable(),
 });
 export type EventSummaryDto = z.infer<typeof eventSummaryDtoSchema>;
 

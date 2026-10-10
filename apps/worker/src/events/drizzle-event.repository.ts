@@ -56,6 +56,7 @@ export class DrizzleEventRepository extends EventRepository {
 						environment: input.environment,
 						platform: input.platform,
 						userIdentifier: input.userIdentifier,
+						traceId: input.traceId,
 						payload: input.payload,
 					})
 					.onConflictDoNothing()

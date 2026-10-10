@@ -5,6 +5,7 @@ import {
 	performanceOverviewDtoSchema,
 	sampleDetailDtoSchema,
 	sampleListDtoSchema,
+	traceDtoSchema,
 	transactionListDtoSchema,
 } from "@sentinel/shared";
 import { http } from "@/services/http/http";
@@ -35,6 +36,11 @@ export const performanceService = {
 		http(`${base(orgId, projectId)}/samples`, {
 			schema: sampleListDtoSchema,
 			query,
+		}),
+
+	trace: (orgId: string, projectId: string, traceId: string) =>
+		http(`${base(orgId, projectId)}/traces/${traceId}`, {
+			schema: traceDtoSchema,
 		}),
 
 	sample: (orgId: string, projectId: string, transactionId: string) =>

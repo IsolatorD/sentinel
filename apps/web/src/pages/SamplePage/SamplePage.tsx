@@ -8,6 +8,7 @@ import { Skeleton } from "@/components/atoms/Skeleton/Skeleton";
 import { ErrorState } from "@/components/molecules/ErrorState/ErrorState";
 import { KeyValueList } from "@/components/molecules/KeyValueList/KeyValueList";
 import { StatBlock } from "@/components/molecules/StatBlock/StatBlock";
+import { SampleTraceSummary } from "@/components/organisms/SampleTraceSummary/SampleTraceSummary";
 import { SpanWaterfall } from "@/components/organisms/SpanWaterfall/SpanWaterfall";
 import { PageTemplate } from "@/components/templates/PageTemplate/PageTemplate";
 import { useSample } from "@/hooks/usePerformance/usePerformance";
@@ -123,6 +124,7 @@ export function SamplePage() {
 								)}
 							</div>
 						</Card>
+						<SampleTraceSummary traceId={data.traceId} />
 						<SpanWaterfall sample={data} />
 					</div>
 				)}
