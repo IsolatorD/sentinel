@@ -98,7 +98,7 @@ async function bootstrap() {
 
 	// CORS por ruta: la ingesta la llaman los SDK desde cualquier sitio (sin
 	// cookies); el resto de la API solo acepta el origen del dashboard.
-	const ingestPath = /^\/api\/[0-9a-f-]{36}\/events/i;
+	const ingestPath = /^\/api\/[0-9a-f-]{36}\/(events|transactions)/i;
 	app.enableCors({
 		delegator: (req, callback) => {
 			callback(

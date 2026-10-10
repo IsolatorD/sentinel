@@ -1,13 +1,15 @@
 import { BullModule } from "@nestjs/bullmq";
 import { Module } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
-import { EVENTS_QUEUE } from "@sentinel/shared";
+import { EVENTS_QUEUE, TRANSACTIONS_QUEUE } from "@sentinel/shared";
 import type { ApiEnv } from "../config/env.js";
 import { ProjectsModule } from "../projects/projects.module.js";
 import { IngestController } from "./ingest.controller.js";
 import { IngestGuard } from "./ingest.guard.js";
 import { IngestService } from "./ingest.service.js";
 import { RateLimiterService } from "./rate-limiter.service.js";
+import { TransactionsController } from "./transactions.controller.js";
+import { TransactionsService } from "./transactions.service.js";
 
 @Module({
 	imports: [
@@ -22,9 +24,17 @@ import { RateLimiterService } from "./rate-limiter.service.js";
 				},
 			}),
 		}),
-		BullModule.registerQueue({ name: EVENTS_QUEUE }),
+		BullModule.registerQueue(
+			{ name: EVENTS_QUEUE },
+			{ name: TRANSACTIONS_QUEUE },
+		),
 	],
-	controllers: [IngestController],
-	providers: [IngestService, IngestGuard, RateLimiterService],
+	controllers: [IngestController, TransactionsController],
+	providers: [
+		IngestService,
+		TransactionsService,
+		IngestGuard,
+		RateLimiterService,
+	],
 })
 export class IngestModule {}

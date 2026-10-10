@@ -6,6 +6,7 @@ import { validateWorkerEnv, type WorkerEnv } from "./config/env.js";
 import { DatabaseModule } from "./database/database.module.js";
 import { EventsModule } from "./events/events.module.js";
 import { MailModule } from "./mail/mail.module.js";
+import { TransactionsModule } from "./transactions/transactions.module.js";
 
 @Module({
 	imports: [
@@ -42,6 +43,7 @@ import { MailModule } from "./mail/mail.module.js";
 		DatabaseModule,
 		EventsModule,
 		MailModule,
+		TransactionsModule,
 	],
 })
 export class AppModule {}

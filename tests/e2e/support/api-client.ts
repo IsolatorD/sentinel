@@ -201,6 +201,22 @@ export class Api {
 			headers: { ...(key ? { "X-Sentinel-Key": key } : {}), ...extra.headers },
 		});
 	}
+
+	/** Envía una transacción (rendimiento) por el endpoint público de ingesta. */
+	ingestTransaction(
+		projectId: string,
+		key: string | undefined,
+		transaction: unknown,
+		extra: RequestOptions = {},
+	): Promise<ApiResponse> {
+		return this.request(`/api/${projectId}/transactions`, {
+			method: "POST",
+			body: transaction,
+			origin: null,
+			...extra,
+			headers: { ...(key ? { "X-Sentinel-Key": key } : {}), ...extra.headers },
+		});
+	}
 }
 
 /** Valida una respuesta contra su esquema Zod (el mismo que usan frontend y documentación). */

@@ -10,7 +10,7 @@ import {
 import type { Queue } from "bullmq";
 
 // Acepta UUID con o sin guiones y lo devuelve en formato canónico.
-function normalizeEventId(raw: string | undefined): string | undefined {
+export function normalizeEventId(raw: string | undefined): string | undefined {
 	if (!raw) return undefined;
 	const hex = raw.replace(/-/g, "").toLowerCase();
 	return `${hex.slice(0, 8)}-${hex.slice(8, 12)}-${hex.slice(12, 16)}-${hex.slice(16, 20)}-${hex.slice(20)}`;
