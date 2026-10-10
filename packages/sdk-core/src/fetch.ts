@@ -1,5 +1,14 @@
-import { stripQuery } from "../url";
-import type { AddBreadcrumb, StartHttpSpan, Uninstall } from "./types";
+import type { Uninstall } from "./client";
+import type { AddBreadcrumb } from "./console";
+import { stripQuery } from "./url";
+
+/** Empieza el span de una petición; devuelve `undefined` si no se está midiendo. */
+export type StartHttpSpan = (info: { method: string; url: string }) =>
+	| {
+			headers?: Record<string, string>;
+			end: (statusCode?: number) => void;
+	  }
+	| undefined;
 
 function requestInfo(input: RequestInfo | URL, init?: RequestInit) {
 	let url = "";
@@ -19,9 +28,8 @@ export function installFetch(
 	isOwnUrl: (url: string) => boolean,
 	startSpan?: StartHttpSpan,
 ): Uninstall {
-	if (typeof window === "undefined" || typeof window.fetch !== "function")
-		return () => {};
-	const original = window.fetch;
+	if (typeof globalThis.fetch !== "function") return () => {};
+	const original = globalThis.fetch;
 
 	const wrapped: typeof fetch = function (this: unknown, input, init) {
 		let info: ReturnType<typeof requestInfo> | undefined;
@@ -51,7 +59,7 @@ export function installFetch(
 				args = [input, { ...init, headers }];
 			} catch {}
 		}
-		const promise = original.call(this ?? window, ...args);
+		const promise = original.call(this ?? globalThis, ...args);
 		if (!info) return promise;
 
 		const { url, method } = info;
@@ -88,9 +96,9 @@ export function installFetch(
 		return promise;
 	};
 
-	window.fetch = wrapped;
+	globalThis.fetch = wrapped;
 	return () => {
 		// Solo restauramos si nadie más volvió a envolver fetch encima.
-		if (window.fetch === wrapped) window.fetch = original;
+		if (globalThis.fetch === wrapped) globalThis.fetch = original;
 	};
 }

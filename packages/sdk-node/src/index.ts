@@ -4,6 +4,7 @@ import {
 	type Transaction,
 } from "@sentinel/core";
 import { NodeClient } from "./client";
+import { getClient, setClient } from "./hub";
 import type {
 	Breadcrumb,
 	CaptureHint,
@@ -19,6 +20,11 @@ export type {
 	Transaction,
 } from "@sentinel/core";
 export { NodeClient as SentinelClient } from "./client";
+export {
+	expressErrorHandler,
+	expressRequestHandler,
+	setupFastify,
+} from "./integrations";
 export type {
 	Breadcrumb,
 	CaptureHint,
@@ -35,68 +41,66 @@ export type {
 } from "./types";
 export { SDK_VERSION } from "./version";
 
-let client: NodeClient | undefined;
-
 /**
  * Inicializa el SDK. Llamar una sola vez, lo antes posible (antes de crear el servidor).
  * Si la DSN es inválida, el SDK queda desactivado y no lanza.
  */
 export function init(options: NodeOptions): NodeClient {
-	if (client) void client.close();
-	client = new NodeClient(options).install();
-	return client;
+	const previous = getClient();
+	if (previous) void previous.close();
+	const created = new NodeClient(options).install();
+	setClient(created);
+	return created;
 }
 
-export function getClient(): NodeClient | undefined {
-	return client;
-}
+export { getClient };
 
 export function captureException(
 	thrown: unknown,
 	hint?: CaptureHint,
 ): string | undefined {
-	return client?.captureException(thrown, hint);
+	return getClient()?.captureException(thrown, hint);
 }
 
 export function captureMessage(
 	message: string,
 	levelOrHint?: Level | CaptureHint,
 ): string | undefined {
-	return client?.captureMessage(message, levelOrHint);
+	return getClient()?.captureMessage(message, levelOrHint);
 }
 
 export function addBreadcrumb(crumb: Breadcrumb): void {
-	client?.addBreadcrumb(crumb);
+	getClient()?.addBreadcrumb(crumb);
 }
 
 export function setUser(user: User | null): void {
-	client?.setUser(user);
+	getClient()?.setUser(user);
 }
 
 export function setTag(key: string, value: string): void {
-	client?.setTag(key, value);
+	getClient()?.setTag(key, value);
 }
 
 export function setTags(tags: Record<string, string>): void {
-	client?.setTags(tags);
+	getClient()?.setTags(tags);
 }
 
 export function setContext(
 	name: string,
 	context: Record<string, unknown> | null,
 ): void {
-	client?.setContext(name, context);
+	getClient()?.setContext(name, context);
 }
 
 export function setExtra(key: string, value: unknown): void {
-	client?.setExtra(key, value);
+	getClient()?.setExtra(key, value);
 }
 
 /** Empieza una transacción manual; con el SDK sin iniciar, devuelve `undefined`. */
 export function startTransaction(
 	context: StartTransactionContext,
 ): Transaction | undefined {
-	return client?.startTransaction(context);
+	return getClient()?.startTransaction(context);
 }
 
 /**
@@ -107,7 +111,7 @@ export function runTransaction<T>(
 	context: StartTransactionContext,
 	fn: (transaction: Transaction) => T,
 ): T | undefined {
-	return client?.runTransaction(context, fn);
+	return getClient()?.runTransaction(context, fn);
 }
 
 export function startSpan(
@@ -116,7 +120,7 @@ export function startSpan(
 	data?: Record<string, unknown>,
 	startTimestamp?: number,
 ): Span | undefined {
-	return client?.startSpan(op, description, data, startTimestamp);
+	return getClient()?.startSpan(op, description, data, startTimestamp);
 }
 
 /** Mide una función (síncrona o async). Con el SDK sin iniciar, simplemente la ejecuta. */
@@ -125,7 +129,8 @@ export function trace<T>(
 	description: string | undefined,
 	fn: (span: Span) => T,
 ): T {
-	return client ? client.trace(op, description, fn) : fn(NOOP_SPAN);
+	const current = getClient();
+	return current ? current.trace(op, description, fn) : fn(NOOP_SPAN);
 }
 
 const NOOP_SPAN = {
@@ -139,12 +144,18 @@ const NOOP_SPAN = {
 	end() {},
 } as unknown as Span;
 
+/** La transacción en curso (la de la petición que se está atendiendo), por si quieres renombrarla o etiquetarla. */
+export function getActiveTransaction(): Transaction | undefined {
+	return getClient()?.activeTransaction();
+}
+
 export async function flush(timeoutMs?: number): Promise<boolean> {
-	return client ? client.flush(timeoutMs) : true;
+	const current = getClient();
+	return current ? current.flush(timeoutMs) : true;
 }
 
 export async function close(timeoutMs?: number): Promise<boolean> {
-	const current = client;
-	client = undefined;
+	const current = getClient();
+	setClient(undefined);
 	return current ? current.close(timeoutMs) : true;
 }

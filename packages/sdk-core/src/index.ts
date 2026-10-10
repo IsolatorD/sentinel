@@ -1,4 +1,5 @@
 // Núcleo común de los SDK de Sentinel (navegador y Node): nada aquí depende de `window` ni de `process`.
+
 export { BreadcrumbBuffer } from "./breadcrumbs";
 export {
 	type ClientDeps,
@@ -9,6 +10,7 @@ export {
 export { type AddBreadcrumb, installConsole, originalConsole } from "./console";
 export { type ParsedDsn, parseDsn } from "./dsn";
 export { exceptionFromUnknown } from "./exception";
+export { installFetch, type StartHttpSpan } from "./fetch";
 export { safeSerialize, stringify } from "./normalize";
 export { isInApp, parseStack } from "./stacktrace";
 export { GlobalTraceContext, type TraceContext } from "./tracing/context";

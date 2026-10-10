@@ -4,12 +4,17 @@ import {
 	type ClientDeps,
 	CoreClient,
 	installConsole,
+	installFetch,
 	originalConsole,
 	type Platform,
 	Tracer,
+	type Transaction,
 } from "@sentinel/core";
 import { AsyncTraceContext } from "./async-context";
+import { installHttpClient } from "./instrumentation/http-client";
+import { installHttpServer } from "./instrumentation/http-server";
 import { installProcessHandlers } from "./instrumentation/process-handlers";
+import { requestScope } from "./request-scope";
 import type {
 	NodeBreadcrumbOptions,
 	NodeOptions,
@@ -46,6 +51,8 @@ function nodePlatform(options: NodeOptions): Platform {
 				{ onFinish, context: new AsyncTraceContext() },
 			),
 		eventExtras: () => ({
+			// La petición HTTP que se está atendiendo, si hay una.
+			request: requestScope.getStore()?.request,
 			contexts: {
 				runtime: {
 					name: "node",
@@ -66,6 +73,11 @@ function nodePlatform(options: NodeOptions): Platform {
 export class NodeClient extends CoreClient<NodeOptions> {
 	constructor(options: NodeOptions, deps: ClientDeps = {}) {
 		super(options, deps, nodePlatform(options));
+	}
+
+	/** La transacción en curso (la de la petición que se está atendiendo, o la que abrió el código). */
+	activeTransaction(): Transaction | undefined {
+		return this.tracer?.active;
 	}
 
 	/** Cuántas peticiones se miden de forma automática y qué se mide (para el resto de la instrumentación). */
@@ -94,6 +106,29 @@ export class NodeClient extends CoreClient<NodeOptions> {
 			);
 		}
 		if (crumbs.console) this.uninstallers.push(installConsole(add));
+
+		const tracer = this.tracer;
+		const tracing = this.tracingEnabled;
+		const startSpan = tracing.http
+			? (info: { method: string; url: string }) => tracer?.startHttpSpan(info)
+			: undefined;
+		if (crumbs.http || startSpan) {
+			this.uninstallers.push(
+				installHttpClient(
+					crumbs.http ? add : () => {},
+					this.isOwnUrl,
+					startSpan,
+				),
+				installFetch(crumbs.http ? add : () => {}, this.isOwnUrl, startSpan),
+			);
+		}
+		if (tracer && tracing.server)
+			this.uninstallers.push(
+				installHttpServer({
+					tracer,
+					transactionName: this.options.transactionName,
+				}),
+			);
 		return this;
 	}
 

@@ -2,11 +2,11 @@ import {
 	type ClientDeps,
 	CoreClient,
 	installConsole,
+	installFetch,
 	originalConsole,
 	type Platform,
 } from "@sentinel/core";
 import { installClicks } from "./instrumentation/clicks";
-import { installFetch } from "./instrumentation/fetch";
 import { installGlobalHandlers } from "./instrumentation/global-handlers";
 import { installNavigation } from "./instrumentation/navigation";
 import { installXhr } from "./instrumentation/xhr";

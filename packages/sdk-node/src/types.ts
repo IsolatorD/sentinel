@@ -44,6 +44,14 @@ export interface NodeOptions extends CoreOptions {
 	 */
 	unhandledRejection?: "warn" | "strict" | "none";
 	breadcrumbs?: NodeBreadcrumbOptions | boolean;
+	/**
+	 * Nombre de la transacción de cada petición que atiende el servidor. Por defecto
+	 * `<MÉTODO> <ruta>` con los ids sustituidos por `:id`. Devuelve `undefined` para usar el de por defecto.
+	 */
+	transactionName?: (info: {
+		method: string;
+		path: string;
+	}) => string | undefined;
 	/** Nombre de este servidor o instancia; va en `contexts.runtime`. Por defecto, el hostname. */
 	serverName?: string;
 	/** Cuánto esperar (ms) a que se envíe lo pendiente antes de terminar el proceso. Por defecto 2000. */
