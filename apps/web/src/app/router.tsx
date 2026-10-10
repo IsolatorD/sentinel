@@ -11,8 +11,9 @@ import { sessionQueryOptions } from "@/hooks/useSession/useSession.constants";
 import { AcceptInvitationPage } from "@/pages/AcceptInvitationPage/AcceptInvitationPage";
 import { AlertsPage } from "@/pages/AlertsPage/AlertsPage";
 import { AuthedLayoutPage } from "@/pages/AuthedLayoutPage/AuthedLayoutPage";
+import { DocsPage } from "@/pages/DocsPage/DocsPage";
 import { EmailVerifiedPage } from "@/pages/EmailVerifiedPage/EmailVerifiedPage";
-import { HomePage } from "@/pages/HomePage/HomePage";
+import { IndexPage } from "@/pages/IndexPage/IndexPage";
 import { IssueDetailPage } from "@/pages/IssueDetailPage/IssueDetailPage";
 import { IssuesPage } from "@/pages/IssuesPage/IssuesPage";
 import { LoginPage } from "@/pages/LoginPage/LoginPage";
@@ -54,7 +55,19 @@ const rootRoute = createRootRouteWithContext<RouterContext>()({
 	notFoundComponent: NotFoundPage,
 });
 
-// ---------- Público: con o sin sesión (verificación de correo) ----------
+// ---------- Público: con o sin sesión ----------
+// `/` es la landing para quien no tiene sesión; con sesión lleva a su organización.
+const indexRoute = createRoute({
+	getParentRoute: () => rootRoute,
+	path: "/",
+	component: IndexPage,
+});
+const docsRoute = createRoute({
+	getParentRoute: () => rootRoute,
+	path: "/docs",
+	component: DocsPage,
+});
+// (verificación de correo)
 const verifyEmailRoute = createRoute({
 	getParentRoute: () => rootRoute,
 	path: "/verify-email",
@@ -115,11 +128,6 @@ const authedRoute = createRoute({
 		}
 	},
 	component: AuthedLayoutPage,
-});
-const homeRoute = createRoute({
-	getParentRoute: () => authedRoute,
-	path: "/",
-	component: HomePage,
 });
 const onboardingRoute = createRoute({
 	getParentRoute: () => authedRoute,
@@ -225,11 +233,12 @@ const settingsRoute = createRoute({
 });
 
 const routeTree = rootRoute.addChildren([
+	indexRoute,
+	docsRoute,
 	verifyEmailRoute,
 	emailVerifiedRoute,
 	guestRoute.addChildren([loginRoute, registerRoute]),
 	authedRoute.addChildren([
-		homeRoute,
 		onboardingRoute,
 		acceptInvitationRoute,
 		orgRoute.addChildren([

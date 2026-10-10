@@ -163,8 +163,8 @@ Reglas de alerta (nuevo issue, regresión, umbral de frecuencia), canales email 
 - ✅ **SDK de React Native** (`@sentinel/react-native`): `ErrorUtils`, Hermes, arranque, navegación, XHR, simbolización con los source maps del bundle.
 
 *Pendiente*
-- **Landing del proyecto**: la página pública de Sentinel y punto de entrada a todo lo demás: qué es, qué resuelve, capturas, las funciones (errores, rendimiento, trazas, alertas, source maps, colaboración), los SDK con su instalación, cómo está construido (arquitectura) y cómo ejecutarlo, y los enlaces a la API (`/api/docs`) y a la aplicación (iniciar sesión / crear cuenta). Es la landing *de Sentinel*; la web personal con todos los proyectos del autor es otro proyecto y queda fuera de este.
-- **Documentación pública**: guías por SDK y por tema (instalación, source maps, alertas, trazas) accesibles desde la landing.
+- ✅ **Landing del proyecto** (dentro de `apps/web`, ruta pública `/`; con sesión, `/` lleva a la organización como antes): la página pública de Sentinel y punto de entrada a todo lo demás: qué es, qué resuelve, capturas, las funciones (errores, rendimiento, trazas, alertas, source maps, colaboración), los SDK con su instalación, cómo está construido (arquitectura) y cómo ejecutarlo, y los enlaces a la API (`/api/docs`) y a la aplicación (iniciar sesión / crear cuenta). Es la landing *de Sentinel*; la web personal con todos los proyectos del autor es otro proyecto y queda fuera de este.
+- ✅ **Documentación pública** (`/docs`, accesible desde la landing): primeros pasos, un apartado por SDK, source maps, trazas y rendimiento, alertas, API de ingesta y cómo ejecutarlo.
 - **Retención configurable** (borrado de eventos y transacciones antiguos por proyecto), **cuotas** y **dashboard de estadísticas**.
 
 ## 7. Despliegue (recomendación)

@@ -171,7 +171,7 @@ components/atoms/Button/
 
 Los subcomponentes que solo usa su padre van anidados (`organisms/Sidebar/OrgSwitcher/`); los exportados y reutilizables, al lado de los demás. Las funciones de ayuda globales están en `utils/`. Los imports usan la ruta completa (`@/components/atoms/Button/Button`), sin `index.ts`. El cliente HTTP es axios (`services/http`).
 
-Rutas: `/login`, `/register`, `/onboarding`, `/:org/projects`, `/:org/projects/:proyecto/issues`, `/:org/projects/:proyecto/issues/:issue`, `/:org/projects/:proyecto/settings`, `/:org/projects/:proyecto/performance` (con `performance/transaction?name=` y `performance/samples/:id`).
+Rutas públicas: `/` (**landing** de Sentinel para quien no tiene sesión: qué es, funciones, SDK con su instalación, trazas, arquitectura y cómo ejecutarlo; con sesión lleva a la organización) y `/docs` (documentación). Rutas: `/login`, `/register`, `/onboarding`, `/:org/projects`, `/:org/projects/:proyecto/issues`, `/:org/projects/:proyecto/issues/:issue`, `/:org/projects/:proyecto/settings`, `/:org/projects/:proyecto/performance` (con `performance/transaction?name=` y `performance/samples/:id`).
 
 ## Releases y regresiones
 

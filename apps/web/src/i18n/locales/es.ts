@@ -254,6 +254,320 @@ export const es: Deep<Translations> = {
 				"Esta transacción no tiene spans: solo se midió su duración total.",
 		},
 	},
+	public: {
+		nav: {
+			label: "Principal",
+			features: "Funciones",
+			sdks: "SDK",
+			traces: "Trazas",
+			architecture: "Arquitectura",
+			docs: "Docs",
+		},
+		signIn: "Iniciar sesión",
+		signUp: "Crear cuenta",
+		openApp: "Abrir la aplicación",
+		footer: {
+			tagline:
+				"Seguimiento de errores y de rendimiento que puedes alojar tú: entérate de lo que falla y de lo que va lento antes de que te lo cuenten tus usuarios.",
+			product: "Producto",
+			api: "Referencia de la API",
+			built: "Construido con",
+			stack: "NestJS, PostgreSQL, Redis, React, TypeScript, Python.",
+		},
+	},
+	landing: {
+		hero: {
+			badge: "Errores y rendimiento, en tu propia infraestructura",
+			title:
+				"Entérate de lo que falla, y de lo que va lento, antes que tus usuarios",
+			subtitle:
+				"Sentinel agrupa cada error en un issue con todo su contexto, mide qué tan rápida es de verdad tu app y sigue una misma petición del navegador a tus servidores.",
+			cta: "Crear una cuenta gratis",
+			docs: "Leer la documentación",
+			note: "SDK para JavaScript, React, Node.js, Python y React Native.",
+		},
+		preview: {
+			issues: "Issues",
+			performance: "Rendimiento",
+		},
+		features: {
+			title: "Todo lo necesario para mantener una app sana",
+			subtitle:
+				"De la primera excepción a la petición lenta que hay detrás, en un solo lugar y con el contexto para arreglarlo.",
+			errors: {
+				title: "Errores agrupados en issues",
+				body: "Miles de eventos se convierten en un puñado de issues, con su stack trace, breadcrumbs, release, entorno y los usuarios afectados.",
+			},
+			performance: {
+				title: "Rendimiento y Web Vitals",
+				body: "p50, p95 y p99 por transacción, tasa de errores, throughput, y LCP, CLS, INP, FCP y TTFB valorados con los umbrales de Google.",
+			},
+			traces: {
+				title: "Trazas entre servicios",
+				body: "Una petición, seguida del navegador a tu backend. Salta de un error a la traza en la que ocurrió.",
+			},
+			sourcemaps: {
+				title: "Source maps",
+				body: "Los bundles minificados, incluso los de Hermes en React Native, muestran tu código original. Los mapas son privados: nunca salen del servidor.",
+			},
+			alerts: {
+				title: "Alertas donde trabajas",
+				body: "Reglas de issue nuevo, regresión o frecuencia, por correo, webhook firmado o Slack, con un enfriamiento para que nunca te inunden.",
+			},
+			releases: {
+				title: "Releases y regresiones",
+				body: "Mira qué release introdujo un issue, y que se reabra solo cuando uno resuelto vuelve en una versión posterior.",
+			},
+			teams: {
+				title: "Pensado para equipos",
+				body: "Organizaciones con roles, invitaciones por correo, asignación de issues, comentarios con historial y tokens de API para tu CI.",
+			},
+			privacy: {
+				title: "Privacidad por defecto",
+				body: "Contraseñas, tokens y números de tarjeta se eliminan antes de guardar nada. Tus datos se quedan en tu infraestructura.",
+			},
+		},
+		how: {
+			title: "Cómo funciona",
+			install: {
+				title: "Instala un SDK",
+				body: "Añade unas líneas a tu app. El SDK captura errores y mide peticiones sin romper nunca tu código.",
+			},
+			collect: {
+				title: "Los eventos llegan al instante",
+				body: "La API responde de inmediato y una cola entrega el evento a un worker que lo simboliza, lo agrupa y lo guarda.",
+			},
+			act: {
+				title: "Prioriza y arregla",
+				body: "Abre el issue, mira qué pasó y a quién, asígnalo y recibe un aviso si vuelve.",
+			},
+		},
+		sdks: {
+			title: "Un SDK para cada lugar donde corre tu código",
+			subtitle:
+				"Todos comparten el mismo núcleo y el mismo contrato con el servidor, así que se comportan igual.",
+			javascript: {
+				summary:
+					"Para cualquier página web, con un bundler o con una simple etiqueta script.",
+				points: {
+					one: "Captura errores sin controlar y promesas rechazadas",
+					two: "Breadcrumbs de clics, navegación, consola y red",
+					three: "Carga de página, navegación, peticiones y Web Vitals",
+				},
+			},
+			react: {
+				summary:
+					"Todo el SDK del navegador, más el manejo de errores propio de React.",
+				points: {
+					one: "ErrorBoundary que envía la pila de componentes",
+					two: "Manejadores de errores de la raíz de React 19",
+					three: "Profiler que mide cuánto tarda en montarse un árbol",
+				},
+			},
+			node: {
+				summary: "Para servidores en Node.js: Express, Fastify, Nest y más.",
+				points: {
+					one: "Los errores sin controlar se envían antes de que el proceso termine",
+					two: "Una transacción por petición, con el nombre de su ruta",
+					three: "Continúa la traza que empieza en el navegador",
+				},
+			},
+			python: {
+				summary: "Para aplicaciones ASGI y WSGI: FastAPI, Flask, Django y más.",
+				points: {
+					one: "Sin dependencias: solo la biblioteca estándar",
+					two: "Alcance por petición que funciona con hilos y asyncio",
+					three: "Spans de requests y httpx, y trazas que continúan",
+				},
+			},
+			"react-native": {
+				summary: "Para apps de iOS y Android hechas con React Native.",
+				points: {
+					one: "Los errores fatales se envían antes de que la app se cierre",
+					two: "Arranque, pantallas y peticiones de red",
+					three: "Código original con los source maps de tu bundle",
+				},
+			},
+		},
+		traces: {
+			title: "Sigue una petición del navegador a la base de datos",
+			subtitle:
+				"Un id de traza viaja con cada petición, así que lo que midió el navegador y lo que hizo tu servidor acaban en la misma línea de tiempo.",
+			nodes: {
+				browser: {
+					title: "Navegador",
+					body: "Empieza la traza y añade la cabecera traceparent a las llamadas a tu API.",
+					code: "fetch /api/orders",
+				},
+				api: {
+					title: "Tu API",
+					body: "Continúa la misma traza y mide la petición y sus pasos.",
+					code: "POST /api/orders",
+				},
+				db: {
+					title: "Base de datos",
+					body: "Cada consulta es un span: ves dónde se fue el tiempo.",
+					code: "db.query insert into orders",
+				},
+			},
+			note: "lo comparten todas las transacciones de la petición.",
+			items: {
+				link: {
+					title: "Del error a la traza",
+					body: "Cada error sabe en qué traza ocurrió: un clic para ver todo lo que pasó a su alrededor.",
+				},
+				waterfall: {
+					title: "Cascada de spans",
+					body: "Spans anidados con su duración muestran qué paso es el lento, no solo que algo lo es.",
+				},
+				errors: {
+					title: "Errores de los dos lados",
+					body: "Un fallo del frontend y la excepción del backend que hay detrás aparecen juntos.",
+				},
+			},
+		},
+		architecture: {
+			title: "Hecho para entenderse",
+			subtitle:
+				"Una arquitectura pequeña y honesta: cada evento sigue el mismo camino corto y cada pieza hace una sola cosa.",
+			flow: {
+				sdk: {
+					title: "SDK",
+					body: "Capturan y envían por HTTP con reintentos.",
+				},
+				api: {
+					title: "API",
+					body: "Valida, limpia datos sensibles y responde 202 al instante.",
+				},
+				queue: {
+					title: "Cola",
+					body: "Redis y BullMQ separan la recepción del procesamiento.",
+				},
+				worker: {
+					title: "Worker",
+					body: "Simboliza, calcula el fingerprint, agrupa y avisa.",
+				},
+				db: {
+					title: "PostgreSQL",
+					body: "Issues, eventos, transacciones y spans.",
+				},
+				web: {
+					title: "Panel",
+					body: "Aplicación React con datos y tendencias.",
+				},
+			},
+			stack: "Tecnología",
+			note: "Un monorepo con pnpm y Turborepo, con un único esquema (Zod) como fuente de verdad para la API, los SDK y el panel, y pruebas de extremo a extremo que ejecutan la API y el worker reales.",
+			run: "Ejecútalo tú",
+		},
+		cta: {
+			title: "Empieza a detectar problemas antes que tus usuarios",
+			subtitle:
+				"Crea una cuenta, añade el SDK a tu app y mira tu primer evento en minutos.",
+		},
+	},
+	docs: {
+		title: "Documentación",
+		subtitle:
+			"Todo para ir de cero a tu primer error con traza, y para ejecutar Sentinel por tu cuenta.",
+		toc: "En esta página",
+		sections: {
+			quickstart: "Primeros pasos",
+			sdks: "SDK",
+			sourcemaps: "Source maps",
+			tracing: "Trazas y rendimiento",
+			alerts: "Alertas",
+			api: "API de ingesta",
+			selfhost: "Ejecútalo tú",
+		},
+		quickstart: {
+			intro: "Cinco pasos, unos minutos.",
+			steps: {
+				account: {
+					title: "Crea una cuenta y una organización",
+					body: "Regístrate con correo o con Google. La primera organización se crea contigo.",
+				},
+				project: {
+					title: "Crea un proyecto",
+					body: "Un proyecto es una app que quieres monitorear. Elige su plataforma.",
+				},
+				dsn: {
+					title: "Copia la DSN",
+					body: "Está en los ajustes del proyecto y es lo único que necesita el SDK: la clave y el id del proyecto en una URL.",
+				},
+				install: {
+					title: "Instala el SDK",
+					body: "Añádelo a tu app y llama a init con la DSN, la release y el entorno.",
+				},
+				verify: {
+					title: "Provoca un error",
+					body: "Lanza uno a propósito. Aparece en Issues en unos segundos, con su stack trace y su contexto.",
+				},
+			},
+		},
+		sdks: {
+			intro:
+				"Elige el SDK según dónde corre tu código. Todos comparten las mismas opciones y el mismo comportamiento.",
+			platform: "Plataforma",
+			package: "Paquete",
+			requires: "Requiere",
+		},
+		sourcemaps: {
+			intro:
+				"Sube los source maps de cada build para que los errores muestren tu código original y no el bundle minificado.",
+			points: {
+				release: "La release debe coincidir con la que pasas a init.",
+				before:
+					"Súbelos antes de desplegar: solo se simbolizan los eventos que llegan después.",
+				private:
+					"No publiques los archivos .map en tu servidor: Sentinel no los necesita allí.",
+				mobile:
+					"En React Native se reconoce el bundle (index.android.bundle, main.jsbundle) sea cual sea la ruta donde esté instalada la app.",
+			},
+		},
+		tracing: {
+			intro:
+				"Pon tracesSampleRate para activar el rendimiento. Las cargas de página, las navegaciones, las peticiones y los Web Vitals se miden solos, y un id de traza une el navegador con tu backend.",
+			browser: "Navegador",
+			server: "Servidor",
+			outro:
+				"Por defecto la cabecera traceparent solo se envía a las URLs que listes, así tus trazas no se comparten con terceros.",
+		},
+		alerts: {
+			intro:
+				"Las reglas de alerta se evalúan en el worker a medida que llegan los eventos, con un enfriamiento por regla: una tormenta de errores manda una notificación, no miles.",
+			rules: "Reglas",
+			channels: "Canales",
+			ruleItems: {
+				new_issue: "Aparece un issue nuevo.",
+				regression: "Un issue resuelto vuelve en una release posterior.",
+				frequency: "Un issue ocurre más de N veces en una ventana de tiempo.",
+			},
+			channelItems: {
+				email: "Correo a los miembros que elijas, en el idioma de cada uno.",
+				webhook:
+					"Un webhook firmado con HMAC-SHA256, protegido contra peticiones a direcciones privadas.",
+				slack: "Un mensaje en un canal de Slack mediante un webhook entrante.",
+			},
+		},
+		api: {
+			intro:
+				"Los SDK son clientes ligeros de una API HTTP pública. Si tu lenguaje aún no tiene SDK, puedes enviar los eventos tú mismo.",
+			endpoints: {
+				events: "Envía un error o un mensaje.",
+				transactions: "Envía una transacción de rendimiento con sus spans.",
+			},
+			outro:
+				"Autentica con la clave de la DSN en la cabecera X-Sentinel-Key. La respuesta es 202 al instante y el evento se procesa en segundo plano. La referencia completa está en",
+		},
+		selfhost: {
+			intro:
+				"Sentinel necesita PostgreSQL y Redis. Docker Compose levanta ambos, y Mailpit para ver los correos mientras desarrollas.",
+			env: "Variables de entorno principales",
+			outro:
+				"El archivo .env.example explica cada una. Sin SMTP_URL, el envío de correo queda desactivado.",
+		},
+	},
 	trend: {
 		projectTitle: "Eventos",
 		issueTitle: "Ocurrencias",
