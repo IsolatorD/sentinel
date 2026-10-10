@@ -1,5 +1,6 @@
 export * from "./activity.js";
 export * from "./alerts.js";
+export * from "./dashboard.js";
 export * from "./email.js";
 export * from "./env.js";
 export * from "./errors.js";

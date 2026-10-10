@@ -24,6 +24,14 @@ export function formatDateTime(date: Date | string, locale: string): string {
 	}).format(new Date(date));
 }
 
+/** Fecha en UTC (los periodos de cuota se calculan en UTC), sin hora local. */
+export function formatDateUtc(date: Date | string, locale: string): string {
+	return new Intl.DateTimeFormat(locale, {
+		dateStyle: "medium",
+		timeZone: "UTC",
+	}).format(new Date(date));
+}
+
 /** Número compacto: 1.2K, 3.4M. */
 export function formatCompact(value: number, locale: string): string {
 	return new Intl.NumberFormat(locale, {

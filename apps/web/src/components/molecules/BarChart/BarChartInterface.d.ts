@@ -5,4 +5,6 @@ export interface BarChartProps {
 	bucketMinutes: number;
 	/** Descripción para lectores de pantalla. */
 	label: string;
+	/** Texto de cada barra al pasar el ratón (por defecto, "N eventos"). */
+	format?: (count: number) => string;
 }

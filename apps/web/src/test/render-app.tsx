@@ -8,6 +8,7 @@ import { createQueryClient } from "@/app/query-client";
 import { createAppRouter } from "@/app/router";
 import { authService } from "@/services/authService/authService";
 import { configService } from "@/services/configService/configService";
+import { dashboardService } from "@/services/dashboardService/dashboardService";
 import { issuesService } from "@/services/issuesService/issuesService";
 import { organizationsService } from "@/services/organizationsService/organizationsService";
 import { performanceService } from "@/services/performanceService/performanceService";
@@ -64,6 +65,7 @@ export function mockHappyPath() {
 	vi.mocked(performanceService.samples).mockResolvedValue(fx.sampleList());
 	vi.mocked(performanceService.sample).mockResolvedValue(fx.sampleDetail());
 	vi.mocked(performanceService.trace).mockResolvedValue(fx.trace());
+	vi.mocked(dashboardService.get).mockResolvedValue(fx.dashboard());
 	vi.mocked(statsService.project).mockResolvedValue(fx.stats());
 	vi.mocked(statsService.issue).mockResolvedValue(fx.stats());
 	vi.mocked(issuesService.list).mockResolvedValue(fx.issueList());

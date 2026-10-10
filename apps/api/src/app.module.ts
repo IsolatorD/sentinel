@@ -9,6 +9,7 @@ import { buildLoggerParams } from "./common/logging.js";
 import { NoticeInterceptor } from "./common/notice.js";
 import { type ApiEnv, validateApiEnv } from "./config/env.js";
 import { PublicConfigModule } from "./config/public-config.module.js";
+import { DashboardModule } from "./dashboard/dashboard.module.js";
 import { DatabaseModule } from "./database/database.module.js";
 import { HealthModule } from "./health/health.module.js";
 import { IngestModule } from "./ingest/ingest.module.js";
@@ -47,6 +48,7 @@ import { TokensModule } from "./tokens/tokens.module.js";
 		IngestModule,
 		IssuesModule,
 		PerformanceModule,
+		DashboardModule,
 		QuotaModule,
 		ReleasesModule,
 		AlertsModule,

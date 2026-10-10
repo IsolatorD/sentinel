@@ -3,7 +3,7 @@ import { useTranslation } from "react-i18next";
 import { Alert } from "@/components/molecules/Alert/Alert";
 import { useUsage } from "@/hooks/useProjects/useProjects";
 import { useCurrentProject } from "@/hooks/useScope/useScope";
-import { formatDateTime } from "@/utils/time/time";
+import { formatDateUtc } from "@/utils/time/time";
 
 /** Avisa en lo alto de una pantalla de datos cuando el proyecto agotó su cuota y está rechazando lo que llega. */
 export function QuotaBanner() {
@@ -30,7 +30,7 @@ export function QuotaBanner() {
 					})}
 				</span>{" "}
 				{t("settings.limits.exceededHint", {
-					date: formatDateTime(usage.resetsAt, i18n.language),
+					date: formatDateUtc(usage.resetsAt, i18n.language),
 				})}{" "}
 				<Link
 					to="/$orgSlug/projects/$projectSlug/settings"

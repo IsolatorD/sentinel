@@ -93,6 +93,7 @@ export const en = {
 		},
 	},
 	nav: {
+		overview: "Overview",
 		issues: "Issues",
 		performance: "Performance",
 		projects: "Projects",
@@ -144,6 +145,8 @@ export const en = {
 			p99: "p99",
 			errorRate: "Error rate",
 			throughput: "Throughput",
+			transactionsCount_one: "{{count}} transaction",
+			transactionsCount_other: "{{count}} transactions",
 			perMinute: "{{value}} / min",
 		},
 		overview: {
@@ -560,6 +563,33 @@ export const en = {
 			env: "Main environment variables",
 			outro:
 				"The .env.example file explains each one. Without SMTP_URL, email delivery is disabled.",
+		},
+	},
+	overview: {
+		title: "Overview",
+		loadError: "Couldn't load the overview.",
+		noData: "No data in this period.",
+		noComparison: "no earlier data",
+		change: "{{value}}% vs previous period",
+		unknown: "Unknown",
+		other: "Other",
+		topIssues: "Issues with the most events",
+		slowest: "Slowest transactions (p95)",
+		byLevel: "Events by level",
+		byEnvironment: "Events by environment",
+		byRelease: "Events by release",
+		tiles: {
+			events: "Events",
+			users: "Users affected",
+			newIssues: "New issues",
+			resolved: "Resolved",
+			transactions: "Transactions",
+			p95: "p95",
+			errorRate: "Error rate",
+		},
+		charts: {
+			events: "Events over time",
+			transactions: "Transactions over time",
 		},
 	},
 	trend: {

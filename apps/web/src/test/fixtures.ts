@@ -1,4 +1,5 @@
 import type {
+	DashboardDto,
 	EventDetailDto,
 	EventListDto,
 	IssueDetailDto,
@@ -398,5 +399,65 @@ export const usage = (over: Partial<UsageDto> = {}): UsageDto => ({
 	resetsAt: "2026-11-01T00:00:00.000Z",
 	events: { used: 1_284, quota: null },
 	transactions: { used: 5_320, quota: null },
+	...over,
+});
+
+export const dashboard = (over: Partial<DashboardDto> = {}): DashboardDto => ({
+	period: "7d",
+	bucketMinutes: 360,
+	from: "2026-10-03T00:00:00.000Z",
+	to: "2026-10-09T15:42:00.000Z",
+	totals: {
+		events: 1_284,
+		users: 312,
+		newIssues: 9,
+		resolvedIssues: 4,
+		transactions: 5_320,
+		p95: 2_400,
+		errorRate: 0.0375,
+	},
+	previous: { events: 1_000, newIssues: 12, transactions: 0 },
+	series: [0, 1, 2, 3].map((i) => ({
+		start: new Date(Date.UTC(2026, 9, 9, 12 + i)).toISOString(),
+		events: i === 1 ? 0 : 40,
+		newIssues: i === 2 ? 3 : 0,
+		transactions: 100 + i,
+	})),
+	byLevel: [
+		{ key: "error", count: 900 },
+		{ key: "warning", count: 300 },
+		{ key: "fatal", count: 84 },
+	],
+	byEnvironment: [
+		{ key: "production", count: 1_100 },
+		{ key: "", count: 184 },
+	],
+	byRelease: [
+		{ key: "2.4.0", count: 800 },
+		{ key: "2.3.0", count: 300 },
+		{ key: "other", count: 184 },
+	],
+	topIssues: [
+		{
+			id: ISSUE_ID,
+			title: "TypeError: Cannot read properties of undefined",
+			level: "error",
+			status: "unresolved",
+			events: 640,
+			users: 120,
+		},
+		{
+			id: "a2",
+			title: "PaymentError: gateway rejected",
+			level: "fatal",
+			status: "resolved",
+			events: 84,
+			users: 41,
+		},
+	],
+	slowest: [
+		{ name: "/checkout", op: "pageload", count: 400, p95: 6_640 },
+		{ name: "/cart", op: "pageload", count: 300, p95: 4_340 },
+	],
 	...over,
 });

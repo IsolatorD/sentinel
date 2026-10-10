@@ -48,6 +48,11 @@ export interface PerformanceSearch {
 	page: number;
 }
 
+export interface OverviewSearch {
+	period: StatsPeriod;
+	environment?: string;
+}
+
 export interface TransactionSearch {
 	name?: string;
 	period: StatsPeriod;

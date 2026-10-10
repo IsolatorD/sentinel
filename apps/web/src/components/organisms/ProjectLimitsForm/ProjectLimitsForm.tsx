@@ -13,7 +13,7 @@ import { parseQuota } from "@/components/organisms/ProjectLimitsForm/ProjectLimi
 import { useUpdateProject, useUsage } from "@/hooks/useProjects/useProjects";
 import { ApiError } from "@/utils/apiError/apiError";
 import { apiErrorText } from "@/utils/apiErrorText/apiErrorText";
-import { formatDateTime } from "@/utils/time/time";
+import { formatDateUtc } from "@/utils/time/time";
 
 /** Retención de los datos, límites mensuales de ingesta y lo consumido este mes. */
 export function ProjectLimitsForm({
@@ -78,7 +78,7 @@ export function ProjectLimitsForm({
 							/>
 							<p className="text-xs text-faint">
 								{t("settings.limits.resets", {
-									date: formatDateTime(usage.data.resetsAt, i18n.language),
+									date: formatDateUtc(usage.data.resetsAt, i18n.language),
 								})}
 							</p>
 						</>

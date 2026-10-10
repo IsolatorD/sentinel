@@ -4,6 +4,7 @@ import {
 	FolderKanban,
 	Gauge,
 	KeyRound,
+	LayoutDashboard,
 	Rocket,
 	Settings,
 	Users,
@@ -43,6 +44,16 @@ export function Sidebar() {
 				>
 					{project && (
 						<>
+							<SidebarLink
+								icon={LayoutDashboard}
+								to="/$orgSlug/projects/$projectSlug/overview"
+								params={{
+									orgSlug: organization.slug,
+									projectSlug: project.slug,
+								}}
+							>
+								{t("nav.overview")}
+							</SidebarLink>
 							<SidebarLink
 								icon={Bug}
 								to="/$orgSlug/projects/$projectSlug/issues"

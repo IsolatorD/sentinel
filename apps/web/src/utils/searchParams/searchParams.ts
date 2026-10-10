@@ -4,6 +4,8 @@ import {
 	ISSUES_SEARCH_DEFAULTS,
 	issueSearchInputSchema,
 	issuesSearchInputSchema,
+	OVERVIEW_SEARCH_DEFAULTS,
+	overviewSearchInputSchema,
 	PERFORMANCE_SEARCH_DEFAULTS,
 	performanceSearchInputSchema,
 	TRANSACTION_SEARCH_DEFAULTS,
@@ -13,6 +15,7 @@ import type {
 	AlertsSearch,
 	IssueSearch,
 	IssuesSearch,
+	OverviewSearch,
 	PerformanceSearch,
 	TransactionSearch,
 } from "@/utils/searchParams/searchParamsInterface";
@@ -56,6 +59,14 @@ export function resolvePerformanceSearch(raw: unknown): PerformanceSearch {
 		sort: input.sort ?? PERFORMANCE_SEARCH_DEFAULTS.sort,
 		order: input.order ?? PERFORMANCE_SEARCH_DEFAULTS.order,
 		page: input.page ?? PERFORMANCE_SEARCH_DEFAULTS.page,
+	};
+}
+
+export function resolveOverviewSearch(raw: unknown): OverviewSearch {
+	const input = overviewSearchInputSchema.parse(raw ?? {});
+	return {
+		period: input.period ?? OVERVIEW_SEARCH_DEFAULTS.period,
+		environment: input.environment,
 	};
 }
 

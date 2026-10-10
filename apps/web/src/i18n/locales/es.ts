@@ -97,6 +97,7 @@ export const es: Deep<Translations> = {
 		},
 	},
 	nav: {
+		overview: "Resumen",
 		issues: "Issues",
 		performance: "Rendimiento",
 		projects: "Proyectos",
@@ -148,6 +149,8 @@ export const es: Deep<Translations> = {
 			p99: "p99",
 			errorRate: "Tasa de errores",
 			throughput: "Throughput",
+			transactionsCount_one: "{{count}} transacción",
+			transactionsCount_other: "{{count}} transacciones",
 			perMinute: "{{value}} / min",
 		},
 		overview: {
@@ -566,6 +569,33 @@ export const es: Deep<Translations> = {
 			env: "Variables de entorno principales",
 			outro:
 				"El archivo .env.example explica cada una. Sin SMTP_URL, el envío de correo queda desactivado.",
+		},
+	},
+	overview: {
+		title: "Resumen",
+		loadError: "No se pudo cargar el resumen.",
+		noData: "No hay datos en este periodo.",
+		noComparison: "sin datos anteriores",
+		change: "{{value}}% vs periodo anterior",
+		unknown: "Sin dato",
+		other: "Otros",
+		topIssues: "Issues con más eventos",
+		slowest: "Transacciones más lentas (p95)",
+		byLevel: "Eventos por nivel",
+		byEnvironment: "Eventos por entorno",
+		byRelease: "Eventos por release",
+		tiles: {
+			events: "Eventos",
+			users: "Usuarios afectados",
+			newIssues: "Issues nuevos",
+			resolved: "Resueltos",
+			transactions: "Transacciones",
+			p95: "p95",
+			errorRate: "Tasa de errores",
+		},
+		charts: {
+			events: "Eventos en el tiempo",
+			transactions: "Transacciones en el tiempo",
 		},
 	},
 	trend: {

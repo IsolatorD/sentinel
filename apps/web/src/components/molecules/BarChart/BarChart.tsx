@@ -8,7 +8,12 @@ import type { BarChartProps } from "@/components/molecules/BarChart/BarChartInte
 import { barHeights, formatBucket } from "@/utils/trend/trend";
 
 /** Eventos por intervalo; cada barra lleva un tooltip nativo con la fecha y el total. */
-export function BarChart({ points, bucketMinutes, label }: BarChartProps) {
+export function BarChart({
+	points,
+	bucketMinutes,
+	label,
+	format,
+}: BarChartProps) {
 	const { t, i18n } = useTranslation();
 	const heights = barHeights(points.map((p) => p.events));
 	const barWidth = points.length ? WIDTH / points.length - GAP : 0;
@@ -45,7 +50,7 @@ export function BarChart({ points, bucketMinutes, label }: BarChartProps) {
 							className="fill-primary opacity-80 transition-opacity hover:opacity-100"
 						>
 							<title>
-								{`${formatBucket(point.start, bucketMinutes, i18n.language)} · ${t("trend.events", { count: point.events })}`}
+								{`${formatBucket(point.start, bucketMinutes, i18n.language)} · ${(format ?? ((n) => t("trend.events", { count: n })))(point.events)}`}
 							</title>
 						</rect>
 					);

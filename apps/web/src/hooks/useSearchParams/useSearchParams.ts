@@ -6,12 +6,14 @@ import {
 	resolveAlertsSearch,
 	resolveIssueSearch,
 	resolveIssuesSearch,
+	resolveOverviewSearch,
 	resolvePerformanceSearch,
 	resolveTransactionSearch,
 } from "@/utils/searchParams/searchParams";
 import {
 	ALERTS_SEARCH_DEFAULTS,
 	ISSUES_SEARCH_DEFAULTS,
+	OVERVIEW_SEARCH_DEFAULTS,
 	PERFORMANCE_SEARCH_DEFAULTS,
 	TRANSACTION_SEARCH_DEFAULTS,
 } from "@/utils/searchParams/searchParams.constants";
@@ -19,6 +21,7 @@ import type {
 	AlertsSearch,
 	IssueSearch,
 	IssuesSearch,
+	OverviewSearch,
 	PerformanceSearch,
 	TransactionSearch,
 } from "@/utils/searchParams/searchParamsInterface";
@@ -97,6 +100,23 @@ export function usePerformanceSearch() {
 						{ ...prev, ...patch, ...(options.resetPage ? { page: 1 } : {}) },
 						PERFORMANCE_SEARCH_DEFAULTS,
 					),
+				replace: true,
+			}),
+		[navigate],
+	);
+	return { search, update };
+}
+
+export function useOverviewSearch() {
+	const raw = useSearch({ strict: false });
+	const navigate = useNavigate();
+	const search = useMemo(() => resolveOverviewSearch(raw), [raw]);
+	const update = useCallback(
+		(patch: Partial<OverviewSearch>) =>
+			navigate({
+				to: ".",
+				search: (prev: Record<string, unknown>) =>
+					omitDefaults({ ...prev, ...patch }, OVERVIEW_SEARCH_DEFAULTS),
 				replace: true,
 			}),
 		[navigate],

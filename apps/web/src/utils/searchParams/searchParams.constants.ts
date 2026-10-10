@@ -79,6 +79,14 @@ export const PERFORMANCE_SEARCH_DEFAULTS = {
 	page: 1,
 } as const;
 
+/** Panel de estadísticas del proyecto. */
+export const overviewSearchInputSchema = z.object({
+	period: periodInput,
+	environment: filterInput,
+});
+
+export const OVERVIEW_SEARCH_DEFAULTS = { period: "7d" } as const;
+
 /** Detalle de una transacción (por nombre) con sus ejemplos. */
 export const transactionSearchInputSchema = z.object({
 	name: z.string().trim().min(1).max(2048).optional().catch(undefined),

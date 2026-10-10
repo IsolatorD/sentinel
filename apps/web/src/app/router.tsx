@@ -22,6 +22,7 @@ import { NotFoundPage } from "@/pages/NotFoundPage/NotFoundPage";
 import { OnboardingPage } from "@/pages/OnboardingPage/OnboardingPage";
 import { OrgHomePage } from "@/pages/OrgHomePage/OrgHomePage";
 import { OrgLayoutPage } from "@/pages/OrgLayoutPage/OrgLayoutPage";
+import { OverviewPage } from "@/pages/OverviewPage/OverviewPage";
 import { PerformancePage } from "@/pages/PerformancePage/PerformancePage";
 import { ProjectSettingsPage } from "@/pages/ProjectSettingsPage/ProjectSettingsPage";
 import { ProjectsPage } from "@/pages/ProjectsPage/ProjectsPage";
@@ -38,6 +39,7 @@ import {
 	alertsSearchInputSchema,
 	issueSearchInputSchema,
 	issuesSearchInputSchema,
+	overviewSearchInputSchema,
 	performanceSearchInputSchema,
 	transactionSearchInputSchema,
 } from "@/utils/searchParams/searchParams.constants";
@@ -176,6 +178,13 @@ const projectRoute = createRoute({
 	path: "$projectSlug",
 	component: Outlet,
 });
+const overviewRoute = createRoute({
+	getParentRoute: () => projectRoute,
+	path: "overview",
+	validateSearch: (search: Record<string, unknown>) =>
+		overviewSearchInputSchema.parse(search),
+	component: OverviewPage,
+});
 const issuesRoute = createRoute({
 	getParentRoute: () => projectRoute,
 	path: "issues",
@@ -248,6 +257,7 @@ const routeTree = rootRoute.addChildren([
 			projectsRoute.addChildren([
 				projectsIndexRoute,
 				projectRoute.addChildren([
+					overviewRoute,
 					issuesRoute,
 					issueRoute,
 					performanceRoute,

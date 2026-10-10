@@ -165,7 +165,9 @@ Reglas de alerta (nuevo issue, regresión, umbral de frecuencia), canales email 
 *Pendiente*
 - ✅ **Landing del proyecto** (dentro de `apps/web`, ruta pública `/`; con sesión, `/` lleva a la organización como antes): la página pública de Sentinel y punto de entrada a todo lo demás: qué es, qué resuelve, capturas, las funciones (errores, rendimiento, trazas, alertas, source maps, colaboración), los SDK con su instalación, cómo está construido (arquitectura) y cómo ejecutarlo, y los enlaces a la API (`/api/docs`) y a la aplicación (iniciar sesión / crear cuenta). Es la landing *de Sentinel*; la web personal con todos los proyectos del autor es otro proyecto y queda fuera de este.
 - ✅ **Documentación pública** (`/docs`, accesible desde la landing): primeros pasos, un apartado por SDK, source maps, trazas y rendimiento, alertas, API de ingesta y cómo ejecutarlo.
-- **Retención configurable** (borrado de eventos y transacciones antiguos por proyecto), **cuotas** y **dashboard de estadísticas**.
+- ✅ **Retención configurable** por proyecto (30/90/180/365 días, 90 por defecto): un job diario del worker borra eventos y transacciones antiguos y los issues sin actividad en ese periodo.
+- ✅ **Cuotas mensuales** por proyecto (eventos y transacciones, opcionales): al superarlas la ingesta responde 429 `QUOTA_EXCEEDED` con `Retry-After`; uso y límites en Configuración y aviso en Issues/Rendimiento.
+- ✅ **Dashboard de estadísticas** (`/:org/projects/:project/overview`): totales con variación frente al periodo anterior, series, desgloses por nivel/entorno/release, issues con más eventos y transacciones más lentas.
 
 ## 7. Despliegue (recomendación)
 

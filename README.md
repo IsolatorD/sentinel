@@ -52,6 +52,8 @@ Requiere sesión. Todo cuelga de una organización; quien no es miembro recibe 4
 | POST | `/:projectId/keys` | nueva clave DSN |
 | PATCH / DELETE | `/:projectId/keys/:keyId` | revocar o renombrar / borrar |
 
+`PATCH /:projectId` también acepta `retentionDays` (30, 90, 180 o 365) y `monthlyEventQuota` / `monthlyTransactionQuota` (entero o `null` = sin límite).
+
 La DSN tiene la forma `http://<clavePública>@host/<projectId>`; `PUBLIC_API_URL` (opcional) define el host que se muestra.
 
 ## Ingesta de eventos
@@ -115,6 +117,12 @@ Parámetros del listado: `status` (`unresolved` por defecto, `resolved`, `ignore
 ### Gráficos de tendencia
 
 `GET /api/organizations/:orgId/projects/:projectId/stats?period=` (proyecto) y `…/issues/:issueId/stats?period=` (issue) devuelven una serie **continua**, con los intervalos vacíos a cero, en UTC: `24h` por hora, `7d` cada 6 horas y `30d` por día. Cada punto trae `events` y `users` (usuarios distintos); la respuesta incluye `totalEvents`. El listado de issues añade `trends`: las últimas 24 h por hora de cada issue de la página, para el mini gráfico de cada fila. La agrupación la hace Postgres con `date_bin`, apoyada en los índices `(issue_id, timestamp)` y `(project_id, timestamp)`.
+
+## Retención, cuotas y estadísticas
+
+- **Retención:** cada proyecto conserva sus datos `retentionDays` días (90 por defecto). El worker ejecuta un job diario (`RETENTION_CRON`, por defecto `0 3 * * *`; `RETENTION_ENABLED=false` lo desactiva) que borra por lotes los issues sin actividad en ese periodo, sus eventos antiguos y las transacciones antiguas.
+- **Cuotas:** límites mensuales opcionales de eventos y de transacciones por proyecto (el mes es UTC). Los contadores viven en Redis y se siembran desde la base de datos. Superado el límite, la ingesta responde `429` con `reason: QUOTA_EXCEEDED` y `Retry-After`; los eventos rechazados o inválidos no cuentan. `GET /api/organizations/:orgId/projects/:projectId/usage` devuelve el uso del mes y los límites.
+- **Dashboard:** `GET /api/organizations/:orgId/projects/:projectId/dashboard?period=24h|7d|30d&environment=` devuelve totales (con los del periodo anterior de igual duración), series de eventos y transacciones, desgloses por nivel, entorno y release, los issues con más eventos y las transacciones más lentas (p95). En la web es la página «Resumen» del proyecto.
 
 ## API de rendimiento
 
