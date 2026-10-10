@@ -38,13 +38,39 @@ describe("configuración del proyecto", () => {
 
 		const install = screen.getByTestId("install-instructions");
 		expect(
-			within(install).getByText(/npm install @sentinel\/browser/),
+			within(install).getByText(/npm install @sentinel\/react/),
 		).toBeInTheDocument();
+		expect(install).toHaveTextContent("Sentinel.ErrorBoundary");
 		expect(install).toHaveTextContent(fx.key.dsn);
 	});
 
-	it("las instrucciones también se pueden ver como etiqueta <script>", async () => {
+	it("las instrucciones cambian con la plataforma del proyecto", async () => {
+		vi.mocked(projectsService.get).mockResolvedValue({
+			...fx.project,
+			platform: "node",
+		});
+		renderApp(SETTINGS_PATH);
+		const install = await screen.findByTestId("install-instructions");
+		await waitFor(() =>
+			expect(install).toHaveAttribute("data-platform", "node"),
+		);
+		expect(install).toHaveTextContent("There is no Node.js SDK yet");
+		expect(install).toHaveTextContent("X-Sentinel-Key");
+		expect(within(install).queryByRole("tab")).not.toBeInTheDocument();
+	});
+
+	it("las instrucciones de JavaScript también se pueden ver como etiqueta <script>", async () => {
+		vi.mocked(projectsService.get).mockResolvedValue({
+			...fx.project,
+			platform: "javascript",
+		});
 		const { user } = renderApp(SETTINGS_PATH);
+		await waitFor(() =>
+			expect(screen.getByTestId("install-instructions")).toHaveAttribute(
+				"data-platform",
+				"javascript",
+			),
+		);
 		const install = await screen.findByTestId("install-instructions");
 		await user.click(within(install).getByRole("tab", { name: "Script tag" }));
 		expect(install).toHaveTextContent(

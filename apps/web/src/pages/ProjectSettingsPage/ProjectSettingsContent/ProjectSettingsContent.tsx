@@ -33,7 +33,10 @@ export function ProjectSettingsContent() {
 							<p className="mb-4 text-sm text-muted">
 								{t("settings.install.description")}
 							</p>
-							<InstallInstructions dsn={firstActive.dsn} />
+							<InstallInstructions
+								dsn={firstActive.dsn}
+								platform={project.platform}
+							/>
 						</Section>
 					)}
 					<DeleteProjectSection

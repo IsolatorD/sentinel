@@ -709,8 +709,22 @@ export const en = {
 			description: "Use one of these snippets in your app.",
 			npm: "npm",
 			script: "Script tag",
+			http: "HTTP API",
 			install: "Install",
 			configure: "Configure",
+			hint: {
+				javascript:
+					"Use the browser SDK, either with a bundler or with a script tag.",
+				react:
+					"The React SDK includes the browser SDK and adds an error boundary that reports render errors with their component stack.",
+				node: "There is no Node.js SDK yet. Send events straight to the ingest API; the same request works from any server.",
+				"react-native":
+					"There is no React Native SDK yet. Send events straight to the ingest API.",
+				python:
+					"There is no Python SDK yet. Send events straight to the ingest API.",
+				other:
+					"Send events to the ingest API from any language. You can change the platform in the settings above.",
+			},
 		},
 		danger: {
 			title: "Danger zone",

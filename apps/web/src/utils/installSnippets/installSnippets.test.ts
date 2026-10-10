@@ -1,5 +1,10 @@
 import { describe, expect, it } from "vitest";
-import { npmSnippet, scriptTagSnippet } from "./installSnippets";
+import {
+	httpSnippet,
+	npmSnippet,
+	reactSnippet,
+	scriptTagSnippet,
+} from "./installSnippets";
 
 describe("install snippets", () => {
 	const dsn = "http://key@localhost:3000/abc";
@@ -10,5 +15,22 @@ describe("install snippets", () => {
 		expect(
 			scriptTagSnippet({ dsn, release: "9.9.9", environment: "staging" }),
 		).toContain('release: "9.9.9"');
+	});
+
+	it("React usa @sentinel/react con el ErrorBoundary", () => {
+		const snippet = reactSnippet({ dsn });
+		expect(snippet.install).toBe("npm install @sentinel/react");
+		expect(snippet.code).toContain(`dsn: "${dsn}"`);
+		expect(snippet.code).toContain("Sentinel.ErrorBoundary");
+	});
+
+	it("sin SDK se envía a la API con la clave y el proyecto de la DSN", () => {
+		const curl = httpSnippet({ dsn: "https://pk123@sentinel.dev/proj-1" });
+		expect(curl).toContain('"https://sentinel.dev/api/proj-1/events"');
+		expect(curl).toContain("X-Sentinel-Key: pk123");
+	});
+
+	it("con una DSN vacía deja una plantilla", () => {
+		expect(httpSnippet({ dsn: "" })).toContain("<projectId>");
 	});
 });

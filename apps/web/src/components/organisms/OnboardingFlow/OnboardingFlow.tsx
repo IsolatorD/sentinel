@@ -88,7 +88,10 @@ export function OnboardingFlow() {
 					<p className="mt-1 mb-4 text-sm text-muted">
 						{t("onboarding.install.description")}
 					</p>
-					<InstallInstructions dsn={project.keys?.[0]?.dsn ?? ""} />
+					<InstallInstructions
+						dsn={project.keys?.[0]?.dsn ?? ""}
+						platform={project.platform}
+					/>
 					<Button
 						variant="primary"
 						className="mt-6"

@@ -719,8 +719,22 @@ export const es: Deep<Translations> = {
 			description: "Usa uno de estos fragmentos en tu app.",
 			npm: "npm",
 			script: "Etiqueta script",
+			http: "API HTTP",
 			install: "Instalación",
 			configure: "Configuración",
+			hint: {
+				javascript:
+					"Usa el SDK del navegador, con un bundler o con una etiqueta script.",
+				react:
+					"El SDK de React incluye el del navegador y añade un límite de errores que reporta los fallos de render con su pila de componentes.",
+				node: "Todavía no hay un SDK de Node.js. Envía los eventos directamente a la API de ingesta; la misma petición sirve desde cualquier servidor.",
+				"react-native":
+					"Todavía no hay un SDK de React Native. Envía los eventos directamente a la API de ingesta.",
+				python:
+					"Todavía no hay un SDK de Python. Envía los eventos directamente a la API de ingesta.",
+				other:
+					"Envía los eventos a la API de ingesta desde cualquier lenguaje. Puedes cambiar la plataforma en los ajustes de arriba.",
+			},
 		},
 		danger: {
 			title: "Zona de peligro",
