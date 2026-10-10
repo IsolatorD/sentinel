@@ -1,6 +1,7 @@
 import { useTranslation } from "react-i18next";
 import { IssueFilters } from "@/components/organisms/IssueFilters/IssueFilters";
 import { IssueList } from "@/components/organisms/IssueList/IssueList";
+import { ProjectTrend } from "@/components/organisms/ProjectTrend/ProjectTrend";
 import { PageTemplate } from "@/components/templates/PageTemplate/PageTemplate";
 import { useCurrentProject } from "@/hooks/useScope/useScope";
 import { ProjectGate } from "@/pages/ProjectGate/ProjectGate";
@@ -12,6 +13,7 @@ export function IssuesPage() {
 		<ProjectGate>
 			<PageTemplate title={t("issues.title")} description={project?.name}>
 				<div className="space-y-4">
+					<ProjectTrend />
 					<IssueFilters />
 					<IssueList />
 				</div>

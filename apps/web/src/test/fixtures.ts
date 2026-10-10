@@ -6,6 +6,7 @@ import type {
 	IssueListDto,
 	ProjectDto,
 	ProjectKeyDto,
+	StatsDto,
 } from "@sentinel/shared";
 
 const NOW = Date.now();
@@ -71,6 +72,7 @@ export const issueList = (
 	total,
 	limit: 25,
 	offset: 0,
+	trends: {},
 });
 
 export const eventPayload = {
@@ -189,3 +191,21 @@ export const eventList = (): EventListDto => {
 		offset: 0,
 	};
 };
+
+/** Serie de estadísticas de 24 h (24 puntos); `events` rellena la hora más reciente. */
+export const stats = (
+	over: Partial<StatsDto> = {},
+	events = [0, 0, 3, 5],
+): StatsDto => ({
+	period: "24h",
+	bucketMinutes: 60,
+	from: "2026-10-08T16:00:00.000Z",
+	to: "2026-10-09T15:42:00.000Z",
+	totalEvents: events.reduce((a, b) => a + b, 0),
+	points: events.map((n, i) => ({
+		start: new Date(Date.UTC(2026, 9, 9, 12 + i)).toISOString(),
+		events: n,
+		users: Math.min(n, 2),
+	})),
+	...over,
+});

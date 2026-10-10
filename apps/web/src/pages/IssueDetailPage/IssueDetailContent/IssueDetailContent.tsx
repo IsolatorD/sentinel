@@ -9,6 +9,7 @@ import { IssueActivity } from "@/components/organisms/IssueActivity/IssueActivit
 import { IssueEventDetails } from "@/components/organisms/IssueEventDetails/IssueEventDetails";
 import { IssueEventsTable } from "@/components/organisms/IssueEventsTable/IssueEventsTable";
 import { IssueHeader } from "@/components/organisms/IssueHeader/IssueHeader";
+import { IssueTrend } from "@/components/organisms/IssueTrend/IssueTrend";
 import { PageTemplate } from "@/components/templates/PageTemplate/PageTemplate";
 import {
 	useIssue,
@@ -72,6 +73,8 @@ export function IssueDetailContent() {
 						orgSlug={organization.slug}
 						projectSlug={project.slug}
 					/>
+
+					<IssueTrend issueId={issueId} />
 
 					<div data-tour="issue-tabs">
 						<TabBar

@@ -67,6 +67,7 @@ export function IssueList() {
 					)}
 				>
 					<span>{t("issues.columns.issue")}</span>
+					<span className="text-right">{t("issues.columns.trend")}</span>
 					<span className="text-right">{t("issues.columns.events")}</span>
 					<span className="text-right">{t("issues.columns.users")}</span>
 					<span className="text-right">{t("issues.columns.lastSeen")}</span>
@@ -127,6 +128,7 @@ export function IssueList() {
 									key={issue.id}
 									index={index}
 									issue={issue}
+									trend={data.trends[issue.id]}
 									orgSlug={organization.slug}
 									projectSlug={project.slug}
 								/>

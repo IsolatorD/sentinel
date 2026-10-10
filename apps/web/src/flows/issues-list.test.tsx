@@ -163,6 +163,7 @@ describe("paginación", () => {
 			total: 60,
 			limit: 25,
 			offset: q.offset ?? 0,
+			trends: {},
 		}));
 	});
 

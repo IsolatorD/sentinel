@@ -141,8 +141,8 @@ Reglas de alerta (nuevo issue, regresión, umbral de frecuencia), canales email 
 5. ✅ **Avisos con sonner** (issue resuelto, proyecto creado...): el texto lo manda el backend en una cabecera de respuesta, sin cambiar la forma de los datos; el frontend tiene un respaldo. Límite: los endpoints de Better Auth (organizaciones, invitaciones) no los controlamos, así que sus avisos usan el texto del frontend.
 
 *Bloque C — se apoya en el B*
-6. **Verificación de cuenta por correo**: obligatoria para registros con email y contraseña cuando hay SMTP (Google ya llega verificado), con reenvío del correo.
-7. **Gráficos de tendencia** por issue y por proyecto (agregación de eventos por intervalo en la API).
+6. ✅ **Verificación de cuenta por correo**: obligatoria para registros con email y contraseña cuando hay SMTP (Google ya llega verificado), con reenvío del correo.
+7. ✅ **Gráficos de tendencia** por issue y por proyecto (agregación de eventos por intervalo en la API). Gráficos de barras en SVG propio (sin librería): panel en la lista y en el detalle, y un mini gráfico por fila.
 
 *Pendientes sueltos*: avisar por correo al asignar un issue, tests unitarios por archivo (cuando se indique), módulo de integraciones (Slack, Jira...).
 

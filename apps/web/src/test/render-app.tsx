@@ -12,6 +12,7 @@ import { issuesService } from "@/services/issuesService/issuesService";
 import { organizationsService } from "@/services/organizationsService/organizationsService";
 import { preferencesService } from "@/services/preferencesService/preferencesService";
 import { projectsService } from "@/services/projectsService/projectsService";
+import { statsService } from "@/services/statsService/statsService";
 import * as fx from "./fixtures";
 
 /** Monta la aplicación real (router, caché, páginas) en una ruta; los servicios se simulan en cada test. */
@@ -54,6 +55,8 @@ export function mockHappyPath() {
 	}));
 	vi.mocked(projectsService.list).mockResolvedValue([fx.project]);
 	vi.mocked(projectsService.get).mockResolvedValue(fx.project);
+	vi.mocked(statsService.project).mockResolvedValue(fx.stats());
+	vi.mocked(statsService.issue).mockResolvedValue(fx.stats());
 	vi.mocked(issuesService.list).mockResolvedValue(fx.issueList());
 	vi.mocked(issuesService.get).mockResolvedValue(fx.issueDetail());
 	vi.mocked(issuesService.listEvents).mockResolvedValue(fx.eventList());

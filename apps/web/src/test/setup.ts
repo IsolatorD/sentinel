@@ -11,6 +11,7 @@ beforeAll(async () => {
 
 // Las preferencias del servidor se simulan en todas las pruebas (cada una puede ajustar lo que devuelven).
 vi.mock("@/services/preferencesService/preferencesService");
+vi.mock("@/services/statsService/statsService");
 
 // Ningún test sale a la red: lo que no se simula con `vi.mock` falla como una caída de red. Sin esto,
 // axios (a diferencia de `fetch` con URL relativa) llegaría a un servidor local si lo hubiera.

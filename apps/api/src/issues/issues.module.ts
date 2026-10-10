@@ -10,16 +10,21 @@ import { IssueEventsRepository } from "./issue-events.repository.js";
 import { IssuesController } from "./issues.controller.js";
 import { IssuesRepository } from "./issues.repository.js";
 import { IssuesService } from "./issues.service.js";
+import { StatsController } from "./stats/stats.controller.js";
+import { StatsRepository } from "./stats/stats.repository.js";
+import { StatsService } from "./stats/stats.service.js";
 
 @Module({
 	imports: [AuthModule, OrganizationsModule, ProjectsModule, ReleasesModule],
-	controllers: [IssuesController, ActivityController],
+	controllers: [IssuesController, ActivityController, StatsController],
 	providers: [
 		IssuesRepository,
 		IssueEventsRepository,
 		IssuesService,
 		ActivityRepository,
 		ActivityService,
+		StatsRepository,
+		StatsService,
 	],
 })
 export class IssuesModule {}

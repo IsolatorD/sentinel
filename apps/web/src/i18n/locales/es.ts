@@ -135,6 +135,21 @@ export const es: Deep<Translations> = {
 		open: "Ver issues",
 		loadError: "No se pudieron cargar los proyectos.",
 	},
+	trend: {
+		projectTitle: "Eventos",
+		issueTitle: "Ocurrencias",
+		events_one: "{{count}} evento",
+		events_other: "{{count}} eventos",
+		empty: "No hay eventos en este periodo",
+		loadError: "No se pudo cargar el gráfico.",
+		chartLabel: "Eventos a lo largo del tiempo ({{period}})",
+		period: {
+			label: "Periodo",
+			"24h": "24 h",
+			"7d": "7 días",
+			"30d": "30 días",
+		},
+	},
 	issues: {
 		title: "Issues",
 		tabs: {
@@ -170,7 +185,9 @@ export const es: Deep<Translations> = {
 			events: "Eventos",
 			users: "Usuarios",
 			lastSeen: "Última vez",
+			trend: "Últimas 24 h",
 		},
+		trendLabel: "Eventos por hora en las últimas 24 horas",
 		firstSeen: "Visto por primera vez {{when}}",
 		levels: {
 			fatal: "Fatal",

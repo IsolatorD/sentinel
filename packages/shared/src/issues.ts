@@ -137,7 +137,10 @@ export const issueDetailDtoSchema = issueDtoSchema.extend({
 });
 export type IssueDetailDto = z.infer<typeof issueDetailDtoSchema>;
 
-export const issueListDtoSchema = paginated(issueDtoSchema);
+export const issueListDtoSchema = paginated(issueDtoSchema).extend({
+	/** Eventos de las últimas 24 h por hora (24 valores), por id de issue: alimenta el gráfico de cada fila. */
+	trends: z.record(z.string(), z.array(z.number().int())).default({}),
+});
 export type IssueListDto = z.infer<typeof issueListDtoSchema>;
 
 export const eventListDtoSchema = paginated(eventSummaryDtoSchema);

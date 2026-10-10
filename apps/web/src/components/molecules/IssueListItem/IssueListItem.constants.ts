@@ -8,4 +8,4 @@ export const LEVEL_BAR: Record<string, string> = {
 
 /** Columnas compartidas con la cabecera de la lista. */
 export const ISSUE_GRID =
-	"grid grid-cols-[minmax(0,1fr)_4.5rem_4.5rem_7rem] items-center gap-4";
+	"grid grid-cols-[minmax(0,1fr)_6rem_4.5rem_4.5rem_7rem] items-center gap-4";

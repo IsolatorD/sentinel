@@ -3,6 +3,7 @@ import { Link } from "@tanstack/react-router";
 import { useTranslation } from "react-i18next";
 import { Avatar } from "@/components/atoms/Avatar/Avatar";
 import { Badge } from "@/components/atoms/Badge/Badge";
+import { Sparkline } from "@/components/atoms/Sparkline/Sparkline";
 import {
 	ISSUE_GRID,
 	LEVEL_BAR,
@@ -19,12 +20,15 @@ export function IssueListItem({
 	orgSlug,
 	projectSlug,
 	index = 0,
+	trend,
 }: {
 	issue: IssueDto;
 	orgSlug: string;
 	projectSlug: string;
 	/** Posición en la lista: escalona la entrada de las filas. */
 	index?: number;
+	/** Eventos por hora de las últimas 24 h. */
+	trend?: number[];
 }) {
 	const { t, i18n } = useTranslation();
 	return (
@@ -84,6 +88,9 @@ export function IssueListItem({
 							})}
 						</span>
 					</span>
+				</span>
+				<span className="justify-self-end">
+					{trend && <Sparkline values={trend} label={t("issues.trendLabel")} />}
 				</span>
 				<span className="text-right text-sm tabular-nums text-foreground">
 					{formatCompact(issue.eventCount, i18n.language)}

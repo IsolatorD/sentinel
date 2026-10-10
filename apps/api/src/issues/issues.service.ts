@@ -24,6 +24,7 @@ import {
 	IssueEventsRepository,
 } from "./issue-events.repository.js";
 import { type IssueRow, IssuesRepository } from "./issues.repository.js";
+import { StatsService } from "./stats/stats.service.js";
 
 const toIssueDto = (
 	row: IssueRow,
@@ -79,6 +80,7 @@ export class IssuesService {
 		private readonly projects: ProjectsService,
 		private readonly releases: ReleasesService,
 		private readonly activity: ActivityService,
+		private readonly stats: StatsService,
 	) {}
 
 	async list(
@@ -94,9 +96,10 @@ export class IssuesService {
 			assignee: query.assignee === "me" ? userId : query.assignee,
 		};
 		const { rows, total } = await this.issues.list(projectId, resolved);
-		const [users, people] = await Promise.all([
+		const [users, people, trends] = await Promise.all([
 			this.issues.userCounts(rows.map((r) => r.id)),
 			this.issues.assignees(rows.map((r) => r.assigneeId)),
+			this.stats.trends(rows.map((r) => r.id)),
 		]);
 		return {
 			items: rows.map((r) =>
@@ -107,6 +110,7 @@ export class IssuesService {
 				),
 			),
 			total,
+			trends,
 			limit: query.limit,
 			offset: query.offset,
 		};

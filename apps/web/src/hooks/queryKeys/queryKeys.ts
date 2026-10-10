@@ -40,6 +40,15 @@ export const queryKeys = {
 		projectId: string,
 		query: Partial<ListIssuesQuery>,
 	) => [...queryKeys.issues(orgId, projectId), "list", query] as const,
+	projectStats: (orgId: string, projectId: string, period: string) =>
+		["orgs", orgId, "projects", projectId, "stats", period] as const,
+	issueStats: (
+		orgId: string,
+		projectId: string,
+		issueId: string,
+		period: string,
+	) =>
+		[...queryKeys.issues(orgId, projectId), "stats", issueId, period] as const,
 	issue: (orgId: string, projectId: string, issueId: string) =>
 		[...queryKeys.issues(orgId, projectId), "detail", issueId] as const,
 	issueEvents: (

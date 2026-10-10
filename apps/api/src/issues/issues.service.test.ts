@@ -11,6 +11,7 @@ import type {
 } from "./issue-events.repository.js";
 import type { IssueRow, IssuesRepository } from "./issues.repository.js";
 import { IssuesService } from "./issues.service.js";
+import type { StatsService } from "./stats/stats.service.js";
 
 const ISSUE_ID = "11111111-1111-4111-8111-111111111111";
 const PROJECT_ID = "22222222-2222-4222-8222-222222222222";
@@ -86,6 +87,7 @@ function setup(
 		...deps.issues,
 	};
 	const activity = { record: vi.fn(async () => {}) };
+	const stats = { trends: vi.fn(async () => ({})) };
 	const events = { ...deps.events };
 	return {
 		service: new IssuesService(
@@ -95,6 +97,7 @@ function setup(
 			projects,
 			releases as unknown as ReleasesService,
 			activity as unknown as ActivityService,
+			stats as unknown as StatsService,
 		),
 		activity,
 		releases,

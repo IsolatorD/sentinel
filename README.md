@@ -93,8 +93,14 @@ Requiere sesión. Cuelga de un proyecto: `/api/organizations/:orgId/projects/:pr
 | GET / PATCH / DELETE | `/:issueId` | detalle con el último evento / cambiar estado / borrar |
 | GET | `/:issueId/events` | eventos del issue (resumen, más recientes primero) |
 | GET | `/:issueId/events/:eventId` | evento completo (stacktrace, breadcrumbs, contexto) |
+| GET | `/:issueId/stats?period=` | eventos del issue a lo largo del tiempo (ver abajo) |
+
 
 Parámetros del listado: `status` (`unresolved` por defecto, `resolved`, `ignored` o `all`), `level`, `q` (busca en título y culprit), `sort` (`lastSeen`, `firstSeen`, `events`), `order`, `limit` (máx. 100) y `offset`. Cada issue incluye `userCount` (usuarios distintos afectados). Un issue resuelto que vuelve a ocurrir se reabre solo; uno ignorado sigue ignorado.
+
+### Gráficos de tendencia
+
+`GET /api/organizations/:orgId/projects/:projectId/stats?period=` (proyecto) y `…/issues/:issueId/stats?period=` (issue) devuelven una serie **continua**, con los intervalos vacíos a cero, en UTC: `24h` por hora, `7d` cada 6 horas y `30d` por día. Cada punto trae `events` y `users` (usuarios distintos); la respuesta incluye `totalEvents`. El listado de issues añade `trends`: las últimas 24 h por hora de cada issue de la página, para el mini gráfico de cada fila. La agrupación la hace Postgres con `date_bin`, apoyada en los índices `(issue_id, timestamp)` y `(project_id, timestamp)`.
 
 ## Pruebas
 

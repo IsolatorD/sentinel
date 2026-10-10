@@ -15,4 +15,5 @@ export * from "./public-config.js";
 export * from "./releases.js";
 export * from "./scrub.js";
 export * from "./source-maps.js";
+export * from "./stats.js";
 export * from "./tokens.js";

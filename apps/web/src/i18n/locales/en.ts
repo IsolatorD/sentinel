@@ -131,6 +131,21 @@ export const en = {
 		open: "Open issues",
 		loadError: "Could not load the projects.",
 	},
+	trend: {
+		projectTitle: "Events",
+		issueTitle: "Occurrences",
+		events_one: "{{count}} event",
+		events_other: "{{count}} events",
+		empty: "No events in this period",
+		loadError: "Couldn't load the chart.",
+		chartLabel: "Events over time ({{period}})",
+		period: {
+			label: "Period",
+			"24h": "24 h",
+			"7d": "7 days",
+			"30d": "30 days",
+		},
+	},
 	issues: {
 		title: "Issues",
 		tabs: {
@@ -166,7 +181,9 @@ export const en = {
 			events: "Events",
 			users: "Users",
 			lastSeen: "Last seen",
+			trend: "Last 24 h",
 		},
+		trendLabel: "Events per hour over the last 24 hours",
 		firstSeen: "First seen {{when}}",
 		levels: {
 			fatal: "Fatal",
