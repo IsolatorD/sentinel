@@ -1,11 +1,11 @@
+import type { Transaction } from "@sentinel/core";
 import { ingestTransactionSchema } from "@sentinel/shared";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import type { z } from "zod";
 import type { SentinelClient } from "../client";
 import { createTestClient } from "../test-utils";
 import type { SentinelTransaction } from "../types";
-import { Tracer } from "./tracer";
-import type { Transaction } from "./transaction";
+import { BrowserTracer } from "./browser-tracer";
 
 // Comprobación en compilación: la transacción del SDK debe ser asignable al contrato del servidor.
 const _assignable = (
@@ -14,10 +14,10 @@ const _assignable = (
 void _assignable;
 
 function makeTracer(
-	over: Partial<ConstructorParameters<typeof Tracer>[0]> = {},
+	over: Partial<ConstructorParameters<typeof BrowserTracer>[0]> = {},
 ) {
 	const finished: Transaction[] = [];
-	const tracer = new Tracer(
+	const tracer = new BrowserTracer(
 		{
 			sampleRate: 1,
 			pageload: false,

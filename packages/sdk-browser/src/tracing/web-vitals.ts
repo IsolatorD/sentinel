@@ -1,4 +1,4 @@
-import type { Measurement } from "./transaction";
+import type { Measurement } from "@sentinel/core";
 
 export interface VitalsCollector {
 	/** Valores actuales; solo incluye los que ya se han podido medir. */

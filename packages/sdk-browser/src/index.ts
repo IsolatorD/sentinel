@@ -1,7 +1,9 @@
+import {
+	Span,
+	type StartTransactionContext,
+	type Transaction,
+} from "@sentinel/core";
 import { SentinelClient } from "./client";
-import { Span } from "./tracing/span";
-import type { StartTransactionContext } from "./tracing/tracer";
-import type { Transaction } from "./tracing/transaction";
 import type {
 	Breadcrumb,
 	CaptureHint,
@@ -10,10 +12,13 @@ import type {
 	User,
 } from "./types";
 
+export type {
+	Measurement,
+	Span,
+	StartTransactionContext,
+	Transaction,
+} from "@sentinel/core";
 export { SentinelClient } from "./client";
-export type { Span } from "./tracing/span";
-export type { StartTransactionContext } from "./tracing/tracer";
-export type { Measurement, Transaction } from "./tracing/transaction";
 export type {
 	Breadcrumb,
 	BreadcrumbOptions,

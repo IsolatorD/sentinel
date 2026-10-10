@@ -1,4 +1,4 @@
-import { stringify } from "../normalize";
+import { stringify } from "@sentinel/core";
 import type { Level } from "../types";
 import type { AddBreadcrumb, Uninstall } from "./types";
 

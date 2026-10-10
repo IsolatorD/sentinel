@@ -1,7 +1,6 @@
-/** Quita query y hash: pueden contener tokens u otros datos personales. */
-export function stripQuery(url: string): string {
-	return url.split(/[?#]/, 1)[0];
-}
+import { stripQuery } from "@sentinel/core";
+
+export { stripQuery };
 
 export function pageUrl(sendFullUrl: boolean): string | undefined {
 	if (typeof location === "undefined") return undefined;

@@ -1,16 +1,15 @@
 import { stripQuery } from "../url";
+import { GlobalTraceContext, type TraceContext } from "./context";
 import { type Clock, Span } from "./span";
+import { formatTraceparent } from "./traceparent";
 import { Transaction } from "./transaction";
-import { collectWebVitals } from "./web-vitals";
 
 export interface TracerConfig {
 	/** Fracción de transacciones que se registran (0 a 1). */
 	sampleRate: number;
-	pageload: boolean;
-	navigation: boolean;
+	/** Crea un span por cada petición HTTP saliente. */
 	http: boolean;
-	webVitals: boolean;
-	/** A qué URLs se añade la cabecera `traceparent`. Por defecto, solo al mismo origen. */
+	/** A qué URLs se añade la cabecera `traceparent`. */
 	propagationTargets?: Array<string | RegExp>;
 	maxSpans: number;
 	idleTimeoutMs: number;
@@ -20,6 +19,7 @@ export interface TracerConfig {
 export interface TracerDeps {
 	clock?: Clock;
 	random?: () => number;
+	context?: TraceContext;
 	/** Recibe cada transacción muestreada al terminar. */
 	onFinish: (tx: Transaction) => void;
 }
@@ -30,11 +30,16 @@ export interface StartTransactionContext {
 	startTimestamp?: number;
 	/** Si es `true`, termina sola cuando deja de haber actividad. */
 	idle?: boolean;
+	/** Continúa una traza que viene de fuera (cabecera `traceparent`). */
+	traceId?: string;
+	parentSpanId?: string;
+	/** Decisión ya tomada por quien originó la traza; si se omite, se muestrea con `sampleRate`. */
+	sampled?: boolean;
 	/** Se llama justo antes de cerrarla (uso interno: añadir los Web Vitals). */
 	beforeFinish?: (tx: Transaction) => void;
 }
 
-/** Lo que la instrumentación de `fetch`/XHR recibe al empezar una petición. */
+/** Lo que la instrumentación de peticiones HTTP recibe al empezar una. */
 export interface HttpSpanHandle {
 	/** Cabeceras que hay que añadir a la petición para continuar la traza en el servidor. */
 	headers?: Record<string, string>;
@@ -57,38 +62,59 @@ function statusFromHttp(code: number | undefined): string {
 	);
 }
 
+export { statusFromHttp };
+
 const isPromiseLike = (v: unknown): v is PromiseLike<unknown> =>
 	typeof (v as PromiseLike<unknown> | undefined)?.then === "function";
 
 export class Tracer {
-	private readonly clock: Clock;
+	protected readonly clock: Clock;
 	private readonly random: () => number;
-	private activeTx?: Transaction;
-	/** La transacción automática (pageload/navegación) en curso, para cerrarla al navegar. */
-	private autoTx?: Transaction;
-	private cleanups: Array<() => void> = [];
+	readonly context: TraceContext;
 
 	constructor(
 		readonly config: TracerConfig,
-		private readonly deps: TracerDeps,
+		protected readonly deps: TracerDeps,
 	) {
 		this.clock = deps.clock ?? Date.now;
 		this.random = deps.random ?? Math.random;
+		this.context = deps.context ?? new GlobalTraceContext();
 	}
 
 	/** La transacción en curso, a la que se añaden los spans. */
 	get active(): Transaction | undefined {
-		return this.activeTx && !this.activeTx.finished ? this.activeTx : undefined;
+		const tx = this.context.get();
+		return tx && !tx.finished ? tx : undefined;
 	}
 
 	startTransaction(ctx: StartTransactionContext): Transaction {
-		const tx = new Transaction({
+		const tx = this.createTransaction(ctx);
+		this.context.enter(tx);
+		return tx;
+	}
+
+	/**
+	 * Como `startTransaction`, pero la transacción solo es "la en curso" dentro de `fn` (y de lo
+	 * asíncrono que arranque): lo que necesita un servidor, donde hay una por petición.
+	 */
+	runTransaction<T>(
+		ctx: StartTransactionContext,
+		fn: (tx: Transaction) => T,
+	): T {
+		const tx = this.createTransaction(ctx);
+		return this.context.run(tx, () => fn(tx));
+	}
+
+	protected createTransaction(ctx: StartTransactionContext): Transaction {
+		return new Transaction({
 			name: ctx.name,
 			op: ctx.op ?? "custom",
 			startMs: ctx.startTimestamp ?? this.clock(),
-			sampled: this.random() < this.config.sampleRate,
+			sampled: ctx.sampled ?? this.random() < this.config.sampleRate,
 			maxSpans: this.config.maxSpans,
 			clock: this.clock,
+			traceId: ctx.traceId,
+			parentSpanId: ctx.parentSpanId,
 			idle: ctx.idle
 				? {
 						idleTimeoutMs: this.config.idleTimeoutMs,
@@ -97,14 +123,15 @@ export class Tracer {
 				: undefined,
 			beforeFinish: ctx.beforeFinish,
 			onFinish: (finished) => {
-				if (this.activeTx === finished) this.activeTx = undefined;
-				if (this.autoTx === finished) this.autoTx = undefined;
+				if (this.context.get() === finished) this.context.enter(undefined);
+				this.onTransactionFinished(finished);
 				if (finished.sampled) this.deps.onFinish(finished);
 			},
 		});
-		this.activeTx = tx;
-		return tx;
 	}
+
+	/** Gancho para subclases (p. ej. olvidar la transacción automática que acaba de terminar). */
+	protected onTransactionFinished(_tx: Transaction): void {}
 
 	/** Span dentro de la transacción en curso; sin ninguna, devuelve uno que no se registra. */
 	startSpan(
@@ -155,64 +182,6 @@ export class Tracer {
 		}
 	}
 
-	// ---------- Instrumentación automática ----------
-
-	/** Transacción de la carga de página: desde el inicio de la navegación hasta que la página se asienta. */
-	startPageload(): void {
-		if (!this.config.pageload || typeof window === "undefined") return;
-		const start =
-			typeof performance !== "undefined" && performance.timeOrigin
-				? performance.timeOrigin
-				: this.clock();
-		const vitals = this.config.webVitals ? collectWebVitals() : undefined;
-
-		const tx = this.startAuto({
-			name: location.pathname || "/",
-			op: "pageload",
-			startTimestamp: start,
-			beforeFinish: (t) => {
-				if (!vitals) return;
-				for (const [name, m] of Object.entries(vitals.read()))
-					t.setMeasurement(name, m.value, m.unit);
-				vitals.stop();
-			},
-		});
-		if (vitals) this.cleanups.push(() => vitals.stop());
-
-		// La página no está "lista" hasta el evento load.
-		const release = tx.hold();
-		if (document.readyState === "complete") release();
-		else {
-			window.addEventListener("load", release, { once: true });
-			this.cleanups.push(() => window.removeEventListener("load", release));
-		}
-
-		// Al ocultarse la pestaña no se puede garantizar nada más: se cierra con lo que haya.
-		const onHidden = () => {
-			if (document.visibilityState === "hidden") this.autoTx?.finish();
-		};
-		document.addEventListener("visibilitychange", onHidden);
-		this.cleanups.push(() =>
-			document.removeEventListener("visibilitychange", onHidden),
-		);
-	}
-
-	/** Cambio de URL sin recargar (SPA): cierra la transacción anterior y abre una de navegación. */
-	onNavigation(_from: string, to: string): void {
-		if (!this.config.navigation) return;
-		let pathname: string;
-		try {
-			pathname = new URL(to, location.href).pathname;
-		} catch {
-			return;
-		}
-		// Solo cambió la query o el hash: sigue siendo la misma pantalla.
-		if (this.autoTx && this.autoTx.name === pathname && !this.autoTx.finished)
-			return;
-		this.autoTx?.finish();
-		this.startAuto({ name: pathname, op: "navigation" });
-	}
-
 	/** Empieza un span de petición HTTP, o `undefined` si no hay una transacción muestreada. */
 	startHttpSpan(info: {
 		method: string;
@@ -226,14 +195,11 @@ export class Tracer {
 		const span = tx.startSpan(
 			"http.client",
 			`${info.method} ${this.describeUrl(clean)}`,
-			{
-				method: info.method,
-				url: clean,
-			},
+			{ method: info.method, url: clean },
 		);
 		return {
 			headers: this.shouldPropagate(info.url)
-				? { traceparent: `00-${tx.traceId}-${span.spanId}-01` }
+				? { traceparent: formatTraceparent(tx.traceId, span.spanId) }
 				: undefined,
 			end: (statusCode) => {
 				if (statusCode !== undefined)
@@ -243,41 +209,33 @@ export class Tracer {
 		};
 	}
 
-	/** Termina lo que esté en curso y quita los listeners. */
+	/** Termina lo que esté en curso. */
 	destroy(): void {
-		this.activeTx?.finish();
-		this.autoTx?.finish();
-		for (const cleanup of this.cleanups.splice(0)) cleanup();
+		this.active?.finish();
 	}
 
-	private startAuto(ctx: StartTransactionContext): Transaction {
-		const tx = this.startTransaction({ ...ctx, idle: true });
-		this.autoTx = tx;
-		return tx;
-	}
-
-	private describeUrl(url: string): string {
+	/** Cómo se muestra la URL de una petición en la descripción del span. */
+	protected describeUrl(url: string): string {
 		try {
-			const parsed = new URL(url, location.href);
-			return parsed.origin === location.origin
-				? parsed.pathname
-				: `${parsed.origin}${parsed.pathname}`;
+			const parsed = new URL(url);
+			return `${parsed.origin}${parsed.pathname}`;
 		} catch {
 			return url;
 		}
 	}
 
-	private shouldPropagate(url: string): boolean {
-		let absolute: URL;
+	/** ¿Se añade `traceparent` a esta URL? Solo a las de `propagationTargets`. */
+	protected shouldPropagate(url: string): boolean {
+		const targets = this.config.propagationTargets;
+		if (!targets) return false;
+		let href: string;
 		try {
-			absolute = new URL(url, location.href);
+			href = new URL(url).href;
 		} catch {
 			return false;
 		}
-		const targets = this.config.propagationTargets;
-		if (!targets) return absolute.origin === location.origin;
 		return targets.some((t) =>
-			typeof t === "string" ? absolute.href.includes(t) : t.test(absolute.href),
+			typeof t === "string" ? href.includes(t) : t.test(href),
 		);
 	}
 }

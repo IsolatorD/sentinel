@@ -51,6 +51,7 @@ export function transactionPayload(
 		transaction_id: uuid(),
 		trace_id: tx.traceId,
 		span_id: tx.spanId,
+		...(tx.parentSpanId && { parent_span_id: tx.parentSpanId }),
 		name: clip(tx.name) || "/",
 		op: clip(tx.op, 255),
 		timestamp: new Date(tx.startMs).toISOString(),

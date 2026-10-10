@@ -16,6 +16,8 @@ export interface TransactionOptions {
 	maxSpans: number;
 	clock: Clock;
 	traceId?: string;
+	/** Span del servicio que originó la traza (llega en `traceparent`), si esta transacción la continúa. */
+	parentSpanId?: string;
 	idle?: IdleOptions;
 	/** Se llama justo antes de cerrarla (p. ej. para añadir los Web Vitals). */
 	beforeFinish?: (tx: Transaction) => void;
@@ -37,6 +39,7 @@ export class Transaction {
 	readonly startMs: number;
 	readonly sampled: boolean;
 	readonly op: string;
+	readonly parentSpanId?: string;
 	readonly tags: Record<string, string> = {};
 	readonly measurements: Record<string, Measurement> = {};
 	readonly spans: Span[] = [];
@@ -57,6 +60,7 @@ export class Transaction {
 		this.startMs = options.startMs;
 		this.sampled = options.sampled;
 		this.traceId = options.traceId ?? randomHex(16);
+		this.parentSpanId = options.parentSpanId;
 		this.lastActivityMs = options.startMs;
 
 		if (options.idle) {
