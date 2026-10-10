@@ -155,7 +155,7 @@ Reglas de alerta (nuevo issue, regresión, umbral de frecuencia), canales email 
 - Fuera de la fase, para más adelante: alertas de rendimiento, enlazar un error con su traza en la UI (el `trace_id` ya se guarda), SDK de servidor que continúe la traza (`traceparent`), particionado por fecha y retención.
 
 **Fase 5 — Más plataformas y pulido**
-SDK Node, React Native, Python. Retención configurable, cuotas, dashboard de estadísticas, documentación pública y landing de portfolio.
+SDK Node ✅ (`@sentinel/node`, sobre el núcleo común `@sentinel/core`: errores del proceso, transacciones por petición con `AsyncLocalStorage`, spans de `http`/`https`/`fetch`, continuación de la traza vía `traceparent`, integraciones de Express y Fastify). Pendiente: React Native, Python. Retención configurable, cuotas, dashboard de estadísticas, documentación pública y landing de portfolio.
 
 ## 7. Despliegue (recomendación)
 

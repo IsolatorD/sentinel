@@ -10,6 +10,7 @@ import type {
 import { cn } from "@/utils/cn/cn";
 import {
 	httpSnippet,
+	nodeSnippet,
 	npmSnippet,
 	reactSnippet,
 	scriptTagSnippet,
@@ -26,7 +27,11 @@ export function InstallInstructions({
 	const [picked, setPicked] = useState<Method>();
 	const tab = picked && methods.includes(picked) ? picked : methods[0];
 	const npm =
-		platform === "react" ? reactSnippet({ dsn }) : npmSnippet({ dsn });
+		platform === "react"
+			? reactSnippet({ dsn })
+			: platform === "node"
+				? nodeSnippet({ dsn })
+				: npmSnippet({ dsn });
 
 	return (
 		<div data-testid="install-instructions" data-platform={platform}>

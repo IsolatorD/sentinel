@@ -29,6 +29,8 @@ $("init").addEventListener("click", () => {
 		debug: true,
 		// Rendimiento: mide la carga de página, las navegaciones y cada fetch/XHR.
 		tracesSampleRate: 1,
+		// El backend de examples/node-demo: aquí también se envía `traceparent`.
+		tracePropagationTargets: ["localhost:5601"],
 		tags: { app: "browser-demo" },
 	});
 	log(
@@ -140,4 +142,16 @@ $("perf-slow-fetch").addEventListener("click", async () => {
 	const res = await fetch("/slow?ms=900");
 	tx?.finish();
 	log(`fetch /slow -> ${res.status} (900 ms, con span y traceparent)`);
+});
+
+$("perf-backend").addEventListener("click", async () => {
+	// Una traza que cruza del navegador a un backend con @sentinel/node (examples/node-demo).
+	const tx = Sentinel.startTransaction({ name: "/pedido", op: "navigation" });
+	try {
+		const res = await fetch("http://localhost:5601/api/orders/42");
+		log(`backend Node -> ${res.status} (la traza continúa allí)`);
+	} catch {
+		log("no se pudo llamar al backend: ¿arrancaste examples/node-demo?");
+	}
+	tx?.finish();
 });

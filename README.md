@@ -21,8 +21,11 @@ pnpm dev          # api (3000), worker y web (5173)
 - `apps/api` — NestJS (HTTP)
 - `apps/worker` — NestJS standalone (BullMQ)
 - `apps/web` — React + Vite
+- `packages/sdk-core` — núcleo común de los SDK (`@sentinel/core`): cliente, transporte, filtros y rendimiento
 - `packages/sdk-browser` — SDK de navegador (`@sentinel/browser`)
-- `examples/browser-demo` — página para probar el SDK en un navegador real
+- `packages/sdk-react` — SDK de React (`@sentinel/react`)
+- `packages/sdk-node` — SDK de Node.js (`@sentinel/node`)
+- `examples/browser-demo`, `examples/node-demo` — páginas y servidor para probar los SDK; juntos muestran una traza que cruza del navegador al backend
 - `packages/db` — esquema Drizzle y migraciones (Postgres)
 - `packages/shared` — esquemas Zod y tipos compartidos
 
@@ -208,6 +211,12 @@ Es una red de seguridad, no un sustituto de no enviar datos sensibles: el SDK ya
 ## SDK de React
 
 `packages/sdk-react` (`@sentinel/react`) añade un `ErrorBoundary` que envía los errores de render con la pila de componentes, `withErrorBoundary` y `reactRootOptions()` para los handlers de React 19 (`onUncaughtError`, `onCaughtError`, `onRecoverableError`). Cada error se envía una sola vez aunque llegue por varios caminos. Ver su [README](packages/sdk-react/README.md).
+
+## SDK de Node.js
+
+`packages/sdk-node` (`@sentinel/node`) captura los errores del proceso (`uncaughtException`, `unhandledRejection`), mide cada petición que atiende un servidor `http`/`https` (y con él Express, Fastify o Nest) y las peticiones salientes (`http`, `https`, `fetch`), y **continúa la traza que llega del navegador** en la cabecera `traceparent`: la transacción del frontend y la del backend comparten `trace_id`. Un error capturado durante una petición lleva el `trace_id` de su transacción. Ver su [README](packages/sdk-node/README.md).
+
+Los tres SDK comparten `packages/sdk-core`: el cliente (alcance, filtros, muestreo, deduplicación), el transporte con reintentos, la normalización de eventos y el tracing. Cada plataforma aporta lo suyo: el navegador, la carga de página, Web Vitals y la navegación; Node, `AsyncLocalStorage` para tener una transacción por petición y la instrumentación de `http`.
 
 ## Alertas
 

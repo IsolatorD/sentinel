@@ -841,7 +841,7 @@ export const es: Deep<Translations> = {
 					"Usa el SDK del navegador, con un bundler o con una etiqueta script.",
 				react:
 					"El SDK de React incluye el del navegador y añade un límite de errores que reporta los fallos de render con su pila de componentes.",
-				node: "Todavía no hay un SDK de Node.js. Envía los eventos directamente a la API de ingesta; la misma petición sirve desde cualquier servidor.",
+				node: "El SDK de Node.js captura los errores no controlados y mide cada petición que atiende tu servidor, continuando las trazas que empiezan en el navegador.",
 				"react-native":
 					"Todavía no hay un SDK de React Native. Envía los eventos directamente a la API de ingesta.",
 				python:

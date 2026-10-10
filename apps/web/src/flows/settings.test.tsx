@@ -54,9 +54,26 @@ describe("configuración del proyecto", () => {
 		await waitFor(() =>
 			expect(install).toHaveAttribute("data-platform", "node"),
 		);
-		expect(install).toHaveTextContent("There is no Node.js SDK yet");
-		expect(install).toHaveTextContent("X-Sentinel-Key");
+		expect(
+			within(install).getByText(/npm install @sentinel\/node/),
+		).toBeInTheDocument();
+		expect(install).toHaveTextContent("tracesSampleRate");
+		expect(install).toHaveTextContent(fx.key.dsn);
 		expect(within(install).queryByRole("tab")).not.toBeInTheDocument();
+	});
+
+	it("las plataformas sin SDK (p. ej. Python) se envían a la API HTTP", async () => {
+		vi.mocked(projectsService.get).mockResolvedValue({
+			...fx.project,
+			platform: "python",
+		});
+		renderApp(SETTINGS_PATH);
+		const install = await screen.findByTestId("install-instructions");
+		await waitFor(() =>
+			expect(install).toHaveAttribute("data-platform", "python"),
+		);
+		expect(install).toHaveTextContent("There is no Python SDK yet");
+		expect(install).toHaveTextContent("X-Sentinel-Key");
 	});
 
 	it("las instrucciones de JavaScript también se pueden ver como etiqueta <script>", async () => {

@@ -23,4 +23,15 @@ La demo inicia el SDK con `tracesSampleRate: 1`, así que además de errores mid
 - cada `fetch` como un span `http.client`, con la cabecera `traceparent` si es del mismo origen;
 - tus propias operaciones con `Sentinel.startTransaction` y `Sentinel.trace` (botón *Medir una operación*).
 
+### Una traza que cruza al backend
+
+Con `examples/node-demo` (un servidor con `@sentinel/node`) la traza empieza en el navegador y continúa en el servidor:
+
+```bash
+pnpm build                                          # compila los SDK
+node examples/node-demo/server.mjs --dsn <tu DSN>   # backend en http://localhost:5601
+```
+
+Pulsa **Llamar al backend Node**: el SDK del navegador añade `traceparent` a la petición (`tracePropagationTargets`), el servidor continúa esa traza y las dos transacciones quedan con el mismo `trace_id`. Cada una se ve en **Rendimiento** con sus spans.
+
 Míralo en **Rendimiento** dentro del proyecto. Para ver datos de ejemplo sin abrir la demo: `pnpm seed:demo` (o `node examples/seed/seed.mjs --only transactions`).

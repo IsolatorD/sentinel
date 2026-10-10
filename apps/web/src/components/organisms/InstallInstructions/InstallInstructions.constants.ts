@@ -5,7 +5,7 @@ import type { Method } from "@/components/organisms/InstallInstructions/InstallI
 export const METHODS: Record<Platform, Method[]> = {
 	javascript: ["npm", "script"],
 	react: ["npm"],
-	node: ["http"],
+	node: ["npm"],
 	"react-native": ["http"],
 	python: ["http"],
 	other: ["http"],

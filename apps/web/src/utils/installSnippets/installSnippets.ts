@@ -38,6 +38,34 @@ export function scriptTagSnippet({
 	].join("\n");
 }
 
+/** Instalación en Node.js: captura errores del proceso y mide cada petición que atiende el servidor. */
+export function nodeSnippet({
+	dsn,
+	release = "1.0.0",
+	environment = "production",
+}: SnippetOptions) {
+	return {
+		install: "npm install @sentinel/node",
+		code: [
+			'import * as Sentinel from "@sentinel/node";',
+			"",
+			"// Antes de crear el servidor: así se miden también sus peticiones.",
+			"Sentinel.init({",
+			`  dsn: "${dsn}",`,
+			`  release: "${release}",`,
+			`  environment: "${environment}",`,
+			"  tracesSampleRate: 1,",
+			"});",
+			"",
+			"// Al apagar el servidor, envía lo pendiente:",
+			'process.on("SIGTERM", async () => {',
+			"  await Sentinel.close();",
+			"  process.exit(0);",
+			"});",
+		].join("\n"),
+	};
+}
+
 /** Instalación en React: `@sentinel/react` reexporta el SDK del navegador y añade el ErrorBoundary. */
 export function reactSnippet({
 	dsn,

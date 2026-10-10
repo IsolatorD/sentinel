@@ -831,7 +831,7 @@ export const en = {
 					"Use the browser SDK, either with a bundler or with a script tag.",
 				react:
 					"The React SDK includes the browser SDK and adds an error boundary that reports render errors with their component stack.",
-				node: "There is no Node.js SDK yet. Send events straight to the ingest API; the same request works from any server.",
+				node: "The Node.js SDK captures uncaught errors and measures every request your server handles, continuing traces that start in the browser.",
 				"react-native":
 					"There is no React Native SDK yet. Send events straight to the ingest API.",
 				python:

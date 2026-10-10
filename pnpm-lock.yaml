@@ -439,6 +439,9 @@ importers:
       '@sentinel/db':
         specifier: workspace:*
         version: link:../../packages/db
+      '@sentinel/node':
+        specifier: workspace:*
+        version: link:../../packages/sdk-node
       '@sentinel/shared':
         specifier: workspace:*
         version: link:../../packages/shared

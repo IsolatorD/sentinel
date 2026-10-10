@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
 	httpSnippet,
+	nodeSnippet,
 	npmSnippet,
 	reactSnippet,
 	scriptTagSnippet,
@@ -22,6 +23,14 @@ describe("install snippets", () => {
 		expect(snippet.install).toBe("npm install @sentinel/react");
 		expect(snippet.code).toContain(`dsn: "${dsn}"`);
 		expect(snippet.code).toContain("Sentinel.ErrorBoundary");
+	});
+
+	it("Node usa @sentinel/node con tracesSampleRate y cierra al apagar", () => {
+		const snippet = nodeSnippet({ dsn });
+		expect(snippet.install).toBe("npm install @sentinel/node");
+		expect(snippet.code).toContain(`dsn: "${dsn}"`);
+		expect(snippet.code).toContain("tracesSampleRate");
+		expect(snippet.code).toContain("Sentinel.close()");
 	});
 
 	it("sin SDK se envía a la API con la clave y el proyecto de la DSN", () => {
