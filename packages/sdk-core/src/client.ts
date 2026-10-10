@@ -79,6 +79,8 @@ export interface Platform {
 		request?: SentinelEvent["request"];
 		contexts?: Record<string, Record<string, unknown>>;
 	};
+	/** Último retoque de cada evento antes de enviarlo (p. ej. normalizar los nombres de archivo de los frames). */
+	processEvent?(event: SentinelEvent): SentinelEvent;
 	/** Origen de la página: distingue el código propio de scripts de terceros en los stacks. */
 	pageOrigin?(): string | undefined;
 	/** Dónde escribir los mensajes de `debug`. Por defecto `console.warn`. */
@@ -370,7 +372,9 @@ export class CoreClient<O extends CoreOptions = CoreOptions> {
 			}
 		}
 
-		const normalized = normalizeEvent(event);
+		const normalized = normalizeEvent(
+			this.platform.processEvent?.(event) ?? event,
+		);
 		void this.transport.send(normalized);
 		return normalized.event_id;
 	}

@@ -127,3 +127,24 @@ describe("isInApp", () => {
 		expect(isInApp(undefined, ORIGIN)).toBe(false);
 	});
 });
+
+describe("Hermes y código nativo", () => {
+	it("lee el formato de Hermes (address at ...) y no marca como código propio lo nativo", () => {
+		const frames = parseStack(
+			[
+				"Error: boom",
+				"    at onPress (address at index.android.bundle:1:2345)",
+				"    at anonymous (address at /data/user/0/app/files/index.android.bundle:1:99)",
+				"    at apply (native)",
+			].join("\n"),
+		);
+		// Del más antiguo al más reciente.
+		expect(
+			frames.map((f) => [f.function, f.filename, f.lineno, f.colno, f.in_app]),
+		).toEqual([
+			["apply", "native", undefined, undefined, false],
+			["anonymous", "/data/user/0/app/files/index.android.bundle", 1, 99, true],
+			["onPress", "index.android.bundle", 1, 2345, true],
+		]);
+	});
+});

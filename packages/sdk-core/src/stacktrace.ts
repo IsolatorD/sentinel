@@ -22,6 +22,8 @@ function parseV8Line(line: string): StackFrame | undefined {
 		fn = withFn[1];
 		rest = withFn[2];
 	}
+	// Hermes: "at fn (address at index.android.bundle:1:2345)"; "native" no es un archivo.
+	rest = rest.replace(/^address at /, "");
 	// "eval at foo (http://x/a.js:1:2), <anonymous>:1:1": nos quedamos con lo útil.
 	if (rest.startsWith("eval at ")) rest = "<anonymous>";
 	return { function: fn || undefined, ...parseLocation(rest) };
@@ -42,7 +44,7 @@ export function isInApp(
 ): boolean {
 	if (!filename) return false;
 	// Código nativo, eval y los módulos internos de Node (`node:internal/...`).
-	if (/^(?:<|\[native|node:)/.test(filename)) return false;
+	if (/^(?:<|\[native|native$|node:)/.test(filename)) return false;
 	if (/node_modules/.test(filename)) return false;
 	if (/^(?:chrome|moz|safari|webkit)(?:-web)?-?extension:/i.test(filename))
 		return false;

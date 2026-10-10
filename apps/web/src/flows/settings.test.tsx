@@ -62,7 +62,7 @@ describe("configuración del proyecto", () => {
 		expect(within(install).queryByRole("tab")).not.toBeInTheDocument();
 	});
 
-	it("Python tiene su propio SDK; React Native todavía se envía a la API HTTP", async () => {
+	it("Python tiene su propio SDK; las plataformas sin SDK usan la API HTTP", async () => {
 		vi.mocked(projectsService.get).mockResolvedValue({
 			...fx.project,
 			platform: "python",
@@ -80,15 +80,30 @@ describe("configuración del proyecto", () => {
 
 		vi.mocked(projectsService.get).mockResolvedValue({
 			...fx.project,
-			platform: "react-native",
+			platform: "other",
 		});
 		renderApp(SETTINGS_PATH);
 		const other = await screen.findByTestId("install-instructions");
 		await waitFor(() =>
-			expect(other).toHaveAttribute("data-platform", "react-native"),
+			expect(other).toHaveAttribute("data-platform", "other"),
 		);
-		expect(other).toHaveTextContent("There is no React Native SDK yet");
 		expect(other).toHaveTextContent("X-Sentinel-Key");
+	});
+
+	it("React Native tiene su propio SDK", async () => {
+		vi.mocked(projectsService.get).mockResolvedValue({
+			...fx.project,
+			platform: "react-native",
+		});
+		renderApp(SETTINGS_PATH);
+		const install = await screen.findByTestId("install-instructions");
+		await waitFor(() =>
+			expect(install).toHaveAttribute("data-platform", "react-native"),
+		);
+		expect(
+			within(install).getByText(/npm install @sentinel\/react-native/),
+		).toBeInTheDocument();
+		expect(install).toHaveTextContent("instrumentNavigation");
 	});
 
 	it("las instrucciones de JavaScript también se pueden ver como etiqueta <script>", async () => {

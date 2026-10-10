@@ -25,6 +25,7 @@ pnpm dev          # api (3000), worker y web (5173)
 - `packages/sdk-browser` — SDK de navegador (`@sentinel/browser`)
 - `packages/sdk-react` — SDK de React (`@sentinel/react`)
 - `packages/sdk-node` — SDK de Node.js (`@sentinel/node`)
+- `packages/sdk-react-native` — SDK de React Native (`@sentinel/react-native`)
 - `packages/sdk-python` — SDK de Python (`sentinel-sdk`), con su propio entorno y tests en pytest
 - `examples/browser-demo`, `examples/node-demo`, `examples/python-demo` — página y servidores para probar los SDK; juntos muestran una traza que cruza del navegador al backend
 - `packages/db` — esquema Drizzle y migraciones (Postgres)
@@ -227,6 +228,10 @@ Los tres SDK comparten `packages/sdk-core`: el cliente (alcance, filtros, muestr
 `packages/sdk-python` (`sentinel-sdk`) hace en Python lo que el de Node: captura los errores sin controlar (con su stack, el código fuente alrededor de cada línea y la cadena de causas), mide cada petición de una aplicación **ASGI** (FastAPI, Starlette...) o **WSGI** (Flask, Django...), mide `requests` y `httpx`, y continúa la traza que llega del navegador. No tiene dependencias. Ver su [README](packages/sdk-python/README.md).
 
 Es un paquete aparte (Python, con su `pyproject.toml` y su entorno virtual: `pnpm --filter @sentinel/python setup`). Para no divergir del servidor, sus tests validan cada payload contra el **JSON Schema generado desde los esquemas Zod** de ingesta (`packages/shared/src/json-schemas.ts`), y un test de `shared` falla si ese JSON se desactualiza.
+
+## SDK de React Native
+
+`packages/sdk-react-native` (`@sentinel/react-native`) captura los errores de JavaScript (un error **fatal** retiene el cierre de la app hasta enviarse), las promesas rechazadas (Hermes), mide el arranque de la app, cada pantalla (`instrumentNavigation`, para React Navigation y Expo Router) y las peticiones de red (instrumenta `XMLHttpRequest`, que cubre `fetch` y axios), y envía lo pendiente al pasar a segundo plano. Los frames del bundle se envían como `app:///index.android.bundle` para que el servidor los simbolice con los source maps de la release (subidos con `sentinel-cli`). Ver su [README](packages/sdk-react-native/README.md).
 
 ## Alertas
 

@@ -1,5 +1,7 @@
-import { stripQuery } from "../url";
-import type { AddBreadcrumb, StartHttpSpan, Uninstall } from "./types";
+import type { Uninstall } from "./client";
+import type { AddBreadcrumb } from "./console";
+import type { StartHttpSpan } from "./fetch";
+import { stripQuery } from "./url";
 
 interface TrackedXhr extends XMLHttpRequest {
 	__sentinel?: { method: string; url: string; started?: number };

@@ -859,7 +859,7 @@ export const en = {
 					"The React SDK includes the browser SDK and adds an error boundary that reports render errors with their component stack.",
 				node: "The Node.js SDK captures uncaught errors and measures every request your server handles, continuing traces that start in the browser.",
 				"react-native":
-					"There is no React Native SDK yet. Send events straight to the ingest API.",
+					"The React Native SDK captures JavaScript errors (fatal ones are sent before the app closes), and measures app start, screens and network requests. Upload your source maps to see the original code.",
 				python:
 					"The Python SDK captures uncaught errors and measures every request your ASGI or WSGI app handles (FastAPI, Flask, Django...), continuing traces that start in the browser.",
 				other:

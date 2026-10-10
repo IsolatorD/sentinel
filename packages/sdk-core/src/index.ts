@@ -51,3 +51,4 @@ export type {
 } from "./types";
 export { stripQuery } from "./url";
 export { uuid } from "./uuid";
+export { installXhr } from "./xhr";

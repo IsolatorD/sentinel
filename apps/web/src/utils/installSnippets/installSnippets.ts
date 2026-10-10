@@ -38,6 +38,37 @@ export function scriptTagSnippet({
 	].join("\n");
 }
 
+/** Instalación en React Native: errores de JavaScript, arranque de la app, pantallas y red. */
+export function reactNativeSnippet({
+	dsn,
+	release = "1.0.0",
+	environment = "production",
+}: SnippetOptions) {
+	return {
+		install: "npm install @sentinel/react-native",
+		code: [
+			'import * as Sentinel from "@sentinel/react-native";',
+			"",
+			"// Lo primero de index.js, antes de registrar la app.",
+			"Sentinel.init({",
+			`  dsn: "${dsn}",`,
+			`  release: "${release}",`,
+			`  environment: "${environment}",`,
+			"  tracesSampleRate: 1,",
+			"});",
+			"",
+			"// Pantallas (React Navigation):",
+			"// <NavigationContainer ref={navigationRef}",
+			"//   onReady={() => Sentinel.instrumentNavigation(navigationRef)}>",
+			"",
+			"// Errores de render: Sentinel.withErrorBoundary(App, { fallback: <Oops /> })",
+			"",
+			"// Para ver el código original en cada error, sube los source maps de tu build:",
+			`//   sentinel-cli sourcemaps upload ./build --release ${release}`,
+		].join("\n"),
+	};
+}
+
 /** Instalación en Python: captura errores y mide cada petición de ASGI/WSGI (FastAPI, Flask, Django...). */
 export function pythonSnippet({
 	dsn,

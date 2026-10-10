@@ -4,6 +4,7 @@ import {
 	nodeSnippet,
 	npmSnippet,
 	pythonSnippet,
+	reactNativeSnippet,
 	reactSnippet,
 	scriptTagSnippet,
 } from "./installSnippets";
@@ -41,6 +42,16 @@ describe("install snippets", () => {
 		expect(snippet.code).toContain("SentinelAsgiMiddleware");
 		expect(snippet.code).toContain("setup_flask");
 		expect(snippet.code).toContain("traces_sample_rate");
+	});
+
+	it("React Native usa @sentinel/react-native e indica cómo subir los source maps", () => {
+		const snippet = reactNativeSnippet({ dsn, release: "2.1.0" });
+		expect(snippet.install).toBe("npm install @sentinel/react-native");
+		expect(snippet.code).toContain(`dsn: "${dsn}"`);
+		expect(snippet.code).toContain("instrumentNavigation");
+		expect(snippet.code).toContain(
+			"sentinel-cli sourcemaps upload ./build --release 2.1.0",
+		);
 	});
 
 	it("sin SDK se envía a la API con la clave y el proyecto de la DSN", () => {

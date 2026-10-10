@@ -6,7 +6,7 @@ export const METHODS: Record<Platform, Method[]> = {
 	javascript: ["npm", "script"],
 	react: ["npm"],
 	node: ["npm"],
-	"react-native": ["http"],
+	"react-native": ["npm"],
 	python: ["pip"],
 	other: ["http"],
 };

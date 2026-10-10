@@ -869,7 +869,7 @@ export const es: Deep<Translations> = {
 					"El SDK de React incluye el del navegador y añade un límite de errores que reporta los fallos de render con su pila de componentes.",
 				node: "El SDK de Node.js captura los errores no controlados y mide cada petición que atiende tu servidor, continuando las trazas que empiezan en el navegador.",
 				"react-native":
-					"Todavía no hay un SDK de React Native. Envía los eventos directamente a la API de ingesta.",
+					"El SDK de React Native captura los errores de JavaScript (los fatales se envían antes de que la app se cierre) y mide el arranque, las pantallas y las peticiones de red. Sube tus source maps para ver el código original.",
 				python:
 					"El SDK de Python captura los errores no controlados y mide cada petición que atiende tu aplicación ASGI o WSGI (FastAPI, Flask, Django...), continuando las trazas que empiezan en el navegador.",
 				other:

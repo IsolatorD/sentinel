@@ -13,6 +13,7 @@ import {
 	nodeSnippet,
 	npmSnippet,
 	pythonSnippet,
+	reactNativeSnippet,
 	reactSnippet,
 	scriptTagSnippet,
 } from "@/utils/installSnippets/installSnippets";
@@ -34,7 +35,9 @@ export function InstallInstructions({
 				? nodeSnippet({ dsn })
 				: platform === "python"
 					? pythonSnippet({ dsn })
-					: npmSnippet({ dsn });
+					: platform === "react-native"
+						? reactNativeSnippet({ dsn })
+						: npmSnippet({ dsn });
 
 	return (
 		<div data-testid="install-instructions" data-platform={platform}>

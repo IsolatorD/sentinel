@@ -12,6 +12,7 @@
 		"@sentinel/browser": "workspace:*",
 		"@sentinel/db": "workspace:*",
 		"@sentinel/node": "workspace:*",
+		"@sentinel/react-native": "workspace:*",
 		"@sentinel/shared": "workspace:*",
 		"@types/mailparser": "^3.9.0",
 		"@types/node": "^26.6.4",

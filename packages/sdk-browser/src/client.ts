@@ -3,13 +3,13 @@ import {
 	CoreClient,
 	installConsole,
 	installFetch,
+	installXhr,
 	originalConsole,
 	type Platform,
 } from "@sentinel/core";
 import { installClicks } from "./instrumentation/clicks";
 import { installGlobalHandlers } from "./instrumentation/global-handlers";
 import { installNavigation } from "./instrumentation/navigation";
-import { installXhr } from "./instrumentation/xhr";
 import { BrowserTracer } from "./tracing/browser-tracer";
 import type {
 	Breadcrumb,
