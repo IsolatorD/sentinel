@@ -878,6 +878,17 @@ export const en = {
 		},
 		forbidden: "Only owners and admins can change these settings.",
 	},
+	routeError: {
+		offline: {
+			title: "Can't reach the server",
+			description:
+				"The server isn't responding (it may be starting up or you may be offline). We'll keep trying and this page will load as soon as it answers.",
+		},
+		generic: {
+			title: "Something went wrong",
+			description: "This page couldn't be loaded. Try again.",
+		},
+	},
 	notFound: {
 		title: "Page not found",
 		description:

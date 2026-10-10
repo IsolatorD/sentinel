@@ -26,6 +26,7 @@ import { ProjectSettingsPage } from "@/pages/ProjectSettingsPage/ProjectSettings
 import { ProjectsPage } from "@/pages/ProjectsPage/ProjectsPage";
 import { RegisterPage } from "@/pages/RegisterPage/RegisterPage";
 import { ReleasesPage } from "@/pages/ReleasesPage/ReleasesPage";
+import { RouteErrorPage } from "@/pages/RouteErrorPage/RouteErrorPage";
 import { SamplePage } from "@/pages/SamplePage/SamplePage";
 import { TokensPage } from "@/pages/TokensPage/TokensPage";
 import { TracePage } from "@/pages/TracePage/TracePage";
@@ -262,6 +263,8 @@ export function createAppRouter(
 		history,
 		context: { queryClient },
 		defaultPreload: "intent",
+		// Un fallo al cargar una ruta (p. ej. la API no contesta) se explica en lugar de mostrar el error técnico.
+		defaultErrorComponent: ({ error }) => <RouteErrorPage error={error} />,
 		// Fundido entre pantallas, solo cuando cambia la ruta (no al filtrar, ordenar o paginar).
 		defaultViewTransition: {
 			types: ({ pathChanged }) => (pathChanged ? ["page"] : false),

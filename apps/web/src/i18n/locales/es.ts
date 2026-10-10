@@ -888,6 +888,17 @@ export const es: Deep<Translations> = {
 		},
 		forbidden: "Solo los owners y admins pueden cambiar esta configuración.",
 	},
+	routeError: {
+		offline: {
+			title: "No se puede conectar con el servidor",
+			description:
+				"El servidor no responde (puede estar arrancando o puede que no tengas conexión). Seguimos intentándolo y esta página cargará en cuanto conteste.",
+		},
+		generic: {
+			title: "Algo salió mal",
+			description: "No se pudo cargar esta página. Inténtalo de nuevo.",
+		},
+	},
 	notFound: {
 		title: "Página no encontrada",
 		description: "La página que buscas no existe o no tienes acceso a ella.",
