@@ -21,6 +21,21 @@ createServer((req, res) => {
 	// Cualquier otra ruta (/checkout, /health...) devuelve la página: sirve para probar navegación.
 	const [file, type] =
 		files[path] ?? (path === "/health" ? [null, null] : files["/"]);
+	if (path === "/slow") {
+		// Respuesta lenta a propósito, para ver un span largo en la cascada.
+		const ms = Math.min(
+			Number(new URL(req.url, "http://x").searchParams.get("ms")) || 800,
+			5000,
+		);
+		setTimeout(
+			() =>
+				res
+					.writeHead(200, { "content-type": "application/json" })
+					.end('{"slow":true}'),
+			ms,
+		);
+		return;
+	}
 	if (path === "/health") {
 		res
 			.writeHead(200, { "content-type": "application/json" })

@@ -14,3 +14,13 @@ node examples/browser-demo/serve.mjs       # demo en http://localhost:5500
 3. Pulsa los botones y mira los issues que se forman en la base de datos (`issue` y `event`).
 
 Los frames de la pila apuntan a `demo.js` con su línea real, y los 5 errores del botón de agrupación se unen en un único issue.
+
+## Rendimiento
+
+La demo inicia el SDK con `tracesSampleRate: 1`, así que además de errores mide:
+
+- la **carga de página** (con FCP, LCP, CLS, INP y TTFB) y las **navegaciones** (`Navegar…`);
+- cada `fetch` como un span `http.client`, con la cabecera `traceparent` si es del mismo origen;
+- tus propias operaciones con `Sentinel.startTransaction` y `Sentinel.trace` (botón *Medir una operación*).
+
+Míralo en **Rendimiento** dentro del proyecto. Para ver datos de ejemplo sin abrir la demo: `pnpm seed:demo` (o `node examples/seed/seed.mjs --only transactions`).

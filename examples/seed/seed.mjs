@@ -1,6 +1,7 @@
 // Puebla Sentinel con datos de demostración realistas.
-//   node examples/seed/seed.mjs [--api http://localhost:3000] [--web-origin http://localhost:5173] [--mailpit http://localhost:8025]
-// Crea (o reutiliza) un usuario demo, una organización, un proyecto y una variedad de errores.
+//   node examples/seed/seed.mjs [--api http://localhost:3000] [--web-origin http://localhost:5173] [--mailpit http://localhost:8025] [--only events|transactions]
+// Crea (o reutiliza) un usuario demo, una organización, un proyecto, una variedad de errores y
+// transacciones de rendimiento. `--only` envía solo una de las dos cosas (cada ejecución añade datos).
 // Solo para desarrollo local: las credenciales son de prueba.
 const argv = process.argv.slice(2);
 const args = Object.fromEntries(
@@ -10,6 +11,7 @@ const args = Object.fromEntries(
 );
 const API = args.api ?? "http://localhost:3000";
 const ORIGIN = args["web-origin"] ?? "http://localhost:5173";
+const ONLY = args.only; // undefined = todo
 const EMAIL = "demo@sentinel.dev";
 const PASSWORD = "demo-password-123";
 
@@ -450,7 +452,7 @@ const issues = [
 ];
 
 let sent = 0;
-for (const issue of issues) {
+for (const issue of ONLY === "transactions" ? [] : issues) {
 	for (let n = 0; n < issue.count; n++) {
 		const at = Math.floor(
 			5 +
@@ -494,7 +496,135 @@ for (const issue of issues) {
 	}
 }
 
-console.log(`\nDatos de demostración listos (${sent} eventos).`);
+// ---------- transacciones (rendimiento) ----------
+// Tres páginas con una historia: /cart era lenta en 2.3.0 y mejoró; /checkout empeoró en 2.4.0
+// (la petición a /api/pricing tarda el doble); /products es rápida pero tiene picos.
+const hex = (n) =>
+	Array.from({ length: n }, () =>
+		Math.floor(Math.random() * 16).toString(16),
+	).join("");
+const jitter = (base, spread = 0.6) =>
+	base * (1 - spread / 2 + Math.random() * spread);
+const pages = [
+	{ name: "/", weight: 4, base: () => 850, api: ["/api/home"], mount: "Home" },
+	{
+		name: "/products",
+		weight: 4,
+		base: () => 1200,
+		api: ["/api/products", "/api/categories"],
+		mount: "ProductList",
+	},
+	{
+		name: "/cart",
+		weight: 3,
+		base: (release) => (release === "2.3.0" ? 2600 : 1500),
+		api: ["/api/cart"],
+		mount: "CartPage",
+	},
+	{
+		name: "/checkout",
+		weight: 2,
+		base: (release) => (release === "2.4.0" ? 3400 : 2000),
+		api: ["/api/cart", "/api/pricing"],
+		mount: "CheckoutPage",
+		slowApi: "/api/pricing",
+		errorRate: 0.07,
+	},
+];
+const weighted = pages.flatMap((p) => Array(p.weight).fill(p));
+
+function transaction() {
+	const page = weighted[Math.floor(Math.random() * weighted.length)];
+	const release = Math.random() < 0.7 ? "2.4.0" : "2.3.0";
+	const environment = Math.random() < 0.9 ? "production" : "staging";
+	// Más densidad reciente que antigua: la vista de 24 h y la de 7 días tienen datos.
+	const start = Date.now() - Math.random() ** 2 * 7 * 24 * 3_600_000;
+	const spike = Math.random() < 0.06 ? 2.8 : 1;
+	const duration = Math.round(jitter(page.base(release)) * spike);
+	const root = hex(16);
+	const navigation = Math.random() < 0.3;
+
+	const mountStart = duration * 0.45;
+	const mountSpan = hex(16);
+	const spans = [
+		{
+			span_id: mountSpan,
+			parent_span_id: root,
+			op: "ui.react.mount",
+			description: `<${page.mount}>`,
+			start_timestamp: new Date(start + mountStart).toISOString(),
+			duration_ms: Math.round(duration * 0.5),
+		},
+	];
+	page.api.forEach((path, i) => {
+		const slow = page.slowApi === path && release === "2.4.0";
+		const d = Math.round(duration * (slow ? 0.42 : 0.18) * jitter(1, 0.4));
+		spans.push({
+			span_id: hex(16),
+			// El primer fetch cuelga del montaje del componente; los demás, de la página.
+			parent_span_id: i === 0 ? mountSpan : root,
+			op: "http.client",
+			description: `GET ${path}`,
+			start_timestamp: new Date(
+				start + duration * (0.1 + i * 0.15),
+			).toISOString(),
+			duration_ms: d,
+			status: "ok",
+		});
+	});
+
+	const lcp = Math.round(duration * jitter(0.85, 0.2));
+	return {
+		trace_id: hex(32),
+		span_id: root,
+		name: page.name,
+		op: navigation ? "navigation" : "pageload",
+		timestamp: new Date(start).toISOString(),
+		duration_ms: duration,
+		status: Math.random() < (page.errorRate ?? 0.015) ? "internal_error" : "ok",
+		platform: "javascript",
+		release,
+		environment,
+		user: { id: `user_${100 + Math.floor(Math.random() * 40)}` },
+		// Las navegaciones sin recarga no tienen Web Vitals de carga.
+		measurements: navigation
+			? undefined
+			: {
+					fcp: { value: Math.round(lcp * 0.55), unit: "millisecond" },
+					lcp: { value: lcp, unit: "millisecond" },
+					cls: { value: +(Math.random() ** 3 * 0.35).toFixed(3) },
+					ttfb: { value: Math.round(jitter(260, 0.9)), unit: "millisecond" },
+					...(Math.random() < 0.5 && {
+						inp: { value: Math.round(jitter(180, 1)), unit: "millisecond" },
+					}),
+				},
+		spans,
+	};
+}
+
+let sentTransactions = 0;
+if (ONLY !== "events") {
+	for (let i = 0; i < 240; i++) {
+		const res = await fetch(`${API}/api/${project.id}/transactions`, {
+			method: "POST",
+			headers: {
+				"Content-Type": "application/json",
+				"X-Sentinel-Key": key.publicKey,
+			},
+			body: JSON.stringify(transaction()),
+		});
+		if (res.status !== 202)
+			throw new Error(
+				`ingesta de transacciones falló (${res.status}): ${await res.text()}`,
+			);
+		sentTransactions++;
+		await new Promise((r) => setTimeout(r, 110)); // el límite por defecto es de 600 por minuto
+	}
+}
+
+console.log(
+	`\nDatos de demostración listos (${sent} eventos, ${sentTransactions} transacciones).`,
+);
 console.log(`  Usuario:  ${EMAIL}`);
 console.log(`  Password: ${PASSWORD}`);
 console.log(`  Proyecto: ${project.name}  (DSN: ${key.dsn})`);

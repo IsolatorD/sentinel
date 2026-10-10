@@ -27,6 +27,8 @@ $("init").addEventListener("click", () => {
 		release: "demo@1.0.0",
 		environment: "demo",
 		debug: true,
+		// Rendimiento: mide la carga de página, las navegaciones y cada fetch/XHR.
+		tracesSampleRate: 1,
 		tags: { app: "browser-demo" },
 	});
 	log(
@@ -110,4 +112,32 @@ $("do-fetch").addEventListener("click", async () => {
 $("do-nav").addEventListener("click", () => {
 	history.pushState({}, "", "/checkout?step=2");
 	log("navegación a /checkout");
+});
+
+// ---------- Rendimiento ----------
+const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
+$("perf-trace").addEventListener("click", async () => {
+	// Una transacción propia con spans anidados: se ve como una cascada en "Rendimiento".
+	const tx = Sentinel.startTransaction({
+		name: "importar-pedidos",
+		op: "task",
+	});
+	await Sentinel.trace("parse", "leer el archivo", () => sleep(120));
+	await Sentinel.trace("validate", "validar filas", async () => {
+		await sleep(60);
+		await Sentinel.trace("db.query", "buscar duplicados", () => sleep(90));
+	});
+	await Sentinel.trace("save", "guardar", () => sleep(150));
+	tx?.setMeasurement("rows", 1200);
+	tx?.finish();
+	log("transacción importar-pedidos enviada");
+});
+
+$("perf-slow-fetch").addEventListener("click", async () => {
+	// Es del mismo origen: el SDK añade la cabecera traceparent y crea un span http.client.
+	const tx = Sentinel.startTransaction({ name: "/lento", op: "navigation" });
+	const res = await fetch("/slow?ms=900");
+	tx?.finish();
+	log(`fetch /slow -> ${res.status} (900 ms, con span y traceparent)`);
 });

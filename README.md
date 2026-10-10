@@ -60,6 +60,15 @@ La DSN tiene la forma `http://<clavePública>@host/<projectId>`; `PUBLIC_API_URL
 
 Tests: `pnpm test` (hoy cubre el fingerprint).
 
+## Ingesta de transacciones (rendimiento)
+
+`POST /api/:projectId/transactions` — público, con la misma clave de DSN (`X-Sentinel-Key` o `?sentinel_key=`), el mismo límite por proyecto y el mismo CORS abierto que `/events`. Responde `202 { id }` y encola la transacción en la cola `transactions` de BullMQ; el worker normaliza las fechas y la guarda con sus spans (`perf_transaction` y `perf_span`) de forma atómica. Un reenvío con el mismo `transaction_id` no se duplica.
+
+- **Formato:** esquema Zod en `packages/shared/src/transactions.ts`. Una transacción lleva `trace_id` (32 hex), `span_id` (16 hex), `name`, `op`, `duration_ms`, `status`, `release`, `environment`, `user`, `measurements` (los Web Vitals: `lcp`, `cls`, `inp`, `fcp`, `ttfb`, u otras medidas) y hasta 200 `spans` (`span_id`, `parent_span_id`, `op`, `description`, `start_timestamp`, `duration_ms`).
+- **Datos sensibles:** pasan por el mismo filtro que los eventos antes de encolarse (tokens en URLs, cabeceras `authorization`...).
+- **SDK:** `@sentinel/browser` las genera con `tracesSampleRate > 0` (ver su README); cualquier otro lenguaje puede enviarlas con una petición HTTP.
+- **Consulta:** ver [API de rendimiento](#api-de-rendimiento).
+
 ## Arquitectura del backend
 
 Monolito modular: un módulo de NestJS por feature y, dentro de cada uno, capas con dependencias en un solo sentido:

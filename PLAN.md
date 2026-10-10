@@ -107,7 +107,7 @@ SDK ──POST──► /ingest (valida DSN, rate limit) ──► cola ──�
 - `events` (issue, timestamp, payload JSONB, release, environment, usuario final)
 - `alert_rules` (proyecto, condición, canales), `alert_channels` (email/webhook), `alert_deliveries`
 - `api_tokens` (org, scopes)
-- Fase 4: `transactions`, `spans`
+- Fase 4 ✅: `perf_transaction` (nombre, tipo, estado, duración, traza, release, entorno, medidas de Web Vitals) y `perf_span` (padre, tipo, descripción, inicio, duración). Sin particionar por ahora: índices por proyecto y fecha; se particionará cuando haya volumen real.
 
 ## 5. API
 
@@ -146,8 +146,13 @@ Reglas de alerta (nuevo issue, regresión, umbral de frecuencia), canales email 
 
 *Pendientes sueltos*: avisar por correo al asignar un issue, tests unitarios por archivo (cuando se indique), módulo de integraciones (Slack, Jira...).
 
-**Fase 4 — Performance / tracing**
-Transacciones y spans en el SDK, tabla de transacciones, percentiles (p50/p95), vista de cascada de spans, Web Vitals.
+**Fase 4 — Performance / tracing** ✅
+- A. ✅ Ingesta: `POST /api/:projectId/transactions` (misma clave, límite y CORS que los eventos, con scrubbing), cola `transactions`, tablas `perf_transaction` y `perf_span`.
+- B. ✅ SDK: `startTransaction` / `startSpan` / `trace`, medición automática de carga de página, navegaciones y `fetch`/XHR, Web Vitals (FCP, LCP, CLS, INP, TTFB), muestreo (`tracesSampleRate`, apagado por defecto), cabecera `traceparent` y `Profiler` de React. Los errores llevan el `trace_id` de la transacción en curso.
+- C. ✅ API de consulta: transacciones agrupadas con p50/p95/p99, errores y throughput; resumen con serie temporal; Web Vitals valorados (p75); ejemplos y cascada de spans.
+- D. ✅ UI: pantalla «Rendimiento» (tabla, gráfico de latencia, Web Vitals), detalle de transacción y de ejemplo con la cascada, recorrido guiado.
+- E. ✅ Semilla y demo con transacciones, documentación.
+- Fuera de la fase, para más adelante: alertas de rendimiento, enlazar un error con su traza en la UI (el `trace_id` ya se guarda), SDK de servidor que continúe la traza (`traceparent`), particionado por fecha y retención.
 
 **Fase 5 — Más plataformas y pulido**
 SDK Node, React Native, Python. Retención configurable, cuotas, dashboard de estadísticas, documentación pública y landing de portfolio.

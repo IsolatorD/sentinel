@@ -45,6 +45,13 @@
 			<button id="do-nav" type="button">Navegar (pushState)</button>
 		</fieldset>
 
+		<fieldset>
+			<legend>5. Rendimiento</legend>
+			<button id="perf-trace" type="button">Medir una operación (trace)</button>
+			<button id="perf-slow-fetch" type="button">fetch lento (span + traceparent)</button>
+			<button id="do-nav-2" type="button" onclick="history.pushState({}, '', '/products')">Navegar a /products (transacción)</button>
+		</fieldset>
+
 		<pre id="log">Esperando…</pre>
 		<script src="/sentinel.js"></script>
 		<script src="/demo.js"></script>
