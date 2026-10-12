@@ -55,8 +55,6 @@ export const en = {
 	RESOLUTION_NEEDS_RESOLVED:
 		"A resolution only applies when status is 'resolved'",
 	FREQUENCY_FIELD_REQUIRED: "Required for frequency rules",
-	THRESHOLD_ONLY_FREQUENCY:
-		"Only frequency rules take a threshold and a window",
 	URL_INVALID: "Invalid URL",
 	URL_SCHEME: "The URL must start with http:// or https://",
 	URL_CREDENTIALS: "The URL must not contain credentials",
@@ -144,6 +142,26 @@ export const en = {
 	EMAIL_ASSIGN_VIEW: "View the issue",
 	EMAIL_ASSIGN_HINT:
 		"You get this email because someone assigned an issue to you. You can turn it off in your preferences.",
+	PERFORMANCE_FIELD_REQUIRED: "Required for performance rules",
+	THRESHOLD_NOT_ALLOWED:
+		"Only frequency and performance rules take a threshold and a window",
+	PERFORMANCE_ONLY_FIELD: "Only performance rules can target a transaction",
+	PERFORMANCE_NO_LEVEL: "Performance rules have no minimum level",
+	ERROR_RATE_RANGE: "The error rate threshold is a percentage from 1 to 100",
+	EMAIL_ALERT_PERF_P95: "Slow transactions: p95 above the threshold",
+	EMAIL_ALERT_PERF_ERROR_RATE:
+		"Failing transactions: error rate above the threshold",
+	EMAIL_LABEL_TRANSACTION: "Transaction",
+	EMAIL_LABEL_CURRENT: "Current value",
+	EMAIL_LABEL_THRESHOLD: "Threshold",
+	EMAIL_LABEL_WINDOW: "Window",
+	EMAIL_LABEL_SAMPLES: "Transactions measured",
+	EMAIL_ALERT_ALL_TRANSACTIONS: "All transactions",
+	EMAIL_ALERT_VIEW_PERF: "View performance",
+	EMAIL_ALERT_PERF_FOOTER:
+		"You get this because the alert rule \u201c{{rule}}\u201d of {{organization}} detected a performance problem.",
+	PERFORMANCE_WINDOW_MIN:
+		"Performance rules need a window of at least 5 minutes",
 } as const;
 
 export type MessageCode = keyof typeof en;

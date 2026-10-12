@@ -41,12 +41,15 @@ export const alertRule = pgTable(
 			.notNull()
 			.references(() => project.id, { onDelete: "cascade" }),
 		name: text("name").notNull(),
-		trigger: text("trigger").notNull(), // new_issue | regression | frequency
+		// new_issue | regression | frequency | p95_above | error_rate_above
+		trigger: text("trigger").notNull(),
 		threshold: integer("threshold"),
 		windowMinutes: integer("window_minutes"),
 		cooldownMinutes: integer("cooldown_minutes").notNull().default(60),
 		environment: text("environment"),
 		minLevel: text("min_level"),
+		// Reglas de rendimiento: una transacción concreta (null = todas las del proyecto).
+		transactionName: text("transaction_name"),
 		enabled: boolean("enabled").notNull().default(true),
 		createdAt: timestamp("created_at").defaultNow().notNull(),
 		updatedAt: timestamp("updated_at").defaultNow().notNull(),

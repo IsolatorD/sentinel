@@ -13,6 +13,7 @@ import {
 	inArray,
 	issue,
 	member,
+	notInArray,
 	organization,
 	project,
 	user,
@@ -26,13 +27,17 @@ import {
 	type EmailRecipients,
 	isLocale,
 	type Locale,
+	PERFORMANCE_TRIGGERS,
 } from "@sentinel/shared";
 import { DB } from "../database/database.module.js";
 import type { RuleCriteria } from "./domain/rule-matching.js";
 
 export interface RuleRecord extends RuleCriteria {
 	id: string;
+	projectId: string;
 	name: string;
+	/** Solo reglas de rendimiento: una transacción concreta (`null` = todas). */
+	transactionName: string | null;
 	cooldownMinutes: number;
 	channelIds: string[];
 }
@@ -54,8 +59,9 @@ export interface NewDelivery {
 	channelId: string;
 	channelName: string;
 	channelType: ChannelType;
-	issueId: string;
-	issueTitle: string;
+	/** `null` en los avisos de rendimiento: no hay un issue. */
+	issueId: string | null;
+	issueTitle: string | null;
 	payload: AlertPayload;
 }
 
@@ -78,14 +84,40 @@ export interface IssueContext {
 export class AlertsRepository {
 	constructor(@Inject(DB) private readonly db: Database) {}
 
-	/** Reglas activas del proyecto, con los canales activos a los que avisan. */
+	/** Reglas activas del proyecto (de issues), con los canales activos a los que avisan. */
 	async activeRules(projectId: string): Promise<RuleRecord[]> {
-		const rules = await this.db
-			.select()
-			.from(alertRule)
-			.where(
-				and(eq(alertRule.projectId, projectId), eq(alertRule.enabled, true)),
-			);
+		return this.withChannels(
+			await this.db
+				.select()
+				.from(alertRule)
+				.where(
+					and(
+						eq(alertRule.projectId, projectId),
+						eq(alertRule.enabled, true),
+						notInArray(alertRule.trigger, [...PERFORMANCE_TRIGGERS]),
+					),
+				),
+		);
+	}
+
+	/** Reglas de rendimiento activas de todos los proyectos (las evalúa un job periódico). */
+	async activePerformanceRules(): Promise<RuleRecord[]> {
+		return this.withChannels(
+			await this.db
+				.select()
+				.from(alertRule)
+				.where(
+					and(
+						eq(alertRule.enabled, true),
+						inArray(alertRule.trigger, [...PERFORMANCE_TRIGGERS]),
+					),
+				),
+		);
+	}
+
+	private async withChannels(
+		rules: Array<typeof alertRule.$inferSelect>,
+	): Promise<RuleRecord[]> {
 		if (rules.length === 0) return [];
 		const links = await this.db
 			.select({
@@ -105,7 +137,9 @@ export class AlertsRepository {
 			);
 		return rules.map((r) => ({
 			id: r.id,
+			projectId: r.projectId,
 			name: r.name,
+			transactionName: r.transactionName,
 			trigger: r.trigger as AlertTrigger,
 			threshold: r.threshold,
 			windowMinutes: r.windowMinutes,
@@ -141,6 +175,25 @@ export class AlertsRepository {
 			.innerJoin(project, eq(project.id, issue.projectId))
 			.innerJoin(organization, eq(organization.id, project.organizationId))
 			.where(eq(issue.id, issueId));
+		return row;
+	}
+
+	/** El proyecto y su organización, para armar un aviso que no parte de un issue. */
+	async projectContext(
+		projectId: string,
+	): Promise<Pick<IssueContext, "project" | "organization"> | undefined> {
+		const [row] = await this.db
+			.select({
+				project: { id: project.id, name: project.name, slug: project.slug },
+				organization: {
+					id: organization.id,
+					name: organization.name,
+					slug: organization.slug,
+				},
+			})
+			.from(project)
+			.innerJoin(organization, eq(organization.id, project.organizationId))
+			.where(eq(project.id, projectId));
 		return row;
 	}
 

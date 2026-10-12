@@ -153,7 +153,7 @@ Reglas de alerta (nuevo issue, regresión, umbral de frecuencia), canales email 
 - D. ✅ UI: pantalla «Rendimiento» (tabla, gráfico de latencia, Web Vitals), detalle de transacción y de ejemplo con la cascada, recorrido guiado.
 - E. ✅ Semilla y demo con transacciones, documentación.
 - ✅ después de la fase: error ↔ traza enlazados en la UI (`event.trace_id`, `GET /performance/traces/:id`, página de traza con línea de tiempo entre servicios y errores).
-- Fuera de la fase, para más adelante: alertas de rendimiento, SDK de servidor que continúe la traza (`traceparent`), particionado por fecha y retención.
+- Fuera de la fase, para más adelante: SDK de servidor que continúe la traza (`traceparent`), particionado por fecha y retención.
 
 **Fase 5 — Más plataformas y pulido**
 
@@ -168,6 +168,8 @@ Reglas de alerta (nuevo issue, regresión, umbral de frecuencia), canales email 
 - ✅ **Retención configurable** por proyecto (30/90/180/365 días, 90 por defecto): un job diario del worker borra eventos y transacciones antiguos y los issues sin actividad en ese periodo.
 - ✅ **Cuotas mensuales** por proyecto (eventos y transacciones, opcionales): al superarlas la ingesta responde 429 `QUOTA_EXCEEDED` con `Retry-After`; uso y límites en Configuración y aviso en Issues/Rendimiento.
 - ✅ **Dashboard de estadísticas** (`/:org/projects/:project/overview`): totales con variación frente al periodo anterior, series, desgloses por nivel/entorno/release, issues con más eventos y transacciones más lentas.
+- ✅ **Email al asignar un issue**: correo en el idioma de quien lo recibe, con preferencia por usuario (`emailOnAssign`) y sin aviso al autoasignarse.
+- ✅ **Alertas de rendimiento**: reglas `p95_above` y `error_rate_above` (proyecto o transacción, entorno opcional), evaluadas cada minuto por un job del worker; mismos canales, espera e historial que las de issues.
 
 ## 7. Despliegue (recomendación)
 

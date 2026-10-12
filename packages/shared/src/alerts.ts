@@ -2,10 +2,33 @@ import { z } from "zod";
 import { checkWebhookUrl } from "./network.js";
 
 export const NOTIFICATIONS_QUEUE = "notifications";
+/** Cola de la evaluación periódica de las reglas de rendimiento. */
+export const PERFORMANCE_ALERTS_QUEUE = "performance-alerts";
+export const PERFORMANCE_ALERTS_JOB = "evaluate";
 
-export const ALERT_TRIGGERS = ["new_issue", "regression", "frequency"] as const;
+export const ISSUE_TRIGGERS = ["new_issue", "regression", "frequency"] as const;
+/** Reglas de rendimiento: p95 de la duración y tasa de errores de las transacciones. */
+export const PERFORMANCE_TRIGGERS = ["p95_above", "error_rate_above"] as const;
+export const ALERT_TRIGGERS = [
+	...ISSUE_TRIGGERS,
+	...PERFORMANCE_TRIGGERS,
+] as const;
 export const alertTriggerSchema = z.enum(ALERT_TRIGGERS);
 export type AlertTrigger = z.infer<typeof alertTriggerSchema>;
+export type IssueTrigger = (typeof ISSUE_TRIGGERS)[number];
+export type PerformanceTrigger = (typeof PERFORMANCE_TRIGGERS)[number];
+
+export const isPerformanceTrigger = (
+	trigger: string,
+): trigger is PerformanceTrigger =>
+	(PERFORMANCE_TRIGGERS as readonly string[]).includes(trigger);
+
+/** Con menos transacciones en la ventana no se avisa: un p95 de tres muestras no significa nada. */
+export const PERFORMANCE_MIN_SAMPLES = 10;
+/** Ventana mínima de una regla de rendimiento (minutos). */
+export const PERFORMANCE_MIN_WINDOW_MINUTES = 5;
+/** Techo del umbral de latencia (una hora, en milisegundos). */
+export const MAX_P95_THRESHOLD_MS = 3_600_000;
 
 export const CHANNEL_TYPES = ["email", "webhook", "slack"] as const;
 export const channelTypeSchema = z.enum(CHANNEL_TYPES);
@@ -100,7 +123,7 @@ const ruleFields = {
 	name: z.string().trim().min(1).max(80),
 	trigger: alertTriggerSchema,
 	/** `frequency`: eventos del mismo issue que disparan el aviso... */
-	threshold: z.number().int().min(1).max(100_000).optional(),
+	threshold: z.number().int().min(1).max(MAX_P95_THRESHOLD_MS).optional(),
 	/** ...dentro de esta ventana, en minutos. */
 	windowMinutes: z
 		.number()
@@ -117,49 +140,79 @@ const ruleFields = {
 		.default(60),
 	environment: z.string().trim().min(1).max(64).optional(),
 	minLevel: alertLevelSchema.optional(),
+	/** Reglas de rendimiento: solo esta transacción (si no, todas las del proyecto). */
+	transactionName: z.string().trim().min(1).max(2048).optional(),
 	channelIds: z.array(z.string().uuid()).min(1).max(20),
 	enabled: z.boolean().default(true),
 };
 
-function frequencyRules(
-	v: { trigger?: AlertTrigger; threshold?: number; windowMinutes?: number },
-	ctx: z.RefinementCtx,
-) {
-	if (v.trigger === "frequency") {
-		if (v.threshold === undefined)
-			ctx.addIssue({
-				code: "custom",
-				path: ["threshold"],
-				message: "FREQUENCY_FIELD_REQUIRED",
-			});
-		if (v.windowMinutes === undefined)
-			ctx.addIssue({
-				code: "custom",
-				path: ["windowMinutes"],
-				message: "FREQUENCY_FIELD_REQUIRED",
-			});
-	} else if (
-		v.trigger &&
-		(v.threshold !== undefined || v.windowMinutes !== undefined)
-	) {
-		ctx.addIssue({
-			code: "custom",
-			path: ["threshold"],
-			message: "THRESHOLD_ONLY_FREQUENCY",
-		});
-	}
+export interface RuleShape {
+	trigger: AlertTrigger;
+	threshold?: number | null;
+	windowMinutes?: number | null;
+	minLevel?: string | null;
+	transactionName?: string | null;
 }
 
-export const createRuleSchema = z
-	.object(ruleFields)
-	.superRefine(frequencyRules);
+/**
+ * Qué campos lleva cada tipo de regla. Devuelve el campo con problema y el código del mensaje, o
+ * `null` si la regla es válida. Lo comparten la validación de la creación y la de la edición (donde
+ * hay que mirar el resultado de mezclar lo guardado con lo nuevo).
+ */
+export function ruleShapeProblem(
+	v: RuleShape,
+): { path: keyof RuleShape; code: string } | null {
+	const has = (x: unknown) => x !== undefined && x !== null;
+	if (v.trigger === "frequency") {
+		if (!has(v.threshold))
+			return { path: "threshold", code: "FREQUENCY_FIELD_REQUIRED" };
+		if (!has(v.windowMinutes))
+			return { path: "windowMinutes", code: "FREQUENCY_FIELD_REQUIRED" };
+	} else if (isPerformanceTrigger(v.trigger)) {
+		if (!has(v.threshold))
+			return { path: "threshold", code: "PERFORMANCE_FIELD_REQUIRED" };
+		if (!has(v.windowMinutes))
+			return { path: "windowMinutes", code: "PERFORMANCE_FIELD_REQUIRED" };
+		if (v.windowMinutes && v.windowMinutes < PERFORMANCE_MIN_WINDOW_MINUTES)
+			return { path: "windowMinutes", code: "PERFORMANCE_WINDOW_MIN" };
+		if (v.trigger === "error_rate_above" && v.threshold && v.threshold > 100)
+			return { path: "threshold", code: "ERROR_RATE_RANGE" };
+		if (has(v.minLevel))
+			return { path: "minLevel", code: "PERFORMANCE_NO_LEVEL" };
+	} else {
+		if (has(v.threshold) || has(v.windowMinutes))
+			return { path: "threshold", code: "THRESHOLD_NOT_ALLOWED" };
+	}
+	if (has(v.transactionName) && !isPerformanceTrigger(v.trigger))
+		return { path: "transactionName", code: "PERFORMANCE_ONLY_FIELD" };
+	return null;
+}
+
+function ruleShape(v: Partial<RuleShape>, ctx: z.RefinementCtx): void {
+	if (!v.trigger) return;
+	const problem = ruleShapeProblem({ ...v, trigger: v.trigger });
+	if (problem)
+		ctx.addIssue({
+			code: "custom",
+			path: [problem.path],
+			message: problem.code,
+		});
+}
+
+export const createRuleSchema = z.object(ruleFields).superRefine(ruleShape);
 export type CreateRuleInput = z.infer<typeof createRuleSchema>;
 
 export const updateRuleSchema = z
 	.object({
 		name: ruleFields.name.optional(),
 		trigger: ruleFields.trigger.optional(),
-		threshold: z.number().int().min(1).max(100_000).nullable().optional(),
+		threshold: z
+			.number()
+			.int()
+			.min(1)
+			.max(MAX_P95_THRESHOLD_MS)
+			.nullable()
+			.optional(),
 		windowMinutes: z
 			.number()
 			.int()
@@ -175,6 +228,7 @@ export const updateRuleSchema = z
 			.optional(),
 		environment: z.string().trim().min(1).max(64).nullable().optional(),
 		minLevel: alertLevelSchema.nullable().optional(),
+		transactionName: ruleFields.transactionName.nullable().optional(),
 		channelIds: ruleFields.channelIds.optional(),
 		enabled: z.boolean().optional(),
 	})
@@ -191,6 +245,7 @@ export const ruleDtoSchema = z.object({
 	cooldownMinutes: z.number().int(),
 	environment: z.string().nullable(),
 	minLevel: alertLevelSchema.nullable(),
+	transactionName: z.string().nullable(),
 	channelIds: z.array(z.string().uuid()),
 	enabled: z.boolean(),
 	createdAt: z.string().datetime(),
@@ -241,9 +296,9 @@ export type DeliveryListDto = z.infer<typeof deliveryListDtoSchema>;
 // ---------- Contenido del aviso ----------
 
 /** Lo que se envía por cualquier canal; se guarda con el envío para que sea reproducible. */
-export interface AlertPayload {
+export interface IssueAlertPayload {
 	kind: "alert" | "test";
-	trigger: AlertTrigger;
+	trigger: IssueTrigger;
 	ruleName: string;
 	organization: { id: string; name: string; slug: string };
 	project: { id: string; name: string; slug: string };
@@ -266,6 +321,30 @@ export interface AlertPayload {
 	url: string;
 }
 
+/** Aviso de una regla de rendimiento: no hay un issue, sino una medida que cruzó el umbral. */
+export interface PerformanceAlertPayload {
+	kind: "performance";
+	trigger: PerformanceTrigger;
+	ruleName: string;
+	organization: { id: string; name: string; slug: string };
+	project: { id: string; name: string; slug: string };
+	performance: {
+		/** `null` = todas las transacciones del proyecto. */
+		transaction: string | null;
+		environment: string | null;
+		/** p95 en milisegundos, o tasa de errores en porcentaje (0-100). */
+		value: number;
+		threshold: number;
+		windowMinutes: number;
+		/** Transacciones medidas en la ventana. */
+		sampleCount: number;
+	};
+	/** Enlace a la pantalla de rendimiento. */
+	url: string;
+}
+
+export type AlertPayload = IssueAlertPayload | PerformanceAlertPayload;
+
 /** Datos del job de la cola `notifications`. */
 export interface NotificationJobData {
 	deliveryId: string;
@@ -275,4 +354,6 @@ export const ALERT_TRIGGER_EVENT: Record<AlertTrigger, string> = {
 	new_issue: "issue.new",
 	regression: "issue.regression",
 	frequency: "issue.frequency",
+	p95_above: "performance.p95",
+	error_rate_above: "performance.error_rate",
 };

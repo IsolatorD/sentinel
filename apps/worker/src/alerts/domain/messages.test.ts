@@ -1,8 +1,12 @@
-import type { AlertPayload } from "@sentinel/shared";
+import type {
+	IssueAlertPayload as AlertPayload,
+	PerformanceAlertPayload,
+} from "@sentinel/shared";
 import { describe, expect, it } from "vitest";
 import { classifyHttpStatus } from "./delivery-error.js";
 import {
 	emailContent,
+	formatMeasure,
 	headline,
 	signWebhook,
 	slackBody,
@@ -268,5 +272,95 @@ describe("alertas en español", () => {
 
 	it("el Slack sigue en inglés (no hay un idioma de destinatario)", () => {
 		expect(slackBody(payload()).text).toContain("New issue");
+	});
+});
+
+const perf = (
+	over: Partial<PerformanceAlertPayload["performance"]> = {},
+	top: Partial<PerformanceAlertPayload> = {},
+): PerformanceAlertPayload => ({
+	kind: "performance",
+	trigger: "p95_above",
+	ruleName: "Slow checkout",
+	organization: { id: "org1", name: "Acme", slug: "acme" },
+	project: { id: "p1", name: "Storefront", slug: "storefront" },
+	performance: {
+		transaction: "/checkout",
+		environment: "production",
+		value: 3840,
+		threshold: 2000,
+		windowMinutes: 15,
+		sampleCount: 120,
+		...over,
+	},
+	url: "https://sentinel.example.com/acme/projects/storefront/performance/transaction?name=%2Fcheckout",
+	...top,
+});
+
+describe("avisos de rendimiento", () => {
+	it("formatMeasure da milisegundos, segundos y porcentajes legibles", () => {
+		expect(formatMeasure("p95_above", 840.4)).toBe("840 ms");
+		expect(formatMeasure("p95_above", 3840)).toBe("3.84 s");
+		expect(formatMeasure("p95_above", 60000)).toBe("60 s");
+		expect(formatMeasure("error_rate_above", 12.34)).toBe("12.3%");
+		expect(formatMeasure("error_rate_above", 5)).toBe("5%");
+	});
+
+	it("el titular explica la métrica", () => {
+		expect(headline(perf())).toBe("Slow transactions: p95 above the threshold");
+		expect(headline(perf({}, { trigger: "error_rate_above" }))).toBe(
+			"Failing transactions: error rate above the threshold",
+		);
+		expect(headline(perf(), "es")).toBe(
+			"Transacciones lentas: p95 por encima del umbral",
+		);
+	});
+
+	it("el correo muestra valor, umbral, ventana y muestras, con enlace a rendimiento", () => {
+		const mail = emailContent(perf());
+		expect(mail.subject).toBe(
+			"[Storefront] Slow transactions: p95 above the threshold: /checkout",
+		);
+		for (const part of [
+			"Transaction: /checkout",
+			"Environment: production",
+			"Current value: 3.84 s",
+			"Threshold: 2 s",
+			"Window: 15 minutes",
+			"Transactions measured: 120",
+			"Rule: Slow checkout",
+			"View performance: https://sentinel.example.com/",
+		]) {
+			expect(mail.text, part).toContain(part);
+		}
+	});
+
+	it("sin transacción concreta habla de todas las del proyecto, en el idioma del destinatario", () => {
+		const mail = emailContent(perf({ transaction: null }), "es");
+		expect(mail.text).toContain("Transacción: Todas las transacciones");
+		expect(mail.text).toContain("Ver el rendimiento:");
+		expect(mail.text).toContain("detectó un problema de rendimiento");
+	});
+
+	it("el nombre de la transacción (lo controla la app monitoreada) sale escapado", () => {
+		const mail = emailContent(perf({ transaction: "<img src=x onerror=1>" }));
+		expect(mail.html).not.toContain("<img");
+	});
+
+	it("el webhook lleva `performance` en lugar de `issue`, con su propio evento", () => {
+		const now = new Date("2026-10-09T12:00:00.000Z");
+		const body = webhookBody(perf(), "d1", now);
+		expect(body.event).toBe("performance.p95");
+		expect(body).toHaveProperty("performance.value", 3840);
+		expect(body).not.toHaveProperty("issue");
+		expect(
+			webhookBody(perf({}, { trigger: "error_rate_above" }), "d1", now).event,
+		).toBe("performance.error_rate");
+	});
+
+	it("Slack incluye el enlace y los datos", () => {
+		const body = slackBody(perf());
+		expect(body.text).toContain("/checkout");
+		expect(JSON.stringify(body)).toContain("Current value:* 3.84 s");
 	});
 });

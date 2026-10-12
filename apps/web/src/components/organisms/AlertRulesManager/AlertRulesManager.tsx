@@ -1,4 +1,4 @@
-import type { RuleDto } from "@sentinel/shared";
+import { isPerformanceTrigger, type RuleDto } from "@sentinel/shared";
 import { Bell, Pencil, Plus, Trash2 } from "lucide-react";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -52,13 +52,24 @@ export function AlertRulesManager({ scope }: { scope: ReadyScope }) {
 		const { unit, count } = describeMinutes(minutes);
 		return t(`alerts.duration.${unit}`, { count });
 	};
-	const summary = (rule: RuleDto) =>
-		rule.trigger === "frequency" && rule.threshold && rule.windowMinutes
-			? t("alerts.rules.summary.frequency", {
-					count: rule.threshold,
-					window: duration(rule.windowMinutes),
-				})
-			: t(`alerts.rules.summary.${rule.trigger}`);
+	const summary = (rule: RuleDto) => {
+		if (rule.trigger === "frequency" && rule.threshold && rule.windowMinutes)
+			return t("alerts.rules.summary.frequency", {
+				count: rule.threshold,
+				window: duration(rule.windowMinutes),
+			});
+		if (
+			isPerformanceTrigger(rule.trigger) &&
+			rule.threshold &&
+			rule.windowMinutes
+		)
+			return t(`alerts.rules.summary.${rule.trigger}`, {
+				value: rule.threshold,
+				window: duration(rule.windowMinutes),
+				transaction: rule.transactionName ?? t("alerts.rules.allTransactions"),
+			});
+		return t(`alerts.rules.summary.${rule.trigger}`);
+	};
 	const failure = [update, remove].find((m) => m.isError);
 
 	return (

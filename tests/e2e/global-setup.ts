@@ -100,6 +100,8 @@ export default async function setup(project: TestProject) {
 		...shared,
 		WEB_ORIGIN: "http://localhost:5173",
 		NOTIFICATION_RETRY_DELAY_MS: "150",
+		// Las pruebas de rendimiento lanzan la evaluación a mano: así no se cruza con una repetición programada.
+		PERFORMANCE_ALERTS_ENABLED: "false",
 	});
 	processes.push(api, verifyApi, worker);
 

@@ -54,8 +54,6 @@ export const es: Record<MessageCode, string> = {
 	RESOLUTION_NEEDS_RESOLVED:
 		"Una resolución solo aplica cuando el estado es 'resolved'",
 	FREQUENCY_FIELD_REQUIRED: "Obligatorio en las reglas de frecuencia",
-	THRESHOLD_ONLY_FREQUENCY:
-		"Solo las reglas de frecuencia llevan umbral y ventana",
 	URL_INVALID: "URL no válida",
 	URL_SCHEME: "La URL debe empezar por http:// o https://",
 	URL_CREDENTIALS: "La URL no puede contener credenciales",
@@ -142,4 +140,26 @@ export const es: Record<MessageCode, string> = {
 	EMAIL_ASSIGN_VIEW: "Ver el issue",
 	EMAIL_ASSIGN_HINT:
 		"Recibes este correo porque alguien te asignó un issue. Puedes desactivarlo en tus preferencias.",
+	PERFORMANCE_FIELD_REQUIRED: "Obligatorio en las reglas de rendimiento",
+	THRESHOLD_NOT_ALLOWED:
+		"Solo las reglas de frecuencia y de rendimiento llevan umbral y ventana",
+	PERFORMANCE_ONLY_FIELD:
+		"Solo las reglas de rendimiento pueden apuntar a una transacción",
+	PERFORMANCE_NO_LEVEL: "Las reglas de rendimiento no tienen nivel mínimo",
+	ERROR_RATE_RANGE:
+		"El umbral de la tasa de errores es un porcentaje de 1 a 100",
+	EMAIL_ALERT_PERF_P95: "Transacciones lentas: p95 por encima del umbral",
+	EMAIL_ALERT_PERF_ERROR_RATE:
+		"Transacciones con errores: tasa de errores por encima del umbral",
+	EMAIL_LABEL_TRANSACTION: "Transacción",
+	EMAIL_LABEL_CURRENT: "Valor actual",
+	EMAIL_LABEL_THRESHOLD: "Umbral",
+	EMAIL_LABEL_WINDOW: "Ventana",
+	EMAIL_LABEL_SAMPLES: "Transacciones medidas",
+	EMAIL_ALERT_ALL_TRANSACTIONS: "Todas las transacciones",
+	EMAIL_ALERT_VIEW_PERF: "Ver el rendimiento",
+	EMAIL_ALERT_PERF_FOOTER:
+		"Recibes esto porque la regla de alerta \u00ab{{rule}}\u00bb de {{organization}} detectó un problema de rendimiento.",
+	PERFORMANCE_WINDOW_MIN:
+		"Las reglas de rendimiento necesitan una ventana de al menos 5 minutos",
 };

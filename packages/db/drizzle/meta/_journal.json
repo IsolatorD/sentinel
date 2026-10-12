@@ -85,6 +85,13 @@
 			"when": 1791794423731,
 			"tag": "0011_chilly_toxin",
 			"breakpoints": true
+		},
+		{
+			"idx": 12,
+			"version": "7",
+			"when": 1791794835717,
+			"tag": "0012_open_bullseye",
+			"breakpoints": true
 		}
 	]
 }

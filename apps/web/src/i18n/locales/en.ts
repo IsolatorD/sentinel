@@ -541,6 +541,10 @@ export const en = {
 				new_issue: "A new issue appears.",
 				regression: "A resolved issue comes back in a newer release.",
 				frequency: "An issue happens more than N times in a time window.",
+				p95_above:
+					"The p95 latency of your transactions goes above a threshold (for the whole project or one transaction).",
+				error_rate_above:
+					"The share of failing transactions goes above a threshold.",
 			},
 			channelItems: {
 				email: "Email to the members you choose, in each member's language.",
@@ -1014,6 +1018,7 @@ export const en = {
 			toggle: "Enable or disable",
 			disabled: "Disabled",
 			notifies: "Notifies:",
+			allTransactions: "all transactions",
 			levelFrom: "{{level}} or worse",
 			needChannel:
 				"Create a channel first: a rule needs somewhere to send its alerts.",
@@ -1027,13 +1032,27 @@ export const en = {
 				new_issue: "A new issue appears",
 				regression: "An issue comes back after being resolved",
 				frequency: "An issue happens too often",
+				p95_above: "Transactions get slow (p95 latency)",
+				error_rate_above: "Transactions fail too often (error rate)",
 			},
 			summary: {
 				new_issue: "When a new issue appears",
 				regression: "When a resolved issue comes back",
 				frequency: "When an issue has {{count}} events in {{window}}",
+				p95_above:
+					"When the p95 of {{transaction}} is above {{value}} ms within {{window}}",
+				error_rate_above:
+					"When the error rate of {{transaction}} is above {{value}}% within {{window}}",
 			},
 			dialog: {
+				latency: "p95 above (ms)",
+				errorRate: "Error rate above (%)",
+				latencyInvalid:
+					"Enter a whole number of milliseconds between 1 and {{max}}.",
+				errorRateInvalid: "Enter a whole percentage between 1 and 100.",
+				transaction: "Transaction (optional)",
+				transactionHint:
+					"Leave empty to watch all the transactions of the project. At least 10 transactions in the window are needed to alert.",
 				createTitle: "Create alert rule",
 				editTitle: "Edit alert rule",
 				name: "Name",

@@ -39,6 +39,7 @@ const rule = (over = {}) => ({
 	cooldownMinutes: 60,
 	environment: null,
 	minLevel: null,
+	transactionName: null,
 	channelIds: [channel().id],
 	enabled: true,
 	createdAt: ago(3600_000),
@@ -141,6 +142,89 @@ describe("reglas", () => {
 		expect(within(row).getByText(/50 events in 1 hour/)).toBeInTheDocument();
 		expect(within(row).getByText(/production/)).toBeInTheDocument();
 		expect(within(row).getByText(/Error or worse/)).toBeInTheDocument();
+	});
+
+	it("una regla de rendimiento se describe con su métrica, su umbral y su transacción", async () => {
+		vi.mocked(alertsService.listRules).mockResolvedValue([
+			rule({
+				id: "r2222222-2222-4222-8222-222222222222",
+				name: "Checkout lento",
+				trigger: "p95_above",
+				threshold: 2000,
+				windowMinutes: 15,
+				transactionName: "/checkout",
+			}),
+			rule({
+				id: "r3333333-3333-4333-8333-333333333333",
+				name: "Errores altos",
+				trigger: "error_rate_above",
+				threshold: 5,
+				windowMinutes: 60,
+			}),
+		]);
+		renderApp(PATH);
+		const rows = await screen.findAllByTestId("rule-row");
+		expect(
+			within(rows[0]).getByText(
+				/p95 of \/checkout is above 2000 ms within 15 minutes/,
+			),
+		).toBeInTheDocument();
+		expect(
+			within(rows[1]).getByText(
+				/error rate of all transactions is above 5% within 1 hour/,
+			),
+		).toBeInTheDocument();
+	});
+
+	it("crear una regla de rendimiento pide umbral y ventana, y no ofrece el nivel mínimo", async () => {
+		vi.mocked(alertsService.createRule).mockResolvedValue(rule());
+		const { user } = renderApp(PATH);
+		await user.click(
+			await screen.findByRole("button", { name: "Create rule" }),
+		);
+		const dialog = await screen.findByRole("dialog");
+		await user.type(within(dialog).getByLabelText("Name"), "Checkout lento");
+		await user.selectOptions(
+			within(dialog).getByLabelText("Alert me when"),
+			"p95_above",
+		);
+		expect(within(dialog).queryByLabelText("Minimum level")).toBeNull();
+		// Valores iniciales razonables; la ventana más corta es de 5 minutos.
+		expect(within(dialog).getByLabelText("p95 above (ms)")).toHaveValue(1000);
+		expect(
+			within(dialog).queryByRole("option", { name: "1 minute" }),
+		).toBeNull();
+
+		const threshold = within(dialog).getByLabelText("p95 above (ms)");
+		await user.clear(threshold);
+		await user.type(threshold, "0");
+		await user.click(within(dialog).getByRole("checkbox", { name: /Equipo/ }));
+		await user.click(within(dialog).getByRole("button", { name: "Create" }));
+		expect(alertsService.createRule).not.toHaveBeenCalled();
+		expect(
+			within(dialog).getByText(/whole number of milliseconds/),
+		).toBeInTheDocument();
+
+		await user.clear(threshold);
+		await user.type(threshold, "2500");
+		await user.type(within(dialog).getByLabelText(/Transaction/), "/checkout");
+		await user.click(within(dialog).getByRole("button", { name: "Create" }));
+		await waitFor(() =>
+			expect(alertsService.createRule).toHaveBeenCalledWith(
+				"org-1",
+				fx.PROJECT_ID,
+				{
+					name: "Checkout lento",
+					trigger: "p95_above",
+					threshold: 2500,
+					windowMinutes: 15,
+					cooldownMinutes: 60,
+					channelIds: [channel().id],
+					enabled: true,
+					transactionName: "/checkout",
+				},
+			),
+		);
 	});
 
 	it("sin canales no se puede crear una regla y se explica por qué", async () => {
@@ -259,6 +343,7 @@ describe("reglas", () => {
 					cooldownMinutes: 60,
 					environment: null,
 					minLevel: null,
+					transactionName: null,
 					channelIds: [channel().id],
 					enabled: true,
 				},

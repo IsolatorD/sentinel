@@ -14,6 +14,7 @@ export {
 	ilike,
 	inArray,
 	isNull,
+	notInArray,
 	or,
 	sql,
 	TransactionRollbackError,

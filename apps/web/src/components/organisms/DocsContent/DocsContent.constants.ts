@@ -39,7 +39,13 @@ export const TRACING_SERVER = `// Tu backend (Node, Python...) continúa la traz
 Sentinel.init({ dsn, tracesSampleRate: 1 });
 // -> la transacción del servidor comparte trace_id con la del navegador`;
 
-export const ALERT_RULES = ["new_issue", "regression", "frequency"] as const;
+export const ALERT_RULES = [
+	"new_issue",
+	"regression",
+	"frequency",
+	"p95_above",
+	"error_rate_above",
+] as const;
 export const ALERT_CHANNELS = ["email", "webhook", "slack"] as const;
 
 export const ENDPOINTS = [

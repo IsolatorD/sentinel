@@ -547,6 +547,10 @@ export const es: Deep<Translations> = {
 				new_issue: "Aparece un issue nuevo.",
 				regression: "Un issue resuelto vuelve en una release posterior.",
 				frequency: "Un issue ocurre más de N veces en una ventana de tiempo.",
+				p95_above:
+					"La latencia p95 de tus transacciones supera un umbral (en todo el proyecto o en una transacción).",
+				error_rate_above:
+					"El porcentaje de transacciones con error supera un umbral.",
 			},
 			channelItems: {
 				email: "Correo a los miembros que elijas, en el idioma de cada uno.",
@@ -1024,6 +1028,7 @@ export const es: Deep<Translations> = {
 			toggle: "Activar o desactivar",
 			disabled: "Desactivada",
 			notifies: "Avisa a:",
+			allTransactions: "todas las transacciones",
 			levelFrom: "{{level}} o más grave",
 			needChannel:
 				"Crea primero un canal: una regla necesita un lugar al que enviar sus avisos.",
@@ -1037,13 +1042,28 @@ export const es: Deep<Translations> = {
 				new_issue: "Aparece un issue nuevo",
 				regression: "Un issue resuelto vuelve a ocurrir",
 				frequency: "Un issue ocurre demasiado seguido",
+				p95_above: "Las transacciones se vuelven lentas (latencia p95)",
+				error_rate_above:
+					"Las transacciones fallan demasiado (tasa de errores)",
 			},
 			summary: {
 				new_issue: "Cuando aparece un issue nuevo",
 				regression: "Cuando un issue resuelto vuelve a ocurrir",
 				frequency: "Cuando un issue tiene {{count}} eventos en {{window}}",
+				p95_above:
+					"Cuando el p95 de {{transaction}} supera {{value}} ms en {{window}}",
+				error_rate_above:
+					"Cuando la tasa de errores de {{transaction}} supera el {{value}}% en {{window}}",
 			},
 			dialog: {
+				latency: "p95 superior a (ms)",
+				errorRate: "Tasa de errores superior a (%)",
+				latencyInvalid:
+					"Escribe un número entero de milisegundos entre 1 y {{max}}.",
+				errorRateInvalid: "Escribe un porcentaje entero entre 1 y 100.",
+				transaction: "Transacción (opcional)",
+				transactionHint:
+					"Déjala vacía para vigilar todas las transacciones del proyecto. Hacen falta al menos 10 transacciones en la ventana para avisar.",
 				createTitle: "Crear regla de alerta",
 				editTitle: "Editar regla de alerta",
 				name: "Nombre",

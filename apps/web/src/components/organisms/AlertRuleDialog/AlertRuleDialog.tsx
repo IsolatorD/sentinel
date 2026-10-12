@@ -4,6 +4,8 @@ import {
 	type AlertLevel,
 	type AlertTrigger,
 	type CreateRuleInput,
+	isPerformanceTrigger,
+	MAX_P95_THRESHOLD_MS,
 } from "@sentinel/shared";
 import { type FormEvent, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -17,8 +19,12 @@ import { Modal } from "@/components/molecules/Modal/Modal";
 import {
 	COOLDOWN_OPTIONS,
 	DEFAULT_COOLDOWN,
+	DEFAULT_ERROR_RATE_THRESHOLD,
+	DEFAULT_P95_THRESHOLD,
+	DEFAULT_PERFORMANCE_WINDOW,
 	DEFAULT_THRESHOLD,
 	DEFAULT_WINDOW,
+	PERFORMANCE_WINDOW_OPTIONS,
 	WINDOW_OPTIONS,
 } from "@/components/organisms/AlertRuleDialog/AlertRuleDialog.constants";
 import type {
@@ -53,6 +59,9 @@ export function AlertRuleDialog({
 	const [windowMinutes, setWindowMinutes] = useState(
 		rule?.windowMinutes ?? DEFAULT_WINDOW,
 	);
+	const [transactionName, setTransactionName] = useState(
+		rule?.transactionName ?? "",
+	);
 	const [cooldown, setCooldown] = useState(
 		rule?.cooldownMinutes ?? DEFAULT_COOLDOWN,
 	);
@@ -65,6 +74,25 @@ export function AlertRuleDialog({
 	);
 	const [enabled, setEnabled] = useState(rule?.enabled ?? true);
 	const [errors, setErrors] = useState<RuleFormErrors>({});
+
+	const performance = isPerformanceTrigger(trigger);
+	const usesThreshold = trigger === "frequency" || performance;
+
+	/** Cada tipo de regla tiene su propio umbral y ventana: al cambiar de tipo se parte de valores razonables. */
+	function changeTrigger(next: AlertTrigger) {
+		setTrigger(next);
+		clearError("threshold");
+		if (next === "frequency") {
+			setThreshold(DEFAULT_THRESHOLD);
+			setWindowMinutes(DEFAULT_WINDOW);
+		} else if (next === "p95_above") {
+			setThreshold(DEFAULT_P95_THRESHOLD);
+			setWindowMinutes(DEFAULT_PERFORMANCE_WINDOW);
+		} else if (next === "error_rate_above") {
+			setThreshold(DEFAULT_ERROR_RATE_THRESHOLD);
+			setWindowMinutes(DEFAULT_PERFORMANCE_WINDOW);
+		}
+	}
 
 	const duration = (minutes: number) => {
 		const { unit, count } = describeMinutes(minutes);
@@ -88,17 +116,25 @@ export function AlertRuleDialog({
 		const trimmed = name.trim();
 		if (!trimmed) next.name = t("auth.validation.required");
 		const count = Number(threshold);
-		if (
-			trigger === "frequency" &&
-			(!Number.isInteger(count) || count < 1 || count > 100_000)
-		)
+		if (trigger === "frequency" && (!Number.isInteger(count) || count < 1))
 			next.threshold = t("alerts.rules.dialog.thresholdInvalid");
+		if (
+			trigger === "p95_above" &&
+			(!Number.isInteger(count) || count < 1 || count > MAX_P95_THRESHOLD_MS)
+		)
+			next.threshold = t("alerts.rules.dialog.latencyInvalid", {
+				max: MAX_P95_THRESHOLD_MS,
+			});
+		if (
+			trigger === "error_rate_above" &&
+			(!Number.isInteger(count) || count < 1 || count > 100)
+		)
+			next.threshold = t("alerts.rules.dialog.errorRateInvalid");
 		if (channelIds.length === 0)
 			next.channels = t("alerts.rules.dialog.channelsRequired");
 		setErrors(next);
 		if (Object.keys(next).length > 0) return;
 
-		const frequency = trigger === "frequency";
 		const close = { onSuccess: () => onOpenChange(false) };
 		if (rule) {
 			update.mutate(
@@ -107,11 +143,14 @@ export function AlertRuleDialog({
 					input: {
 						name: trimmed,
 						trigger,
-						threshold: frequency ? count : null,
-						windowMinutes: frequency ? windowMinutes : null,
+						threshold: usesThreshold ? count : null,
+						windowMinutes: usesThreshold ? windowMinutes : null,
 						cooldownMinutes: cooldown,
 						environment: environment.trim() || null,
-						minLevel: minLevel || null,
+						minLevel: performance ? null : minLevel || null,
+						transactionName: performance
+							? transactionName.trim() || null
+							: null,
 						channelIds,
 						enabled,
 					},
@@ -125,9 +164,13 @@ export function AlertRuleDialog({
 				cooldownMinutes: cooldown,
 				channelIds,
 				enabled,
-				...(frequency && { threshold: count, windowMinutes }),
+				...(usesThreshold && { threshold: count, windowMinutes }),
 				...(environment.trim() && { environment: environment.trim() }),
-				...(minLevel && { minLevel }),
+				...(!performance && minLevel && { minLevel }),
+				...(performance &&
+					transactionName.trim() && {
+						transactionName: transactionName.trim(),
+					}),
 			};
 			create.mutate(input, close);
 		}
@@ -180,7 +223,7 @@ export function AlertRuleDialog({
 					<Select
 						id="rule-trigger"
 						value={trigger}
-						onChange={(e) => setTrigger(e.target.value as AlertTrigger)}
+						onChange={(e) => changeTrigger(e.target.value as AlertTrigger)}
 					>
 						{ALERT_TRIGGERS.map((id) => (
 							<option key={id} value={id}>
@@ -189,10 +232,16 @@ export function AlertRuleDialog({
 						))}
 					</Select>
 				</FormField>
-				{trigger === "frequency" && (
+				{usesThreshold && (
 					<div className="grid grid-cols-2 gap-3">
 						<FormField
-							label={t("alerts.rules.dialog.threshold")}
+							label={t(
+								trigger === "p95_above"
+									? "alerts.rules.dialog.latency"
+									: trigger === "error_rate_above"
+										? "alerts.rules.dialog.errorRate"
+										: "alerts.rules.dialog.threshold",
+							)}
 							htmlFor="rule-threshold"
 							error={errors.threshold}
 						>
@@ -217,7 +266,10 @@ export function AlertRuleDialog({
 								value={windowMinutes}
 								onChange={(e) => setWindowMinutes(Number(e.target.value))}
 							>
-								{WINDOW_OPTIONS.map((minutes) => (
+								{(performance
+									? PERFORMANCE_WINDOW_OPTIONS
+									: WINDOW_OPTIONS
+								).map((minutes) => (
 									<option key={minutes} value={minutes}>
 										{duration(minutes)}
 									</option>
@@ -225,6 +277,21 @@ export function AlertRuleDialog({
 							</Select>
 						</FormField>
 					</div>
+				)}
+				{performance && (
+					<FormField
+						label={t("alerts.rules.dialog.transaction")}
+						htmlFor="rule-transaction"
+						hint={t("alerts.rules.dialog.transactionHint")}
+					>
+						<Input
+							id="rule-transaction"
+							value={transactionName}
+							onChange={(e) => setTransactionName(e.target.value)}
+							maxLength={2048}
+							placeholder="/checkout"
+						/>
+					</FormField>
 				)}
 				<div className="grid grid-cols-2 gap-3">
 					<FormField
@@ -239,23 +306,25 @@ export function AlertRuleDialog({
 							maxLength={64}
 						/>
 					</FormField>
-					<FormField
-						label={t("alerts.rules.dialog.minLevel")}
-						htmlFor="rule-level"
-					>
-						<Select
-							id="rule-level"
-							value={minLevel}
-							onChange={(e) => setMinLevel(e.target.value as AlertLevel | "")}
+					{!performance && (
+						<FormField
+							label={t("alerts.rules.dialog.minLevel")}
+							htmlFor="rule-level"
 						>
-							<option value="">{t("alerts.rules.dialog.anyLevel")}</option>
-							{ALERT_LEVELS.map((level) => (
-								<option key={level} value={level}>
-									{t(`issues.levels.${level}`)}
-								</option>
-							))}
-						</Select>
-					</FormField>
+							<Select
+								id="rule-level"
+								value={minLevel}
+								onChange={(e) => setMinLevel(e.target.value as AlertLevel | "")}
+							>
+								<option value="">{t("alerts.rules.dialog.anyLevel")}</option>
+								{ALERT_LEVELS.map((level) => (
+									<option key={level} value={level}>
+										{t(`issues.levels.${level}`)}
+									</option>
+								))}
+							</Select>
+						</FormField>
+					)}
 				</div>
 				<FormField
 					label={t("alerts.rules.dialog.cooldown")}

@@ -18,10 +18,12 @@ import {
 	type EmailRecipients,
 	emailRecipientsSchema,
 	isBlockedHostname,
+	isPerformanceTrigger,
 	type ListDeliveriesQuery,
 	NOTIFICATIONS_QUEUE,
 	type NotificationJobData,
 	type RuleDto,
+	ruleShapeProblem,
 	type UpdateChannelInput,
 	type UpdateRuleInput,
 } from "@sentinel/shared";
@@ -61,6 +63,7 @@ const toRuleDto = (row: RuleRow): RuleDto => ({
 	cooldownMinutes: row.cooldownMinutes,
 	environment: row.environment,
 	minLevel: row.minLevel as RuleDto["minLevel"],
+	transactionName: row.transactionName,
 	channelIds: row.channelIds,
 	enabled: row.enabled,
 	createdAt: row.createdAt.toISOString(),
@@ -275,6 +278,7 @@ export class AlertsService {
 				cooldownMinutes: values.cooldownMinutes,
 				environment: values.environment ?? null,
 				minLevel: values.minLevel ?? null,
+				transactionName: values.transactionName ?? null,
 				enabled: values.enabled,
 			},
 			[...new Set(channelIds)],
@@ -293,18 +297,52 @@ export class AlertsService {
 		const current = await this.repository.findRule(projectId, ruleId);
 		if (!current) throw new NotFoundException({ reason: "RULE_NOT_FOUND" });
 
-		// El resultado debe seguir siendo una regla válida (p. ej. frecuencia exige umbral y ventana).
+		// El resultado debe seguir siendo una regla válida: se mira lo guardado mezclado con lo nuevo
+		// (p. ej. frecuencia exige umbral y ventana; cambiar a "issue nuevo" los quita).
 		const trigger = input.trigger ?? (current.trigger as RuleDto["trigger"]);
-		const threshold =
-			input.threshold === undefined ? current.threshold : input.threshold;
-		const windowMinutes =
-			input.windowMinutes === undefined
-				? current.windowMinutes
-				: input.windowMinutes;
-		if (trigger === "frequency") {
-			if (threshold === null || windowMinutes === null)
-				throw new BadRequestException({ reason: "FREQUENCY_NEEDS_THRESHOLD" });
-		}
+		const usesThreshold =
+			trigger === "frequency" || isPerformanceTrigger(trigger);
+		const merged = {
+			trigger,
+			threshold: usesThreshold
+				? input.threshold === undefined
+					? current.threshold
+					: input.threshold
+				: null,
+			windowMinutes: usesThreshold
+				? input.windowMinutes === undefined
+					? current.windowMinutes
+					: input.windowMinutes
+				: null,
+			minLevel: isPerformanceTrigger(trigger)
+				? null
+				: input.minLevel === undefined
+					? current.minLevel
+					: input.minLevel,
+			transactionName: isPerformanceTrigger(trigger)
+				? input.transactionName === undefined
+					? current.transactionName
+					: input.transactionName
+				: null,
+		};
+		// Lo que el cliente envió explícitamente y no encaja con el tipo de regla se rechaza,
+		// en vez de descartarlo en silencio.
+		const problem = ruleShapeProblem({
+			trigger,
+			threshold: usesThreshold ? merged.threshold : input.threshold,
+			windowMinutes: usesThreshold ? merged.windowMinutes : input.windowMinutes,
+			minLevel: isPerformanceTrigger(trigger)
+				? input.minLevel
+				: merged.minLevel,
+			transactionName: isPerformanceTrigger(trigger)
+				? merged.transactionName
+				: input.transactionName,
+		});
+		if (problem)
+			throw new BadRequestException({
+				reason:
+					trigger === "frequency" ? "FREQUENCY_NEEDS_THRESHOLD" : problem.code,
+			});
 		if (input.channelIds)
 			await this.assertChannels(projectId, input.channelIds);
 
@@ -320,10 +358,11 @@ export class AlertsService {
 				...(input.environment !== undefined && {
 					environment: input.environment,
 				}),
-				...(input.minLevel !== undefined && { minLevel: input.minLevel }),
 				trigger,
-				threshold: trigger === "frequency" ? threshold : null,
-				windowMinutes: trigger === "frequency" ? windowMinutes : null,
+				threshold: merged.threshold,
+				windowMinutes: merged.windowMinutes,
+				minLevel: merged.minLevel,
+				transactionName: merged.transactionName,
 			},
 			input.channelIds ? [...new Set(input.channelIds)] : undefined,
 		);

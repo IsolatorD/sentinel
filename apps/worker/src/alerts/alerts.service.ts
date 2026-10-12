@@ -7,9 +7,13 @@ import {
 } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import {
-	type AlertPayload,
+	type IssueAlertPayload,
+	type IssueTrigger,
+	isPerformanceTrigger,
 	NOTIFICATIONS_QUEUE,
 	type NotificationJobData,
+	type PerformanceAlertPayload,
+	type PerformanceTrigger,
 } from "@sentinel/shared";
 import type { Queue } from "bullmq";
 import type { Redis } from "ioredis";
@@ -22,6 +26,7 @@ import {
 	type IssueContext,
 	type RuleRecord,
 } from "./alerts.repository.js";
+import { performanceSummary } from "./domain/messages.js";
 import {
 	firesOnEvent,
 	frequencyReached,
@@ -33,6 +38,17 @@ import { ALERTS_REDIS } from "./redis.provider.js";
 /** Las reglas cambian poco y se leen en cada evento: una caché corta evita una consulta por evento. */
 const RULES_TTL_MS = 5_000;
 
+/** Regla de issues: sus tipos se disparan por lo que le pasa a un issue. */
+type IssueRule = RuleRecord & { trigger: IssueTrigger };
+
+/** Una medida de rendimiento que cruzó el umbral de una regla. */
+export interface PerformanceBreach {
+	rule: RuleRecord & { trigger: PerformanceTrigger };
+	/** p95 en ms, o tasa de errores en porcentaje. */
+	value: number;
+	sampleCount: number;
+}
+
 export interface StoredEventInfo extends StoredEvent {
 	projectId: string;
 	release?: string;
@@ -41,7 +57,7 @@ export interface StoredEventInfo extends StoredEvent {
 @Injectable()
 export class AlertsService implements OnModuleDestroy {
 	private readonly logger = new Logger(AlertsService.name);
-	private readonly rulesCache = new TtlCache<RuleRecord[]>(500);
+	private readonly rulesCache = new TtlCache<IssueRule[]>(500);
 	private readonly webOrigin: string;
 	private readonly retryDelayMs: number;
 
@@ -87,7 +103,7 @@ export class AlertsService implements OnModuleDestroy {
 		if (candidates.length === 0) return;
 
 		const counts = new Map<number, number>(); // ventana -> eventos (varias reglas comparten consulta)
-		const due: Array<{ rule: RuleRecord; count?: number }> = [];
+		const due: Array<{ rule: IssueRule; count?: number }> = [];
 		for (const rule of candidates) {
 			if (rule.trigger === "frequency") {
 				const window = rule.windowMinutes ?? 0;
@@ -145,22 +161,27 @@ export class AlertsService implements OnModuleDestroy {
 		await this.redis.quit();
 	}
 
-	private async rulesFor(projectId: string): Promise<RuleRecord[]> {
+	private async rulesFor(projectId: string): Promise<IssueRule[]> {
 		const cached = this.rulesCache.get(projectId);
 		if (cached) return cached.value;
-		const rules = await this.repository.activeRules(projectId);
+		const rules = (await this.repository.activeRules(projectId)).filter(
+			(r): r is IssueRule => !isPerformanceTrigger(r.trigger),
+		);
 		this.rulesCache.set(projectId, rules, RULES_TTL_MS);
 		return rules;
 	}
 
-	/** Un solo aviso por regla e issue dentro del período de espera (atómico: `SET NX EX`). */
+	/**
+	 * Un solo aviso por regla y "sujeto" (el issue, o `perf` en las reglas de rendimiento) dentro del
+	 * período de espera (atómico: `SET NX EX`).
+	 */
 	private async acquireCooldown(
 		rule: RuleRecord,
-		issueId: string,
+		subject: string,
 	): Promise<boolean> {
 		if (rule.cooldownMinutes <= 0) return true;
 		const ok = await this.redis.set(
-			`alert:cooldown:${rule.id}:${issueId}`,
+			`alert:cooldown:${rule.id}:${subject}`,
 			"1",
 			"EX",
 			rule.cooldownMinutes * 60,
@@ -169,12 +190,73 @@ export class AlertsService implements OnModuleDestroy {
 		return ok === "OK";
 	}
 
+	/**
+	 * Aviso de una regla de rendimiento. Respeta la espera de la regla: mientras el problema siga
+	 * ahí se repite cada `cooldownMinutes`, no en cada evaluación. Nunca lanza.
+	 */
+	async onPerformanceBreach(breach: PerformanceBreach): Promise<boolean> {
+		const { rule } = breach;
+		try {
+			if (!(await this.acquireCooldown(rule, "perf"))) return false;
+			const context = await this.repository.projectContext(rule.projectId);
+			if (!context) return false;
+			const channels = await this.repository.channelsByIds(rule.channelIds);
+			if (channels.length === 0) return false;
+			const payload = this.performancePayload(context, breach);
+			await this.dispatch(
+				channels.map((channel) => ({
+					projectId: rule.projectId,
+					kind: "alert" as const,
+					ruleId: rule.id,
+					ruleName: rule.name,
+					channelId: channel.id,
+					channelName: channel.name,
+					channelType: channel.type,
+					issueId: null,
+					issueTitle: performanceSummary(payload),
+					payload,
+				})),
+			);
+			return true;
+		} catch (error) {
+			this.logger.error(
+				`no se pudo avisar de la regla de rendimiento ${rule.id}: ${(error as Error).message}`,
+			);
+			return false;
+		}
+	}
+
+	private performancePayload(
+		context: Pick<IssueContext, "project" | "organization">,
+		{ rule, value, sampleCount }: PerformanceBreach,
+	): PerformanceAlertPayload {
+		const base = `${this.webOrigin}/${context.organization.slug}/projects/${context.project.slug}/performance`;
+		return {
+			kind: "performance",
+			trigger: rule.trigger,
+			ruleName: rule.name,
+			organization: context.organization,
+			project: context.project,
+			performance: {
+				transaction: rule.transactionName,
+				environment: rule.environment,
+				value,
+				threshold: rule.threshold ?? 0,
+				windowMinutes: rule.windowMinutes ?? 0,
+				sampleCount,
+			},
+			url: rule.transactionName
+				? `${base}/transaction?name=${encodeURIComponent(rule.transactionName)}`
+				: base,
+		};
+	}
+
 	private payload(
 		context: IssueContext,
-		rule: RuleRecord,
+		rule: IssueRule,
 		info: StoredEventInfo,
 		count?: number,
-	): AlertPayload {
+	): IssueAlertPayload {
 		const { issue } = context;
 		return {
 			kind: "alert",

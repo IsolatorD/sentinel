@@ -248,12 +248,15 @@ Cada proyecto tiene una página **Alertas** con tres pestañas: **Reglas** (cuá
 **Reglas** — avisan por uno o varios canales:
 - *Issue nuevo* y *Regresión* (un issue resuelto reaparece en una release posterior, ver más arriba).
 - *Frecuencia*: un mismo issue acumula N eventos dentro de una ventana (de 1 minuto a 1 día). Es lo que detecta los picos.
-- Filtros opcionales por **entorno** y **nivel mínimo**, y una **espera** entre avisos (1 hora por defecto) para no recibir el mismo issue una y otra vez.
+- *Rendimiento*: **latencia p95** por encima de N ms, o **tasa de errores** por encima de N %, medidas sobre las transacciones que llegaron en una ventana (de 5 minutos a 1 día). Vigilan todo el proyecto o **una transacción concreta** (p. ej. `/checkout`), con filtro opcional de entorno. Con menos de 10 transacciones en la ventana no se avisa. Mientras el problema siga, la **espera** de la regla (1 hora por defecto) evita repetir el aviso; no hay aviso de «recuperado».
+- Filtros opcionales por **entorno** y **nivel mínimo** (este último solo en reglas de issues), y una **espera** entre avisos (1 hora por defecto) para no recibir el mismo issue una y otra vez.
 
 **Canales**:
 - **Email**: a todos los miembros de la organización o solo a algunos. Se envía un correo por persona. Necesita `SMTP_URL`; en desarrollo `pnpm infra:up` levanta **Mailpit** (buzón de pruebas en http://localhost:8025) y basta con `SMTP_URL=smtp://localhost:1025`.
 - **Webhook**: un POST JSON firmado a tu URL.
 - **Slack**: el formato de los webhooks entrantes de Slack (también lo aceptan Discord, con `/slack` al final de su URL, y Teams).
+
+Las reglas de rendimiento las evalúa un job del worker (cola `performance-alerts`) cada minuto (`PERFORMANCE_ALERTS_CRON`, por defecto `* * * * *`; `PERFORMANCE_ALERTS_ENABLED=false` lo desactiva). Cada evaluación mide con una consulta por regla (`percentile_cont` sobre `perf_transaction.received_at`), así que la ventana cuenta por cuándo *llegaron* las transacciones, no por cuándo empezaron.
 
 Cada canal tiene un botón **Enviar prueba**. Los avisos se entregan en segundo plano (otra cola del worker): si el destino falla se reintenta con espera creciente (5 intentos); un `4xx` no se reintenta porque no se arreglaría solo. Todo queda en el historial.
 
@@ -273,7 +276,25 @@ Cada canal tiene un botón **Enviar prueba**. Los avisos se entregan en segundo 
 }
 ```
 
-`event` es `issue.new`, `issue.regression`, `issue.frequency` (que añade `frequency: { count, windowMinutes }`) o `alert.test`. Los cambios futuros solo añadirán campos.
+`event` es `issue.new`, `issue.regression`, `issue.frequency` (que añade `frequency: { count, windowMinutes }`), `performance.p95`, `performance.error_rate` o `alert.test`. Los cambios futuros solo añadirán campos.
+
+Los avisos de rendimiento no llevan `issue`, sino `performance` (y `url` apunta a la pantalla de rendimiento, o a la transacción):
+
+```json
+{
+  "event": "performance.p95",
+  "delivery_id": "6b0f…",
+  "timestamp": "2026-10-09T12:00:00.000Z",
+  "rule": { "name": "Checkout lento", "trigger": "p95_above" },
+  "organization": { "id": "…", "name": "Acme", "slug": "acme" },
+  "project": { "id": "…", "name": "Storefront", "slug": "storefront" },
+  "performance": { "transaction": "/checkout", "environment": "production",
+                   "value": 3840, "threshold": 2000, "windowMinutes": 15, "sampleCount": 120 },
+  "url": "https://tu-panel/acme/projects/storefront/performance/transaction?name=%2Fcheckout"
+}
+```
+
+`value` es el p95 en milisegundos (`performance.p95`) o el porcentaje de transacciones con error, de 0 a 100 (`performance.error_rate`); `transaction` es `null` si la regla vigila todo el proyecto.
 
 **Verifica la firma** para saber que la petición viene de Sentinel. Al crear el canal se muestra una sola vez su secreto (`whsec_…`):
 
@@ -301,6 +322,7 @@ Otras cabeceras: `X-Sentinel-Event`, `X-Sentinel-Delivery` (id del envío, útil
 ## Colaboración
 
 - **Responsable**: cualquier miembro puede asignar un issue a otro miembro de la organización (o dejarlo sin asignar) desde su cabecera. El listado se filtra por *Asignados a mí*, *Sin asignar* o una persona (`?assignee=me|unassigned|<id>`).
+- **Aviso por correo al asignar**: quien recibe un issue recibe un correo (en su idioma, con un enlace al issue). No se envía si se lo asigna a sí mismo ni al quitar la asignación, y cada persona puede desactivarlo desde el menú de su cuenta (preferencia `emailOnAssign`, activada por defecto; `PATCH /api/me/preferences`).
 - **Actividad**: cada issue tiene una pestaña con sus **comentarios** y el registro de los cambios (quién lo resolvió, reabrió, ignoró o asignó, con su release). Los comentarios los escribe cualquier miembro; solo su autor los edita, y su autor o un owner/admin los borra. El registro de cambios no se edita.
 - **Miembros** (`/:org/members`): lista de personas con su rol; owners y admins invitan por correo, cambian roles (`member`/`admin`), quitan miembros y reenvían o cancelan invitaciones pendientes. El owner no se puede degradar ni quitar desde aquí.
 - **Invitaciones por correo**: se envía un enlace (`/accept-invitation/<id>`) a la dirección invitada. Si esa persona no tiene sesión, pasa por el login (o el registro) y **vuelve al enlace** (`?redirect=`, solo rutas internas). La invitación solo la puede aceptar la cuenta con ese correo.

@@ -6,6 +6,7 @@ import { validateWorkerEnv, type WorkerEnv } from "./config/env.js";
 import { DatabaseModule } from "./database/database.module.js";
 import { EventsModule } from "./events/events.module.js";
 import { MailModule } from "./mail/mail.module.js";
+import { PerformanceAlertsModule } from "./performance-alerts/performance-alerts.module.js";
 import { RetentionModule } from "./retention/retention.module.js";
 import { TransactionsModule } from "./transactions/transactions.module.js";
 
@@ -44,6 +45,7 @@ import { TransactionsModule } from "./transactions/transactions.module.js";
 		DatabaseModule,
 		EventsModule,
 		MailModule,
+		PerformanceAlertsModule,
 		RetentionModule,
 		TransactionsModule,
 	],

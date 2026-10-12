@@ -21,6 +21,13 @@ const workerEnvSchema = z.object({
 		.transform((v) => v === "true"),
 	/** Cuándo corre la retención (cron de 5 campos, hora del servidor). Por defecto, a las 03:00. */
 	RETENTION_CRON: z.string().min(1).default("0 3 * * *"),
+	/** Evalúa las reglas de alerta de rendimiento (p95 y tasa de errores) de todos los proyectos. */
+	PERFORMANCE_ALERTS_ENABLED: z
+		.enum(["true", "false"])
+		.default("true")
+		.transform((v) => v === "true"),
+	/** Cada cuánto se evalúan (cron de 5 campos). Por defecto, cada minuto. */
+	PERFORMANCE_ALERTS_CRON: z.string().min(1).default("* * * * *"),
 });
 
 export type WorkerEnv = z.infer<typeof workerEnvSchema>;

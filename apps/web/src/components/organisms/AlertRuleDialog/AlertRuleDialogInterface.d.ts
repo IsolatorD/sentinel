@@ -13,5 +13,6 @@ export interface AlertRuleDialogProps {
 export interface RuleFormErrors {
 	name?: string;
 	threshold?: string;
+	transactionName?: string;
 	channels?: string;
 }
