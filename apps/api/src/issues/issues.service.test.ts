@@ -85,6 +85,7 @@ function setup(
 	const issues = {
 		userCounts: vi.fn(async () => new Map()),
 		assignees: vi.fn(async () => new Map()),
+		ticket: vi.fn(async () => null),
 		findInProject: vi.fn(async () => issueRow()),
 		...deps.issues,
 	};

@@ -104,6 +104,12 @@ export class Api {
 		session?: Session,
 		extra: RequestOptions = {},
 	) => this.request(path, { ...extra, method: "PATCH", body, session });
+	put = (
+		path: string,
+		body: unknown,
+		session?: Session,
+		extra: RequestOptions = {},
+	) => this.request(path, { ...extra, method: "PUT", body, session });
 	delete = (path: string, session?: Session, extra: RequestOptions = {}) =>
 		this.request(path, { ...extra, method: "DELETE", session });
 

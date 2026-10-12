@@ -14,6 +14,7 @@ vi.mock("@/services/preferencesService/preferencesService");
 vi.mock("@/services/statsService/statsService");
 vi.mock("@/services/dashboardService/dashboardService");
 vi.mock("@/services/performanceService/performanceService");
+vi.mock("@/services/integrationsService/integrationsService");
 
 // Ningún test sale a la red: lo que no se simula con `vi.mock` falla como una caída de red. Sin esto,
 // axios (a diferencia de `fetch` con URL relativa) llegaría a un servidor local si lo hubiera.

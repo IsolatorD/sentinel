@@ -1,7 +1,12 @@
 import { z } from "zod";
 import { paginated, userRefSchema } from "./issues.js";
 
-export const ACTIVITY_TYPES = ["comment", "status", "assignment"] as const;
+export const ACTIVITY_TYPES = [
+	"comment",
+	"status",
+	"assignment",
+	"ticket",
+] as const;
 export const activityTypeSchema = z.enum(ACTIVITY_TYPES);
 export type ActivityType = z.infer<typeof activityTypeSchema>;
 
@@ -23,6 +28,7 @@ export type ListActivityQuery = z.infer<typeof listActivityQuerySchema>;
  * Una entrada del historial. `data` según el tipo:
  * - status: `{ from, to, release? }`
  * - assignment: `{ from: {id,name}|null, to: {id,name}|null }`
+ * - ticket: `{ action: "created" | "unlinked", key, url }`
  */
 export const activityDtoSchema = z.object({
 	id: z.string().uuid(),

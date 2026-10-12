@@ -329,6 +329,16 @@ Otras cabeceras: `X-Sentinel-Event`, `X-Sentinel-Delivery` (id del envío, útil
 
 El correo no lo envía la API sino el worker, a través de una cola (`emails`): así hay un único lugar con acceso al SMTP y los fallos se reintentan sin bloquear la petición.
 
+## Integración con Jira
+
+Cada proyecto puede conectarse con **Jira Cloud** (Configuración → Jira) para crear un ticket a partir de un issue con un clic. Slack no necesita integración aparte: ya es un canal de alertas (webhook entrante).
+
+- **Conexión** (solo owner/admin): sitio (`https://<equipo>.atlassian.net`), correo de la cuenta, **API token** ([cómo crear uno](https://id.atlassian.com/manage-profile/security/api-tokens)), clave del proyecto de Jira y tipo de issue (`Bug` por defecto). Al guardar se comprueba contra Jira que las credenciales sirven, que el proyecto existe y que el tipo de issue existe en él.
+- **Seguridad**: solo se aceptan sitios `https://*.atlassian.net` (nunca hosts arbitrarios, así que no se puede usar para llegar a la red interna); el token se guarda cifrado con AES-256-GCM (clave derivada de `BETTER_AUTH_SECRET`: si ese secreto cambia hay que volver a conectar) y la API nunca lo devuelve. Al editar, dejar el token vacío conserva el guardado, pero solo si no cambian el sitio ni el correo.
+- **Ticket**: cualquier miembro lo crea desde la cabecera del issue. Lleva el título, el culprit, el nivel, los contadores, la release y un enlace de vuelta al issue. Un issue tiene como mucho un ticket; el vínculo se ve en la cabecera (con enlace a Jira), se puede quitar (no borra el ticket en Jira) y cada cambio queda en la actividad del issue.
+- **API**: `GET|PUT|DELETE /api/organizations/:orgId/projects/:projectId/integrations/jira` y `POST|DELETE …/issues/:issueId/ticket`. Un fallo de Jira responde 400 (credenciales, proyecto o tipo inválidos) o 502 (Jira no responde); el detalle de Jira solo queda en el log del servidor.
+- No hay sincronización de vuelta (resolver el ticket no resuelve el issue): requeriría un webhook público de Jira hacia Sentinel.
+
 ## Idioma, mensajes y avisos
 
 - **Idioma de la persona**: se elige en el menú de la cuenta y se guarda en su perfil (`GET/PATCH /api/me/preferences`: idioma, tema y recorridos vistos), así que la sigue entre dispositivos. La primera vez se toma el del navegador.

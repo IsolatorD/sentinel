@@ -734,6 +734,11 @@ export const es: Deep<Translations> = {
 			activity: "Actividad",
 			label: "Secciones del issue",
 		},
+		ticket: {
+			create: "Crear ticket en Jira",
+			unlink: "Desvincular ticket",
+			opensInJira: "(se abre en Jira)",
+		},
 		assignee: {
 			label: "Responsable",
 			unassigned: "Sin asignar",
@@ -901,6 +906,8 @@ export const es: Deep<Translations> = {
 			assignedSelf: "{{who}} se asignó este issue",
 			unassigned: "{{who}} quitó la asignación de {{from}}",
 			reassigned: "{{who}} reasignó este issue de {{from}} a {{to}}",
+			ticketCreated: "{{who}} creó el ticket {{key}}",
+			ticketUnlinked: "{{who}} desvinculó el ticket {{key}}",
 			generic: "{{who}} actualizó este issue",
 		},
 	},
@@ -1218,6 +1225,26 @@ export const es: Deep<Translations> = {
 			dsn: "DSN",
 			deleteConfirm:
 				"¿Eliminar esta clave? Las apps que la usan dejarán de enviar eventos.",
+		},
+		jira: {
+			title: "Jira",
+			connected: "Conectado",
+			description:
+				"Conecta el proyecto con Jira Cloud para que cualquiera pueda crear un ticket desde un issue. El API token se guarda cifrado y no se vuelve a mostrar.",
+			siteUrl: "Sitio de Jira",
+			siteUrlHint:
+				"La dirección de tu Jira Cloud, como https://tu-equipo.atlassian.net.",
+			email: "Correo de la cuenta",
+			apiToken: "API token",
+			apiTokenHint:
+				"Crea uno en los ajustes de tu cuenta de Atlassian, en Seguridad, API tokens.",
+			apiTokenKeep: "Déjalo vacío para conservar el token guardado.",
+			projectKey: "Clave del proyecto",
+			issueType: "Tipo de issue",
+			connect: "Conectar",
+			update: "Guardar cambios",
+			disconnect: "Desconectar",
+			saved: "Conexión con Jira guardada.",
 		},
 		limits: {
 			title: "Datos y límites",

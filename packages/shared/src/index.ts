@@ -6,6 +6,7 @@ export * from "./env.js";
 export * from "./errors.js";
 export * from "./health.js";
 export * from "./ingest.js";
+export * from "./integrations.js";
 export * from "./issues.js";
 export * from "./locale.js";
 export * from "./maintenance.js";

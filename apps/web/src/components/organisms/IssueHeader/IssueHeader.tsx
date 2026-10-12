@@ -13,6 +13,7 @@ import { StatBlock } from "@/components/molecules/StatBlock/StatBlock";
 import { StatusBadge } from "@/components/molecules/StatusBadge/StatusBadge";
 import { IssueAssignee } from "@/components/organisms/IssueAssignee/IssueAssignee";
 import type { IssueHeaderProps } from "@/components/organisms/IssueHeader/IssueHeaderInterface";
+import { IssueTicket } from "@/components/organisms/IssueTicket/IssueTicket";
 import {
 	useDeleteIssue,
 	useUpdateIssueStatus,
@@ -79,6 +80,9 @@ export function IssueHeader({
 					{resolutionNote && (
 						<p className="mt-2 text-sm text-muted">{resolutionNote}</p>
 					)}
+					<div className="mt-3">
+						<IssueTicket issue={issue} scope={scope} />
+					</div>
 				</div>
 				<div className="flex shrink-0 flex-wrap gap-2">
 					{issue.status === "unresolved" ? (

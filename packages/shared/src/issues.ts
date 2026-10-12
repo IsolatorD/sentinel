@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { levelSchema } from "./ingest.js";
+import { ticketDtoSchema } from "./integrations.js";
 
 export const ISSUE_STATUSES = ["unresolved", "resolved", "ignored"] as const;
 export const issueStatusSchema = z.enum(ISSUE_STATUSES);
@@ -136,6 +137,8 @@ export type EventDetailDto = z.infer<typeof eventDetailDtoSchema>;
 
 export const issueDetailDtoSchema = issueDtoSchema.extend({
 	latestEvent: eventDetailDtoSchema.nullable(),
+	/** Ticket de Jira ligado al issue, si lo hay. */
+	ticket: ticketDtoSchema.nullable(),
 });
 export type IssueDetailDto = z.infer<typeof issueDetailDtoSchema>;
 

@@ -13,6 +13,7 @@ import { DashboardModule } from "./dashboard/dashboard.module.js";
 import { DatabaseModule } from "./database/database.module.js";
 import { HealthModule } from "./health/health.module.js";
 import { IngestModule } from "./ingest/ingest.module.js";
+import { IntegrationsModule } from "./integrations/integrations.module.js";
 import { IssuesModule } from "./issues/issues.module.js";
 import { OrganizationsModule } from "./organizations/organizations.module.js";
 import { PerformanceModule } from "./performance/performance.module.js";
@@ -49,6 +50,7 @@ import { TokensModule } from "./tokens/tokens.module.js";
 		IssuesModule,
 		PerformanceModule,
 		DashboardModule,
+		IntegrationsModule,
 		QuotaModule,
 		ReleasesModule,
 		AlertsModule,

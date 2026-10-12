@@ -13,12 +13,18 @@ import {
 	inArray,
 	isNull,
 	issue,
+	issueTicket,
 	or,
 	organization,
 	project,
 	user,
 } from "@sentinel/db";
-import type { IssueStatus, ListIssuesQuery, UserRef } from "@sentinel/shared";
+import type {
+	IssueStatus,
+	ListIssuesQuery,
+	TicketDto,
+	UserRef,
+} from "@sentinel/shared";
 import { DB } from "../database/database.module.js";
 import { containsPattern } from "./domain/search.js";
 
@@ -117,6 +123,28 @@ export class IssuesRepository {
 			.from(user)
 			.where(inArray(user.id, ids));
 		return new Map(rows.map((r) => [r.id, r]));
+	}
+
+	/** Ticket externo ligado al issue, con quién lo creó. */
+	async ticket(issueId: string): Promise<TicketDto | null> {
+		const [row] = await this.db
+			.select({
+				key: issueTicket.externalKey,
+				url: issueTicket.externalUrl,
+				createdAt: issueTicket.createdAt,
+				creator: { id: user.id, name: user.name, email: user.email },
+			})
+			.from(issueTicket)
+			.leftJoin(user, eq(user.id, issueTicket.createdBy))
+			.where(eq(issueTicket.issueId, issueId));
+		if (!row) return null;
+		return {
+			provider: "jira",
+			key: row.key,
+			url: row.url,
+			createdAt: row.createdAt.toISOString(),
+			createdBy: row.creator?.id ? row.creator : null,
+		};
 	}
 
 	/** Nombre y slug del proyecto y de su organización, para escribir enlaces y correos. */

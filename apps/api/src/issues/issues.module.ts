@@ -37,5 +37,6 @@ import { StatsService } from "./stats/stats.service.js";
 		StatsRepository,
 		StatsService,
 	],
+	exports: [ActivityService],
 })
 export class IssuesModule {}

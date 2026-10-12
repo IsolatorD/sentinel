@@ -728,6 +728,11 @@ export const en = {
 			activity: "Activity",
 			label: "Issue sections",
 		},
+		ticket: {
+			create: "Create Jira ticket",
+			unlink: "Unlink ticket",
+			opensInJira: "(opens in Jira)",
+		},
 		assignee: {
 			label: "Assignee",
 			unassigned: "Unassigned",
@@ -891,6 +896,8 @@ export const en = {
 			assignedSelf: "{{who}} assigned this issue to themselves",
 			unassigned: "{{who}} unassigned {{from}}",
 			reassigned: "{{who}} reassigned this issue from {{from}} to {{to}}",
+			ticketCreated: "{{who}} created ticket {{key}}",
+			ticketUnlinked: "{{who}} unlinked ticket {{key}}",
 			generic: "{{who}} updated this issue",
 		},
 	},
@@ -1205,6 +1212,26 @@ export const en = {
 			delete: "Delete",
 			dsn: "DSN",
 			deleteConfirm: "Delete this key? Apps using it will stop sending events.",
+		},
+		jira: {
+			title: "Jira",
+			connected: "Connected",
+			description:
+				"Connect the project to Jira Cloud so anyone can create a ticket from an issue. The API token is stored encrypted and never shown again.",
+			siteUrl: "Jira site",
+			siteUrlHint:
+				"Your Jira Cloud address, like https://your-team.atlassian.net.",
+			email: "Account email",
+			apiToken: "API token",
+			apiTokenHint:
+				"Create one in your Atlassian account settings, under Security, API tokens.",
+			apiTokenKeep: "Leave empty to keep the saved token.",
+			projectKey: "Project key",
+			issueType: "Issue type",
+			connect: "Connect",
+			update: "Save changes",
+			disconnect: "Disconnect",
+			saved: "Jira connection saved.",
 		},
 		limits: {
 			title: "Data and limits",

@@ -8,6 +8,8 @@ export type ActivityEventKey =
 	| "activity.events.assignedSelf"
 	| "activity.events.unassigned"
 	| "activity.events.reassigned"
+	| "activity.events.ticketCreated"
+	| "activity.events.ticketUnlinked"
 	| "activity.events.generic";
 
 export interface Person {

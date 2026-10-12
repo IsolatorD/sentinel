@@ -9,6 +9,7 @@ import { createAppRouter } from "@/app/router";
 import { authService } from "@/services/authService/authService";
 import { configService } from "@/services/configService/configService";
 import { dashboardService } from "@/services/dashboardService/dashboardService";
+import { integrationsService } from "@/services/integrationsService/integrationsService";
 import { issuesService } from "@/services/issuesService/issuesService";
 import { organizationsService } from "@/services/organizationsService/organizationsService";
 import { performanceService } from "@/services/performanceService/performanceService";
@@ -68,6 +69,7 @@ export function mockHappyPath() {
 	vi.mocked(performanceService.sample).mockResolvedValue(fx.sampleDetail());
 	vi.mocked(performanceService.trace).mockResolvedValue(fx.trace());
 	vi.mocked(dashboardService.get).mockResolvedValue(fx.dashboard());
+	vi.mocked(integrationsService.getJira).mockResolvedValue(fx.jiraConnection());
 	vi.mocked(statsService.project).mockResolvedValue(fx.stats());
 	vi.mocked(statsService.issue).mockResolvedValue(fx.stats());
 	vi.mocked(issuesService.list).mockResolvedValue(fx.issueList());

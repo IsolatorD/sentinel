@@ -53,4 +53,23 @@ describe("apiErrorText", () => {
 		expect(apiErrorText(new Error("red"), "genérico")).toBe("genérico");
 		expect(apiErrorText(undefined, "genérico")).toBe("genérico");
 	});
+
+	it("un 502 con motivo conocido (un servicio externo no respondió) sí se explica; sin motivo, no", () => {
+		expect(
+			apiErrorText(
+				new ApiError(
+					502,
+					"Jira could not be reached",
+					undefined,
+					undefined,
+					undefined,
+					"JIRA_REQUEST_FAILED",
+				),
+				"genérico",
+			),
+		).toBe("Jira could not be reached");
+		expect(apiErrorText(new ApiError(502, "Bad Gateway"), "genérico")).toBe(
+			"genérico",
+		);
+	});
 });

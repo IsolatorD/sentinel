@@ -3,6 +3,7 @@ import { Skeleton } from "@/components/atoms/Skeleton/Skeleton";
 import { Section } from "@/components/molecules/Section/Section";
 import { DeleteProjectSection } from "@/components/organisms/DeleteProjectSection/DeleteProjectSection";
 import { InstallInstructions } from "@/components/organisms/InstallInstructions/InstallInstructions";
+import { JiraIntegrationForm } from "@/components/organisms/JiraIntegrationForm/JiraIntegrationForm";
 import { ProjectGeneralForm } from "@/components/organisms/ProjectGeneralForm/ProjectGeneralForm";
 import { ProjectKeysManager } from "@/components/organisms/ProjectKeysManager/ProjectKeysManager";
 import { ProjectLimitsForm } from "@/components/organisms/ProjectLimitsForm/ProjectLimitsForm";
@@ -30,6 +31,7 @@ export function ProjectSettingsContent() {
 					<ProjectGeneralForm project={project} orgId={organization.id} />
 					<ProjectKeysManager project={project} orgId={organization.id} />
 					<ProjectLimitsForm project={project} orgId={organization.id} />
+					<JiraIntegrationForm project={project} orgId={organization.id} />
 					{firstActive && (
 						<Section title={t("settings.install.title")}>
 							<p className="mb-4 text-sm text-muted">

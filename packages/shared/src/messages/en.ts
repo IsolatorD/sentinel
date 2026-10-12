@@ -162,6 +162,21 @@ export const en = {
 		"You get this because the alert rule \u201c{{rule}}\u201d of {{organization}} detected a performance problem.",
 	PERFORMANCE_WINDOW_MIN:
 		"Performance rules need a window of at least 5 minutes",
+	JIRA_NOT_CONNECTED: "This project is not connected to Jira",
+	JIRA_AUTH_FAILED:
+		"Jira rejected the credentials. Check the email and the API token",
+	JIRA_PROJECT_NOT_FOUND:
+		"Jira does not know that project key, or the account cannot see it",
+	JIRA_ISSUE_TYPE_NOT_FOUND:
+		"That issue type does not exist in the Jira project",
+	JIRA_REQUEST_FAILED: "Jira could not be reached or rejected the request",
+	JIRA_TOKEN_REQUIRED: "An API token is required to connect to Jira",
+	JIRA_SITE_INVALID:
+		"The site must be a Jira Cloud address, like https://your-team.atlassian.net",
+	JIRA_KEY_INVALID:
+		"The project key is 2 to 10 letters, digits or underscores, starting with a letter (e.g. APP)",
+	TICKET_EXISTS: "This issue already has a ticket",
+	TICKET_NOT_FOUND: "This issue has no ticket",
 } as const;
 
 export type MessageCode = keyof typeof en;

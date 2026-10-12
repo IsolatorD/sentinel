@@ -8,7 +8,11 @@ import { ApiError } from "@/utils/apiError/apiError";
  * compartido; y si no hay nada reconocible, un mensaje genérico.
  */
 export function apiErrorText(error: unknown, generic: string): string {
-	if (!(error instanceof ApiError) || error.status >= 500) return generic;
+	if (!(error instanceof ApiError)) return generic;
+	// Un 5xx es un fallo nuestro y no se detalla, salvo el 502 con motivo conocido: "un servicio
+	// externo (p. ej. Jira) no respondió", que sí le sirve al usuario.
+	if (error.status >= 500 && !(error.status === 502 && error.reason))
+		return generic;
 	if (error.reason && isMessageCode(error.reason)) {
 		return (
 			error.message ||

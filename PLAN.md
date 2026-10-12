@@ -170,6 +170,7 @@ Reglas de alerta (nuevo issue, regresión, umbral de frecuencia), canales email 
 - ✅ **Dashboard de estadísticas** (`/:org/projects/:project/overview`): totales con variación frente al periodo anterior, series, desgloses por nivel/entorno/release, issues con más eventos y transacciones más lentas.
 - ✅ **Email al asignar un issue**: correo en el idioma de quien lo recibe, con preferencia por usuario (`emailOnAssign`) y sin aviso al autoasignarse.
 - ✅ **Alertas de rendimiento**: reglas `p95_above` y `error_rate_above` (proyecto o transacción, entorno opcional), evaluadas cada minuto por un job del worker; mismos canales, espera e historial que las de issues.
+- ✅ **Integración con Jira Cloud**: conexión por proyecto (API token cifrado, solo `*.atlassian.net`), crear/desvincular un ticket desde el issue, con su rastro en la actividad. Slack queda cubierto por el canal de alertas existente. Fuera de alcance: sincronización de vuelta (webhooks de Jira) y OAuth.
 
 ## 7. Despliegue (recomendación)
 

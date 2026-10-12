@@ -57,5 +57,16 @@ export function describeActivity(
 		};
 	}
 
+	if (entry.type === "ticket") {
+		const key = typeof data.key === "string" ? data.key : "";
+		return {
+			key:
+				data.action === "unlinked"
+					? "activity.events.ticketUnlinked"
+					: "activity.events.ticketCreated",
+			values: { who, key },
+		};
+	}
+
 	return { key: "activity.events.generic", values: { who } };
 }

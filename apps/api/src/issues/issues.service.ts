@@ -127,10 +127,11 @@ export class IssuesService {
 	): Promise<IssueDetailDto> {
 		await this.authorize(userId, orgId, projectId, "member");
 		const row = await this.requireIssue(projectId, issueId);
-		const [users, latest, people] = await Promise.all([
+		const [users, latest, people, ticket] = await Promise.all([
 			this.issues.userCounts([issueId]),
 			this.events.latest(issueId),
 			this.issues.assignees([row.assigneeId]),
+			this.issues.ticket(issueId),
 		]);
 		return {
 			...toIssueDto(
@@ -139,6 +140,7 @@ export class IssuesService {
 				row.assigneeId ? (people.get(row.assigneeId) ?? null) : null,
 			),
 			latestEvent: latest ? toEventDetail(latest) : null,
+			ticket,
 		};
 	}
 

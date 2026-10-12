@@ -162,4 +162,19 @@ export const es: Record<MessageCode, string> = {
 		"Recibes esto porque la regla de alerta \u00ab{{rule}}\u00bb de {{organization}} detectó un problema de rendimiento.",
 	PERFORMANCE_WINDOW_MIN:
 		"Las reglas de rendimiento necesitan una ventana de al menos 5 minutos",
+	JIRA_NOT_CONNECTED: "Este proyecto no está conectado a Jira",
+	JIRA_AUTH_FAILED:
+		"Jira rechazó las credenciales. Revisa el correo y el API token",
+	JIRA_PROJECT_NOT_FOUND:
+		"Jira no conoce esa clave de proyecto, o la cuenta no puede verlo",
+	JIRA_ISSUE_TYPE_NOT_FOUND:
+		"Ese tipo de issue no existe en el proyecto de Jira",
+	JIRA_REQUEST_FAILED: "No se pudo contactar con Jira o rechazó la petición",
+	JIRA_TOKEN_REQUIRED: "Hace falta un API token para conectar con Jira",
+	JIRA_SITE_INVALID:
+		"El sitio debe ser una dirección de Jira Cloud, como https://tu-equipo.atlassian.net",
+	JIRA_KEY_INVALID:
+		"La clave del proyecto tiene de 2 a 10 letras, dígitos o guiones bajos, y empieza por una letra (p. ej. APP)",
+	TICKET_EXISTS: "Este issue ya tiene un ticket",
+	TICKET_NOT_FOUND: "Este issue no tiene ticket",
 };

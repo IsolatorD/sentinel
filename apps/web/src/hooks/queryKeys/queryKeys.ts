@@ -11,6 +11,8 @@ export const queryKeys = {
 		["orgs", orgId, "projects", projectId, "dashboard", query] as const,
 	usage: (orgId: string, projectId: string) =>
 		["orgs", orgId, "projects", projectId, "usage"] as const,
+	jira: (orgId: string, projectId: string) =>
+		["orgs", orgId, "projects", projectId, "integrations", "jira"] as const,
 	project: (orgId: string, projectId: string) =>
 		["orgs", orgId, "projects", projectId] as const,
 	releases: (orgId: string, projectId: string) =>

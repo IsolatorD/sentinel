@@ -5,12 +5,14 @@ import type {
 	IssueDetailDto,
 	IssueDto,
 	IssueListDto,
+	JiraConnectionDto,
 	PerformanceOverviewDto,
 	ProjectDto,
 	ProjectKeyDto,
 	SampleDetailDto,
 	SampleListDto,
 	StatsDto,
+	TicketDto,
 	TraceDto,
 	TransactionGroupDto,
 	TransactionListDto,
@@ -191,6 +193,7 @@ export const issueDetail = (
 ): IssueDetailDto => ({
 	...issue(),
 	latestEvent: event(),
+	ticket: null,
 	...over,
 });
 
@@ -459,5 +462,25 @@ export const dashboard = (over: Partial<DashboardDto> = {}): DashboardDto => ({
 		{ name: "/checkout", op: "pageload", count: 400, p95: 6_640 },
 		{ name: "/cart", op: "pageload", count: 300, p95: 4_340 },
 	],
+	...over,
+});
+
+export const jiraConnection = (
+	over: Partial<JiraConnectionDto> = {},
+): JiraConnectionDto => ({
+	connected: false,
+	siteUrl: null,
+	email: null,
+	projectKey: null,
+	issueType: null,
+	...over,
+});
+
+export const ticket = (over: Partial<TicketDto> = {}): TicketDto => ({
+	provider: "jira",
+	key: "APP-12",
+	url: "https://acme.atlassian.net/browse/APP-12",
+	createdAt: ago(60),
+	createdBy: user,
 	...over,
 });
