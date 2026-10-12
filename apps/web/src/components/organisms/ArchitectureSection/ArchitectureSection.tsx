@@ -1,10 +1,8 @@
 import { ArrowRight } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { Badge } from "@/components/atoms/Badge/Badge";
-import { CodeBlock } from "@/components/molecules/CodeBlock/CodeBlock";
 import {
 	FLOW,
-	RUN_COMMANDS,
 	STACK,
 } from "@/components/organisms/ArchitectureSection/ArchitectureSection.constants";
 
@@ -47,28 +45,20 @@ export function ArchitectureSection() {
 					))}
 				</ol>
 
-				<div className="mt-12 grid gap-10 lg:grid-cols-2">
-					<div className="min-w-0">
-						<h3 className="text-sm font-semibold">
-							{t("landing.architecture.stack")}
-						</h3>
-						<ul className="mt-3 flex flex-wrap gap-2">
-							{STACK.map((item) => (
-								<li key={item}>
-									<Badge tone="neutral">{item}</Badge>
-								</li>
-							))}
-						</ul>
-						<p className="mt-5 text-sm text-muted">
-							{t("landing.architecture.note")}
-						</p>
-					</div>
-					<div className="min-w-0">
-						<h3 className="mb-3 text-sm font-semibold">
-							{t("landing.architecture.run")}
-						</h3>
-						<CodeBlock title="bash" code={RUN_COMMANDS} />
-					</div>
+				<div className="mt-12 max-w-3xl min-w-0">
+					<h3 className="text-sm font-semibold">
+						{t("landing.architecture.stack")}
+					</h3>
+					<ul className="mt-3 flex flex-wrap gap-2">
+						{STACK.map((item) => (
+							<li key={item}>
+								<Badge tone="neutral">{item}</Badge>
+							</li>
+						))}
+					</ul>
+					<p className="mt-5 text-sm text-muted">
+						{t("landing.architecture.note")}
+					</p>
 				</div>
 			</div>
 		</section>

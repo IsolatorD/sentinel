@@ -463,7 +463,6 @@ export const es: Deep<Translations> = {
 			},
 			stack: "Tecnología",
 			note: "Un monorepo con pnpm y Turborepo, con un único esquema (Zod) como fuente de verdad para la API, los SDK y el panel, y pruebas de extremo a extremo que ejecutan la API y el worker reales.",
-			run: "Ejecútalo tú",
 		},
 		cta: {
 			title: "Empieza a detectar problemas antes que tus usuarios",
@@ -473,8 +472,7 @@ export const es: Deep<Translations> = {
 	},
 	docs: {
 		title: "Documentación",
-		subtitle:
-			"Todo para ir de cero a tu primer error con traza, y para ejecutar Sentinel por tu cuenta.",
+		subtitle: "Todo para ir de cero a tu primer error con traza.",
 		toc: "En esta página",
 		sections: {
 			quickstart: "Primeros pasos",
@@ -483,7 +481,6 @@ export const es: Deep<Translations> = {
 			tracing: "Trazas y rendimiento",
 			alerts: "Alertas",
 			api: "API de ingesta",
-			selfhost: "Ejecútalo tú",
 		},
 		quickstart: {
 			intro: "Cinco pasos, unos minutos.",
@@ -568,13 +565,6 @@ export const es: Deep<Translations> = {
 			},
 			outro:
 				"Autentica con la clave de la DSN en la cabecera X-Sentinel-Key. La respuesta es 202 al instante y el evento se procesa en segundo plano. La referencia completa está en",
-		},
-		selfhost: {
-			intro:
-				"Sentinel necesita PostgreSQL y Redis. Docker Compose levanta ambos, y Mailpit para ver los correos mientras desarrollas.",
-			env: "Variables de entorno principales",
-			outro:
-				"El archivo .env.example explica cada una. Sin SMTP_URL, el envío de correo queda desactivado.",
 		},
 	},
 	overview: {

@@ -146,7 +146,6 @@ describe("documentación (/docs)", () => {
 			"#tracing",
 			"#alerts",
 			"#api",
-			"#selfhost",
 		]);
 		for (const link of links) {
 			const id = link.getAttribute("href")?.slice(1) ?? "";

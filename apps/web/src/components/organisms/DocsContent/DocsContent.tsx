@@ -1,12 +1,10 @@
 import { useTranslation } from "react-i18next";
 import { CodeBlock } from "@/components/molecules/CodeBlock/CodeBlock";
-import { RUN_COMMANDS } from "@/components/organisms/ArchitectureSection/ArchitectureSection.constants";
 import { DocSection } from "@/components/organisms/DocsContent/DocSection/DocSection";
 import {
 	ALERT_CHANNELS,
 	ALERT_RULES,
 	ENDPOINTS,
-	ENV_VARS,
 	PACKAGES,
 	QUICKSTART_STEPS,
 	SOURCEMAPS_COMMAND,
@@ -198,28 +196,6 @@ export function DocsContent() {
 						{t("public.footer.api")}
 					</a>
 				</p>
-			</DocSection>
-
-			<DocSection
-				id="selfhost"
-				title={t("docs.sections.selfhost")}
-				intro={t("docs.selfhost.intro")}
-			>
-				<CodeBlock title="bash" code={RUN_COMMANDS} />
-				<div>
-					<h3 className="text-sm font-semibold">{t("docs.selfhost.env")}</h3>
-					<ul className="mt-2 flex flex-wrap gap-2">
-						{ENV_VARS.map((name) => (
-							<li
-								key={name}
-								className="rounded border border-border bg-subtle px-2 py-0.5 font-mono text-xs"
-							>
-								{name}
-							</li>
-						))}
-					</ul>
-					<p className="mt-3 text-sm text-muted">{t("docs.selfhost.outro")}</p>
-				</div>
 			</DocSection>
 		</div>
 	);

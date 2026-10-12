@@ -6,7 +6,6 @@ export const DOC_SECTIONS = [
 	"tracing",
 	"alerts",
 	"api",
-	"selfhost",
 ] as const;
 
 export const PACKAGES = [
@@ -51,15 +50,4 @@ export const ALERT_CHANNELS = ["email", "webhook", "slack"] as const;
 export const ENDPOINTS = [
 	{ method: "POST", path: "/api/:projectId/events" },
 	{ method: "POST", path: "/api/:projectId/transactions" },
-] as const;
-
-export const ENV_VARS = [
-	"DATABASE_URL",
-	"REDIS_HOST",
-	"BETTER_AUTH_SECRET",
-	"BETTER_AUTH_URL",
-	"WEB_ORIGIN",
-	"SMTP_URL",
-	"INGEST_RATE_LIMIT_PER_MINUTE",
-	"ENABLE_DOCS",
 ] as const;

@@ -28,12 +28,3 @@ export const STACK = [
 	"Turborepo",
 	"pnpm",
 ] as const;
-
-export const RUN_COMMANDS = [
-	"cp .env.example .env",
-	"pnpm install",
-	"pnpm infra:up      # Postgres, Redis, Mailpit",
-	"pnpm db:migrate",
-	"pnpm dev           # API :3000 · worker · web :5173",
-	"pnpm seed:demo     # demo@sentinel.dev",
-].join("\n");

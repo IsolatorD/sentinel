@@ -457,7 +457,6 @@ export const en = {
 			},
 			stack: "Stack",
 			note: "A pnpm and Turborepo monorepo, with one schema (Zod) as the single source of truth for the API, the SDKs and the dashboard, and end-to-end tests that run the real API and worker.",
-			run: "Run it yourself",
 		},
 		cta: {
 			title: "Start catching problems before your users do",
@@ -467,8 +466,7 @@ export const en = {
 	},
 	docs: {
 		title: "Documentation",
-		subtitle:
-			"Everything to go from zero to your first traced error, and to run Sentinel yourself.",
+		subtitle: "Everything to go from zero to your first traced error.",
 		toc: "On this page",
 		sections: {
 			quickstart: "Quickstart",
@@ -477,7 +475,6 @@ export const en = {
 			tracing: "Traces and performance",
 			alerts: "Alerts",
 			api: "Ingestion API",
-			selfhost: "Run it yourself",
 		},
 		quickstart: {
 			intro: "Five steps, a few minutes.",
@@ -562,13 +559,6 @@ export const en = {
 			},
 			outro:
 				"Authenticate with the DSN key in the X-Sentinel-Key header. The answer is 202 at once, and the event is processed in the background. The full reference is in",
-		},
-		selfhost: {
-			intro:
-				"Sentinel needs PostgreSQL and Redis. Docker Compose starts both, plus Mailpit to catch emails while you develop.",
-			env: "Main environment variables",
-			outro:
-				"The .env.example file explains each one. Without SMTP_URL, email delivery is disabled.",
 		},
 	},
 	overview: {
