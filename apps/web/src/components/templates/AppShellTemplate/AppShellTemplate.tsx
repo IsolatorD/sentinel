@@ -2,21 +2,36 @@ import { Menu as MenuIcon, X } from "lucide-react";
 import { type ReactNode, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Logo } from "@/components/atoms/Logo/Logo";
+import { useSidebarCollapsed } from "@/hooks/useSidebarCollapsed/useSidebarCollapsed";
+import { cn } from "@/utils/cn/cn";
 
 /** Estructura de la app: barra lateral fija en escritorio y desplegable en móvil. */
 export function AppShellTemplate({
 	sidebar,
 	children,
 }: {
-	sidebar: ReactNode;
+	/** La barra lateral recibe si está en modo mini (solo escritorio) y cómo alternarlo. */
+	sidebar: (props: {
+		collapsed: boolean;
+		onToggleCollapsed?: () => void;
+	}) => ReactNode;
 	children: ReactNode;
 }) {
 	const { t } = useTranslation();
 	const [open, setOpen] = useState(false);
+	const { collapsed, toggle } = useSidebarCollapsed();
 
 	return (
 		<div className="flex h-full">
-			<aside className="hidden w-64 shrink-0 md:block">{sidebar}</aside>
+			<aside
+				className={cn(
+					"hidden shrink-0 transition-[width] duration-200 md:block",
+					collapsed ? "w-[4.5rem]" : "w-64",
+				)}
+				data-collapsed={collapsed}
+			>
+				{sidebar({ collapsed, onToggleCollapsed: toggle })}
+			</aside>
 
 			{open && (
 				<div className="fixed inset-0 z-30 md:hidden">
@@ -27,7 +42,7 @@ export function AppShellTemplate({
 						onClick={() => setOpen(false)}
 					/>
 					<aside className="absolute inset-y-0 left-0 w-64 animate-slide-in-left shadow-xl">
-						{sidebar}
+						{sidebar({ collapsed: false })}
 					</aside>
 				</div>
 			)}

@@ -93,6 +93,8 @@ export const en = {
 		},
 	},
 	nav: {
+		collapse: "Collapse menu",
+		expand: "Expand menu",
 		overview: "Overview",
 		issues: "Issues",
 		performance: "Performance",

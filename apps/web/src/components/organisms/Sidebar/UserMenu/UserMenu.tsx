@@ -16,10 +16,14 @@ import {
 } from "@/hooks/usePreferences/usePreferences";
 import { useSession, useSignOut } from "@/hooks/useSession/useSession";
 import { useTheme } from "@/hooks/useTheme/useTheme";
+import { cn } from "@/utils/cn/cn";
 
 export function UserMenu({
 	onStartTour,
+	collapsed = false,
 }: {
+	/** Modo mini: solo el avatar. */
+	collapsed?: boolean;
 	/** Repite el recorrido guiado de bienvenida. */
 	onStartTour?: () => void;
 }) {
@@ -37,20 +41,30 @@ export function UserMenu({
 		<Menu>
 			<MenuTrigger
 				data-tour="user-menu"
-				className="flex w-full items-center gap-2.5 rounded-md px-2 py-1.5 text-left hover:bg-sidebar-hover"
+				className={cn(
+					"flex w-full items-center gap-2.5 rounded-md px-2 py-1.5 text-left hover:bg-sidebar-hover",
+					collapsed && "justify-center px-0",
+				)}
 				aria-label={t("nav.account")}
+				title={collapsed ? user.name : undefined}
 			>
 				<Avatar name={user.name} rounded="full" />
-				<span className="min-w-0 flex-1">
-					<span className="block truncate text-sm font-medium text-white">
-						{user.name}
+				{!collapsed && (
+					<span className="min-w-0 flex-1">
+						<span className="block truncate text-sm font-medium text-white">
+							{user.name}
+						</span>
+						<span className="block truncate text-xs text-sidebar-muted">
+							{user.email}
+						</span>
 					</span>
-					<span className="block truncate text-xs text-sidebar-muted">
-						{user.email}
-					</span>
-				</span>
+				)}
 			</MenuTrigger>
-			<MenuContent align="start" side="top" className="w-64">
+			<MenuContent
+				align="start"
+				side={collapsed ? "right" : "top"}
+				className="w-64"
+			>
 				<MenuLabel>{t("common.language")}</MenuLabel>
 				<div className="px-2 pb-1">
 					<LanguageSelect

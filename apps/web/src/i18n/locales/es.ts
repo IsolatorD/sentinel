@@ -97,6 +97,8 @@ export const es: Deep<Translations> = {
 		},
 	},
 	nav: {
+		collapse: "Contraer menú",
+		expand: "Expandir menú",
 		overview: "Resumen",
 		issues: "Issues",
 		performance: "Rendimiento",

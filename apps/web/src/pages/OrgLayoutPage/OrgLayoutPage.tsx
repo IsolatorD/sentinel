@@ -35,7 +35,7 @@ export function OrgLayoutPage() {
 	}
 
 	return (
-		<AppShellTemplate sidebar={<Sidebar />}>
+		<AppShellTemplate sidebar={(props) => <Sidebar {...props} />}>
 			{/* Con la ruta como `key`, cada pantalla entra de cero (y anima si el navegador no hace el fundido). */}
 			<div key={pathname} className="page-enter min-h-full">
 				<Outlet />
