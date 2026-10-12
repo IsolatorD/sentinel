@@ -38,7 +38,7 @@ export function IssueListItem({
 				params={{ orgSlug, projectSlug, issueId: issue.id }}
 				className={cn(
 					ISSUE_GRID,
-					"relative border-b border-border px-5 py-3 transition-colors last:border-b-0 hover:bg-primary-soft/40",
+					"relative flex flex-col gap-2 border-b border-border py-3 pr-4 pl-5 transition-colors last:border-b-0 hover:bg-primary-soft/40 md:px-5",
 				)}
 				data-testid="issue-row"
 			>
@@ -50,8 +50,8 @@ export function IssueListItem({
 					)}
 				/>
 				<span className="min-w-0">
-					<span className="flex items-center gap-2">
-						<span className="truncate text-sm font-semibold text-foreground">
+					<span className="flex flex-wrap items-center gap-x-2 gap-y-1 md:flex-nowrap">
+						<span className="line-clamp-2 min-w-0 text-sm font-semibold break-words text-foreground md:line-clamp-none md:truncate">
 							{issue.title}
 						</span>
 						{issue.status !== "unresolved" && (
@@ -61,7 +61,7 @@ export function IssueListItem({
 							<Badge tone="warning">{t("issues.regression")}</Badge>
 						)}
 					</span>
-					<span className="mt-0.5 flex items-center gap-2 text-xs text-muted">
+					<span className="mt-1 flex items-center gap-2 text-xs text-muted md:mt-0.5">
 						<LevelBadge level={issue.level} />
 						{issue.assignee && (
 							<span
@@ -79,7 +79,9 @@ export function IssueListItem({
 							</span>
 						)}
 						{issue.culprit && (
-							<span className="truncate font-mono">{issue.culprit}</span>
+							<span className="min-w-0 truncate font-mono">
+								{issue.culprit}
+							</span>
 						)}
 						<span className="hidden shrink-0 text-faint sm:inline">
 							·{" "}
@@ -89,19 +91,34 @@ export function IssueListItem({
 						</span>
 					</span>
 				</span>
-				<span className="justify-self-end">
-					{trend && <Sparkline values={trend} label={t("issues.trendLabel")} />}
+				{/* En pantallas estrechas las cifras van en una fila con su etiqueta; desde `md` se reparten por columnas. */}
+				<span className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-muted md:contents">
+					<span className="order-last ml-auto md:order-none md:ml-0 md:justify-self-end">
+						{trend && (
+							<Sparkline values={trend} label={t("issues.trendLabel")} />
+						)}
+					</span>
+					<span className="tabular-nums md:text-right md:text-sm md:text-foreground">
+						<span className="text-faint md:hidden">
+							{t("issues.columns.events")}{" "}
+						</span>
+						<span className="font-medium text-foreground md:font-normal">
+							{formatCompact(issue.eventCount, i18n.language)}
+						</span>
+					</span>
+					<span className="tabular-nums md:text-right md:text-sm md:text-foreground">
+						<span className="text-faint md:hidden">
+							{t("issues.columns.users")}{" "}
+						</span>
+						<span className="font-medium text-foreground md:font-normal">
+							{formatCompact(issue.userCount, i18n.language)}
+						</span>
+					</span>
+					<RelativeTime
+						date={issue.lastSeen}
+						className="text-xs text-muted md:text-right"
+					/>
 				</span>
-				<span className="text-right text-sm tabular-nums text-foreground">
-					{formatCompact(issue.eventCount, i18n.language)}
-				</span>
-				<span className="text-right text-sm tabular-nums text-foreground">
-					{formatCompact(issue.userCount, i18n.language)}
-				</span>
-				<RelativeTime
-					date={issue.lastSeen}
-					className="text-right text-xs text-muted"
-				/>
 			</Link>
 		</li>
 	);

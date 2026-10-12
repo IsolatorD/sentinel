@@ -63,7 +63,7 @@ export function IssueList() {
 				<div
 					className={cn(
 						ISSUE_GRID,
-						"border-b border-border bg-subtle/70 px-5 py-2 text-[11px] font-medium tracking-wide text-faint uppercase",
+						"hidden border-b border-border bg-subtle/70 px-5 py-2 text-[11px] font-medium tracking-wide text-faint uppercase",
 					)}
 				>
 					<span>{t("issues.columns.issue")}</span>
