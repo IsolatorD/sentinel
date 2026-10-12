@@ -10,6 +10,7 @@ import type {
 	ALERT_TABS,
 	issueSearchInputSchema,
 	issuesSearchInputSchema,
+	SETTINGS_SECTIONS,
 } from "@/utils/searchParams/searchParams.constants";
 
 export type IssuesSearchInput = z.infer<typeof issuesSearchInputSchema>;
@@ -59,4 +60,8 @@ export interface TransactionSearch {
 	environment?: string;
 	release?: string;
 	samples: "slowest" | "recent";
+}
+
+export interface SettingsSearch {
+	section: (typeof SETTINGS_SECTIONS)[number];
 }

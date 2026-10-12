@@ -1194,6 +1194,14 @@ export const es: Deep<Translations> = {
 	},
 	settings: {
 		title: "Configuración del proyecto",
+		nav: {
+			label: "Secciones de la configuración",
+			general: "General",
+			keys: "Claves e instalación",
+			limits: "Datos y límites",
+			integrations: "Integraciones",
+			danger: "Zona de peligro",
+		},
 		general: {
 			title: "General",
 			name: "Nombre del proyecto",
@@ -1280,7 +1288,7 @@ export const es: Deep<Translations> = {
 				python:
 					"El SDK de Python captura los errores no controlados y mide cada petición que atiende tu aplicación ASGI o WSGI (FastAPI, Flask, Django...), continuando las trazas que empiezan en el navegador.",
 				other:
-					"Envía los eventos a la API de ingesta desde cualquier lenguaje. Puedes cambiar la plataforma en los ajustes de arriba.",
+					"Envía los eventos a la API de ingesta desde cualquier lenguaje. Puedes cambiar la plataforma en la sección General de la configuración.",
 			},
 		},
 		danger: {

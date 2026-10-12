@@ -100,3 +100,19 @@ export const TRANSACTION_SEARCH_DEFAULTS = {
 	period: "24h",
 	samples: "slowest",
 } as const;
+
+/** Secciones de la configuración del proyecto, en el orden del menú lateral. */
+export const SETTINGS_SECTIONS = [
+	"general",
+	"keys",
+	"limits",
+	"integrations",
+	"danger",
+] as const;
+
+/** Configuración del proyecto: qué sección se muestra. */
+export const settingsSearchInputSchema = z.object({
+	section: z.enum(SETTINGS_SECTIONS).optional().catch(undefined),
+});
+
+export const SETTINGS_SEARCH_DEFAULTS = { section: "general" } as const;

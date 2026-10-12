@@ -8,6 +8,8 @@ import {
 	overviewSearchInputSchema,
 	PERFORMANCE_SEARCH_DEFAULTS,
 	performanceSearchInputSchema,
+	SETTINGS_SEARCH_DEFAULTS,
+	settingsSearchInputSchema,
 	TRANSACTION_SEARCH_DEFAULTS,
 	transactionSearchInputSchema,
 } from "@/utils/searchParams/searchParams.constants";
@@ -17,6 +19,7 @@ import type {
 	IssuesSearch,
 	OverviewSearch,
 	PerformanceSearch,
+	SettingsSearch,
 	TransactionSearch,
 } from "@/utils/searchParams/searchParamsInterface";
 
@@ -68,6 +71,11 @@ export function resolveOverviewSearch(raw: unknown): OverviewSearch {
 		period: input.period ?? OVERVIEW_SEARCH_DEFAULTS.period,
 		environment: input.environment,
 	};
+}
+
+export function resolveSettingsSearch(raw: unknown): SettingsSearch {
+	const input = settingsSearchInputSchema.parse(raw ?? {});
+	return { section: input.section ?? SETTINGS_SEARCH_DEFAULTS.section };
 }
 
 export function resolveTransactionSearch(raw: unknown): TransactionSearch {

@@ -2,7 +2,12 @@ import { screen, waitFor, within } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { projectsService } from "@/services/projectsService/projectsService";
 import * as fx from "@/test/fixtures";
-import { mockHappyPath, renderApp, SETTINGS_PATH } from "@/test/render-app";
+import {
+	mockHappyPath,
+	renderApp,
+	SETTINGS_PATH,
+	settingsSection,
+} from "@/test/render-app";
 import { ApiError } from "@/utils/apiError/apiError";
 
 vi.mock("@/services/authService/authService");
@@ -24,14 +29,21 @@ const revokedKey = {
 };
 
 describe("configuración del proyecto", () => {
-	it("muestra los datos generales, las claves DSN y las instrucciones de instalación", async () => {
-		renderApp(SETTINGS_PATH);
+	it("muestra los datos generales, y las claves DSN y las instrucciones de instalación en su sección", async () => {
+		const { user } = renderApp(SETTINGS_PATH);
 		expect(await screen.findByLabelText("Project name")).toHaveValue(
 			"Storefront",
 		);
 		expect(screen.getByLabelText("Platform")).toHaveValue("react");
+		// Cada sección se muestra sola: las claves no aparecen en General.
+		expect(screen.queryByTestId("key-row")).not.toBeInTheDocument();
 
-		const row = screen.getByTestId("key-row");
+		await user.click(
+			within(screen.getByTestId("settings-nav")).getByRole("button", {
+				name: "Keys and install",
+			}),
+		);
+		const row = await screen.findByTestId("key-row");
 		expect(within(row).getByText("Default")).toBeInTheDocument();
 		expect(within(row).getByText("Active")).toBeInTheDocument();
 		expect(within(row).getByText(fx.key.dsn)).toBeInTheDocument();
@@ -42,6 +54,42 @@ describe("configuración del proyecto", () => {
 		).toBeInTheDocument();
 		expect(install).toHaveTextContent("Sentinel.ErrorBoundary");
 		expect(install).toHaveTextContent(fx.key.dsn);
+		expect(screen.queryByLabelText("Project name")).not.toBeInTheDocument();
+	});
+
+	it("el menú lateral recorre las secciones, marca la actual y se refleja en la URL", async () => {
+		const { user, router } = renderApp(SETTINGS_PATH);
+		const nav = await screen.findByTestId("settings-nav");
+		expect(
+			within(nav).getByRole("button", { name: "General" }),
+		).toHaveAttribute("aria-current", "page");
+
+		for (const [name, marker] of [
+			["Data and limits", "usage-panel"],
+			["Integrations", "jira-form"],
+			["Danger zone", null],
+		] as const) {
+			await user.click(within(nav).getByRole("button", { name: name }));
+			expect(within(nav).getByRole("button", { name })).toHaveAttribute(
+				"aria-current",
+				"page",
+			);
+			if (marker) expect(await screen.findByTestId(marker)).toBeInTheDocument();
+		}
+		expect(
+			await screen.findByRole("button", { name: "Delete project" }),
+		).toBeInTheDocument();
+		expect(router.state.location.search).toMatchObject({ section: "danger" });
+
+		await user.click(within(nav).getByRole("button", { name: "General" }));
+		expect(await screen.findByLabelText("Project name")).toBeInTheDocument();
+		// General es la sección por defecto: no hace falta en la URL.
+		expect(router.state.location.search).not.toHaveProperty("section");
+	});
+
+	it("una sección desconocida en la URL cae en General", async () => {
+		renderApp(`${SETTINGS_PATH}?section=inventada`);
+		expect(await screen.findByLabelText("Project name")).toBeInTheDocument();
 	});
 
 	it("las instrucciones cambian con la plataforma del proyecto", async () => {
@@ -49,7 +97,7 @@ describe("configuración del proyecto", () => {
 			...fx.project,
 			platform: "node",
 		});
-		renderApp(SETTINGS_PATH);
+		renderApp(settingsSection("keys"));
 		const install = await screen.findByTestId("install-instructions");
 		await waitFor(() =>
 			expect(install).toHaveAttribute("data-platform", "node"),
@@ -67,7 +115,7 @@ describe("configuración del proyecto", () => {
 			...fx.project,
 			platform: "python",
 		});
-		const { unmount } = renderApp(SETTINGS_PATH);
+		const { unmount } = renderApp(settingsSection("keys"));
 		const install = await screen.findByTestId("install-instructions");
 		await waitFor(() =>
 			expect(install).toHaveAttribute("data-platform", "python"),
@@ -82,7 +130,7 @@ describe("configuración del proyecto", () => {
 			...fx.project,
 			platform: "other",
 		});
-		renderApp(SETTINGS_PATH);
+		renderApp(settingsSection("keys"));
 		const other = await screen.findByTestId("install-instructions");
 		await waitFor(() =>
 			expect(other).toHaveAttribute("data-platform", "other"),
@@ -95,7 +143,7 @@ describe("configuración del proyecto", () => {
 			...fx.project,
 			platform: "react-native",
 		});
-		renderApp(SETTINGS_PATH);
+		renderApp(settingsSection("keys"));
 		const install = await screen.findByTestId("install-instructions");
 		await waitFor(() =>
 			expect(install).toHaveAttribute("data-platform", "react-native"),
@@ -111,7 +159,7 @@ describe("configuración del proyecto", () => {
 			...fx.project,
 			platform: "javascript",
 		});
-		const { user } = renderApp(SETTINGS_PATH);
+		const { user } = renderApp(settingsSection("keys"));
 		await waitFor(() =>
 			expect(screen.getByTestId("install-instructions")).toHaveAttribute(
 				"data-platform",
@@ -184,7 +232,7 @@ describe("claves DSN", () => {
 			keys: [fx.key, revokedKey],
 		});
 		vi.mocked(projectsService.updateKey).mockResolvedValue(fx.key);
-		const { user } = renderApp(SETTINGS_PATH);
+		const { user } = renderApp(settingsSection("keys"));
 		const rows = await screen.findAllByTestId("key-row");
 		expect(within(rows[1]).getByText("Revoked")).toBeInTheDocument();
 
@@ -206,7 +254,7 @@ describe("claves DSN", () => {
 
 	it("crear una clave con etiqueta, o con la de por defecto", async () => {
 		vi.mocked(projectsService.createKey).mockResolvedValue(fx.key);
-		const { user } = renderApp(SETTINGS_PATH);
+		const { user } = renderApp(settingsSection("keys"));
 		await user.type(await screen.findByLabelText("Label"), "Producción");
 		await user.click(screen.getByRole("button", { name: "Create key" }));
 		expect(projectsService.createKey).toHaveBeenLastCalledWith(
@@ -224,7 +272,7 @@ describe("claves DSN", () => {
 	});
 
 	it("eliminar una clave pide confirmación", async () => {
-		const { user } = renderApp(SETTINGS_PATH);
+		const { user } = renderApp(settingsSection("keys"));
 		await user.click(await screen.findByRole("button", { name: "Delete" }));
 		const dialog = await screen.findByRole("dialog");
 		expect(projectsService.removeKey).not.toHaveBeenCalled();
@@ -240,7 +288,7 @@ describe("claves DSN", () => {
 		vi.mocked(projectsService.updateKey).mockRejectedValue(
 			new ApiError(403, "Insufficient permissions"),
 		);
-		const { user } = renderApp(SETTINGS_PATH);
+		const { user } = renderApp(settingsSection("keys"));
 		await user.click(await screen.findByRole("button", { name: "Revoke" }));
 		expect(
 			await screen.findByText(
@@ -252,7 +300,7 @@ describe("claves DSN", () => {
 
 describe("zona de peligro", () => {
 	it("eliminar el proyecto exige escribir su nombre", async () => {
-		const { user, router } = renderApp(SETTINGS_PATH);
+		const { user, router } = renderApp(settingsSection("danger"));
 		await user.click(
 			await screen.findByRole("button", { name: "Delete project" }),
 		);

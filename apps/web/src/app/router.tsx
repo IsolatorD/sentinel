@@ -41,6 +41,7 @@ import {
 	issuesSearchInputSchema,
 	overviewSearchInputSchema,
 	performanceSearchInputSchema,
+	settingsSearchInputSchema,
 	transactionSearchInputSchema,
 } from "@/utils/searchParams/searchParams.constants";
 import {
@@ -238,6 +239,8 @@ const alertsRoute = createRoute({
 const settingsRoute = createRoute({
 	getParentRoute: () => projectRoute,
 	path: "settings",
+	validateSearch: (search: Record<string, unknown>) =>
+		settingsSearchInputSchema.parse(search),
 	component: ProjectSettingsPage,
 });
 

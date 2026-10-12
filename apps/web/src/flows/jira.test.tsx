@@ -7,7 +7,7 @@ import {
 	ISSUE_PATH,
 	mockHappyPath,
 	renderApp,
-	SETTINGS_PATH,
+	settingsSection,
 } from "@/test/render-app";
 import { ApiError } from "@/utils/apiError/apiError";
 
@@ -32,7 +32,7 @@ beforeEach(() => {
 
 describe("conexión con Jira (configuración)", () => {
 	it("sin conexión pide los datos y valida lo obligatorio, incluido el token la primera vez", async () => {
-		const { user } = renderApp(SETTINGS_PATH);
+		const { user } = renderApp(settingsSection("integrations"));
 		const form = await screen.findByTestId("jira-form");
 		await user.click(within(form).getByRole("button", { name: "Connect" }));
 		expect(
@@ -43,7 +43,7 @@ describe("conexión con Jira (configuración)", () => {
 
 	it("conecta con lo escrito y muestra que quedó conectado", async () => {
 		vi.mocked(integrationsService.connectJira).mockResolvedValue(connected);
-		const { user } = renderApp(SETTINGS_PATH);
+		const { user } = renderApp(settingsSection("integrations"));
 		const form = await screen.findByTestId("jira-form");
 		await user.type(
 			within(form).getByLabelText("Jira site"),
@@ -81,7 +81,7 @@ describe("conexión con Jira (configuración)", () => {
 			...connected,
 			projectKey: "OPS",
 		});
-		const { user } = renderApp(SETTINGS_PATH);
+		const { user } = renderApp(settingsSection("integrations"));
 		const form = await screen.findByTestId("jira-form");
 		expect(within(form).getByLabelText("API token")).toHaveValue("");
 		expect(within(form).getByLabelText("Jira site")).toHaveValue(
@@ -113,7 +113,7 @@ describe("conexión con Jira (configuración)", () => {
 				"JIRA_AUTH_FAILED",
 			),
 		);
-		const { user } = renderApp(SETTINGS_PATH);
+		const { user } = renderApp(settingsSection("integrations"));
 		const form = await screen.findByTestId("jira-form");
 		await user.type(
 			within(form).getByLabelText("Jira site"),
@@ -134,7 +134,7 @@ describe("conexión con Jira (configuración)", () => {
 	it("se puede desconectar", async () => {
 		vi.mocked(integrationsService.getJira).mockResolvedValue(connected);
 		vi.mocked(integrationsService.disconnectJira).mockResolvedValue(undefined);
-		const { user } = renderApp(SETTINGS_PATH);
+		const { user } = renderApp(settingsSection("integrations"));
 		const form = await screen.findByTestId("jira-form");
 		await user.click(within(form).getByRole("button", { name: "Disconnect" }));
 		await waitFor(() =>

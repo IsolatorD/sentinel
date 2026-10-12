@@ -1182,6 +1182,14 @@ export const en = {
 	},
 	settings: {
 		title: "Project settings",
+		nav: {
+			label: "Settings sections",
+			general: "General",
+			keys: "Keys and install",
+			limits: "Data and limits",
+			integrations: "Integrations",
+			danger: "Danger zone",
+		},
 		general: {
 			title: "General",
 			name: "Project name",
@@ -1267,7 +1275,7 @@ export const en = {
 				python:
 					"The Python SDK captures uncaught errors and measures every request your ASGI or WSGI app handles (FastAPI, Flask, Django...), continuing traces that start in the browser.",
 				other:
-					"Send events to the ingest API from any language. You can change the platform in the settings above.",
+					"Send events to the ingest API from any language. You can change the platform in the General section of the settings.",
 			},
 		},
 		danger: {

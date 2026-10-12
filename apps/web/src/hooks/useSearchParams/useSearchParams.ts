@@ -8,6 +8,7 @@ import {
 	resolveIssuesSearch,
 	resolveOverviewSearch,
 	resolvePerformanceSearch,
+	resolveSettingsSearch,
 	resolveTransactionSearch,
 } from "@/utils/searchParams/searchParams";
 import {
@@ -15,6 +16,7 @@ import {
 	ISSUES_SEARCH_DEFAULTS,
 	OVERVIEW_SEARCH_DEFAULTS,
 	PERFORMANCE_SEARCH_DEFAULTS,
+	SETTINGS_SEARCH_DEFAULTS,
 	TRANSACTION_SEARCH_DEFAULTS,
 } from "@/utils/searchParams/searchParams.constants";
 import type {
@@ -23,6 +25,7 @@ import type {
 	IssuesSearch,
 	OverviewSearch,
 	PerformanceSearch,
+	SettingsSearch,
 	TransactionSearch,
 } from "@/utils/searchParams/searchParamsInterface";
 
@@ -118,6 +121,23 @@ export function useOverviewSearch() {
 				search: (prev: Record<string, unknown>) =>
 					omitDefaults({ ...prev, ...patch }, OVERVIEW_SEARCH_DEFAULTS),
 				replace: true,
+			}),
+		[navigate],
+	);
+	return { search, update };
+}
+
+export function useSettingsSearch() {
+	const raw = useSearch({ strict: false });
+	const navigate = useNavigate();
+	const search = useMemo(() => resolveSettingsSearch(raw), [raw]);
+	const update = useCallback(
+		(patch: Partial<SettingsSearch>) =>
+			navigate({
+				to: ".",
+				search: (prev: Record<string, unknown>) =>
+					omitDefaults({ ...prev, ...patch }, SETTINGS_SEARCH_DEFAULTS),
+				// Cada sección es un lugar propio: atrás/adelante del navegador recorren las que se visitaron.
 			}),
 		[navigate],
 	);

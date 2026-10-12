@@ -84,3 +84,6 @@ export function mockHappyPath() {
 export const ISSUES_PATH = "/acme/projects/storefront/issues";
 export const ISSUE_PATH = `${ISSUES_PATH}/${fx.ISSUE_ID}`;
 export const SETTINGS_PATH = "/acme/projects/storefront/settings";
+/** Una sección concreta de la configuración (`?section=`). */
+export const settingsSection = (section: string) =>
+	`${SETTINGS_PATH}?section=${section}`;

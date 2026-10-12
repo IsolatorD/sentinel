@@ -6,7 +6,7 @@ import {
 	ISSUES_PATH,
 	mockHappyPath,
 	renderApp,
-	SETTINGS_PATH,
+	settingsSection,
 } from "@/test/render-app";
 
 vi.mock("@/services/authService/authService");
@@ -28,7 +28,7 @@ describe("datos y límites", () => {
 				transactions: { used: 5_320, quota: null },
 			}),
 		);
-		renderApp(SETTINGS_PATH);
+		renderApp(settingsSection("limits"));
 		const panel = await screen.findByTestId("usage-panel");
 		const [events, transactions] =
 			await within(panel).findAllByTestId("usage-meter");
@@ -49,7 +49,7 @@ describe("datos y límites", () => {
 		vi.mocked(projectsService.usage).mockResolvedValue(
 			fx.usage({ events: { used: 10_050, quota: 10_000 } }),
 		);
-		renderApp(SETTINGS_PATH);
+		renderApp(settingsSection("limits"));
 		const [events] = await screen.findAllByTestId("usage-meter");
 		expect(events).toHaveAttribute("data-state", "exceeded");
 		expect(within(events).getByRole("progressbar")).toHaveAttribute(
@@ -63,14 +63,12 @@ describe("datos y límites", () => {
 			...fx.project,
 			retentionDays: 180,
 		});
-		const { user } = renderApp(SETTINGS_PATH);
+		const { user } = renderApp(settingsSection("limits"));
 		const retention = await screen.findByLabelText("Data retention");
 		expect(retention).toHaveValue("90");
 		await user.selectOptions(retention, "180");
 		await user.type(screen.getByLabelText("Monthly events limit"), "50000");
-		await user.click(
-			screen.getAllByRole("button", { name: "Save changes" })[1],
-		);
+		await user.click(screen.getByRole("button", { name: "Save changes" }));
 
 		await waitFor(() =>
 			expect(projectsService.update).toHaveBeenCalledWith(
@@ -87,15 +85,13 @@ describe("datos y límites", () => {
 	});
 
 	it("un límite que no es un entero positivo se rechaza sin enviar nada", async () => {
-		const { user } = renderApp(SETTINGS_PATH);
+		const { user } = renderApp(settingsSection("limits"));
 		await user.type(
 			await screen.findByLabelText("Monthly events limit"),
 			"abc",
 		);
 		await user.type(screen.getByLabelText("Monthly transactions limit"), "0");
-		await user.click(
-			screen.getAllByRole("button", { name: "Save changes" })[1],
-		);
+		await user.click(screen.getByRole("button", { name: "Save changes" }));
 		expect(
 			await screen.findAllByText(
 				"Enter a whole number of at least 1, or leave it empty.",
@@ -110,7 +106,7 @@ describe("datos y límites", () => {
 			retentionDays: 365,
 			monthlyEventQuota: 2_000,
 		});
-		renderApp(SETTINGS_PATH);
+		renderApp(settingsSection("limits"));
 		expect(await screen.findByLabelText("Data retention")).toHaveValue("365");
 		expect(screen.getByLabelText("Monthly events limit")).toHaveValue("2000");
 		expect(screen.getByLabelText("Monthly transactions limit")).toHaveValue("");
