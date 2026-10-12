@@ -16,6 +16,7 @@ const saved = (over = {}) => ({
 	locale: "en" as const,
 	theme: "system" as const,
 	toursSeen: [] as Array<"welcome" | "issues" | "issueDetail">,
+	emailOnAssign: true,
 	...over,
 });
 const flag = (tour: string) =>
@@ -47,6 +48,7 @@ describe("sincronización de preferencias", () => {
 			locale: null,
 			theme: null,
 			toursSeen: [],
+			emailOnAssign: true,
 		});
 		renderApp(ISSUES_PATH);
 		await screen.findByTestId("issue-list");
@@ -90,6 +92,7 @@ describe("sincronización de preferencias", () => {
 			locale: null,
 			theme: null,
 			toursSeen: [],
+			emailOnAssign: true,
 		});
 		const { user } = renderApp(ISSUES_PATH);
 		await screen.findByTestId("issue-list");

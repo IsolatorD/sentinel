@@ -7,5 +7,6 @@ import { PreferencesRepository } from "./preferences.repository.js";
 	imports: [AuthModule],
 	controllers: [PreferencesController],
 	providers: [PreferencesRepository],
+	exports: [PreferencesRepository],
 })
 export class PreferencesModule {}

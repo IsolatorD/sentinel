@@ -5,6 +5,7 @@ import type { OrganizationsRepository } from "../organizations/organizations.rep
 import type { ProjectsService } from "../projects/projects.service.js";
 import type { ReleasesService } from "../releases/releases.service.js";
 import type { ActivityService } from "./activity/activity.service.js";
+import type { AssignmentNotifier } from "./assignment-notifier.js";
 import type {
 	EventRow,
 	IssueEventsRepository,
@@ -89,6 +90,7 @@ function setup(
 	};
 	const activity = { record: vi.fn(async () => {}) };
 	const stats = { trends: vi.fn(async () => ({})) };
+	const assignments = { notify: vi.fn(async () => {}) };
 	const events = { ...deps.events };
 	return {
 		service: new IssuesService(
@@ -99,8 +101,10 @@ function setup(
 			releases as unknown as ReleasesService,
 			activity as unknown as ActivityService,
 			stats as unknown as StatsService,
+			assignments as unknown as AssignmentNotifier,
 		),
 		activity,
+		assignments,
 		releases,
 		issues,
 		events,
@@ -239,6 +243,62 @@ describe("IssuesService.get", () => {
 			service.get("u", "org", PROJECT_ID, ISSUE_ID),
 		).rejects.toBeInstanceOf(NotFoundException);
 		expect(issues.findInProject).toHaveBeenCalledWith(PROJECT_ID, ISSUE_ID);
+	});
+});
+
+describe("IssuesService: aviso al asignar", () => {
+	const ana = { id: "u1", name: "Ana", email: "ana@acme.test" };
+	const beto = { id: "u2", name: "Beto", email: "beto@acme.test" };
+	/** Un issue que ahora está asignado a `current`. */
+	const assigning = (current: string | null = null) =>
+		setup("member", {
+			issues: {
+				findInProject: vi.fn(async () => issueRow({ assigneeId: current })),
+				setAssignee: vi.fn(async (_p: string, _i: string, to: string | null) =>
+					issueRow({ assigneeId: to }),
+				),
+				assignees: vi.fn(
+					async () =>
+						new Map([
+							[ana.id, ana],
+							[beto.id, beto],
+						]),
+				),
+			},
+		});
+
+	it("avisa a quien recibe el issue, indicando quién lo asignó", async () => {
+		const { service, assignments, issues } = assigning();
+		await service.update("u1", "org", PROJECT_ID, ISSUE_ID, {
+			assigneeId: "u2",
+		});
+		// Hay que pedir también los datos de quien asigna, para poder nombrarlo en el correo.
+		expect(issues.assignees).toHaveBeenCalledWith(
+			expect.arrayContaining(["u1", "u2"]),
+		);
+		expect(assignments.notify).toHaveBeenCalledWith(
+			expect.objectContaining({
+				assignee: beto,
+				assigner: { id: "u1", name: "Ana" },
+				issueId: ISSUE_ID,
+			}),
+		);
+	});
+
+	it("no avisa al quitar la asignación", async () => {
+		const { service, assignments } = assigning("u2");
+		await service.update("u1", "org", PROJECT_ID, ISSUE_ID, {
+			assigneeId: null,
+		});
+		expect(assignments.notify).not.toHaveBeenCalled();
+	});
+
+	it("no avisa si el asignado no cambia", async () => {
+		const { service, assignments } = assigning("u2");
+		await service.update("u1", "org", PROJECT_ID, ISSUE_ID, {
+			assigneeId: "u2",
+		});
+		expect(assignments.notify).not.toHaveBeenCalled();
 	});
 });
 

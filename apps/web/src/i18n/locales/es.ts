@@ -112,6 +112,8 @@ export const es: Deep<Translations> = {
 		project: "Proyecto",
 		allProjects: "Todos los proyectos",
 		account: "Cuenta",
+		assignEmailOn: "Correos de asignación: sí",
+		assignEmailOff: "Correos de asignación: no",
 		main: "Navegación principal",
 	},
 	platforms: {

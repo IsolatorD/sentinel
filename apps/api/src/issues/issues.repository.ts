@@ -14,6 +14,8 @@ import {
 	isNull,
 	issue,
 	or,
+	organization,
+	project,
 	user,
 } from "@sentinel/db";
 import type { IssueStatus, ListIssuesQuery, UserRef } from "@sentinel/shared";
@@ -115,6 +117,25 @@ export class IssuesRepository {
 			.from(user)
 			.where(inArray(user.id, ids));
 		return new Map(rows.map((r) => [r.id, r]));
+	}
+
+	/** Nombre y slug del proyecto y de su organización, para escribir enlaces y correos. */
+	async notificationContext(
+		projectId: string,
+	): Promise<
+		{ projectName: string; projectSlug: string; orgSlug: string } | undefined
+	> {
+		const [row] = await this.db
+			.select({
+				projectName: project.name,
+				projectSlug: project.slug,
+				orgSlug: organization.slug,
+			})
+			.from(project)
+			.innerJoin(organization, eq(organization.id, project.organizationId))
+			.where(eq(project.id, projectId))
+			.limit(1);
+		return row;
 	}
 
 	async setAssignee(

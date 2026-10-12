@@ -55,9 +55,31 @@ describe("tema", () => {
 			locale: "en",
 			theme: "dark",
 			toursSeen: [],
+			emailOnAssign: true,
 		});
 		const { user } = renderApp(ISSUES_PATH);
 		const menu = await openAccountMenu(user);
 		expect(within(menu).getByLabelText("Theme")).toHaveValue("dark");
+	});
+});
+
+describe("correo al asignar un issue", () => {
+	it("está activado por defecto y se desactiva desde el menú de la cuenta", async () => {
+		const { user } = renderApp(ISSUES_PATH);
+		const menu = await openAccountMenu(user);
+		await user.click(
+			within(menu).getByRole("menuitem", { name: "Assignment emails: on" }),
+		);
+		await waitFor(() =>
+			expect(preferencesService.update).toHaveBeenCalledWith({
+				emailOnAssign: false,
+			}),
+		);
+		const reopened = await openAccountMenu(user);
+		expect(
+			await within(reopened).findByRole("menuitem", {
+				name: "Assignment emails: off",
+			}),
+		).toBeInTheDocument();
 	});
 });

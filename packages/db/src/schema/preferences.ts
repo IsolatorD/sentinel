@@ -1,4 +1,4 @@
-import { jsonb, pgTable, text, timestamp } from "drizzle-orm/pg-core";
+import { boolean, jsonb, pgTable, text, timestamp } from "drizzle-orm/pg-core";
 import { user } from "./auth.js";
 
 /**
@@ -12,5 +12,7 @@ export const userPreference = pgTable("user_preference", {
 	locale: text("locale"),
 	theme: text("theme"),
 	toursSeen: jsonb("tours_seen").$type<string[]>().notNull().default([]),
+	/** Avisar por correo cuando le asignan un issue. */
+	emailOnAssign: boolean("email_on_assign").notNull().default(true),
 	updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });

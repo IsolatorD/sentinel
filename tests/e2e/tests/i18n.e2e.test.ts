@@ -403,14 +403,24 @@ describe("preferencias", () => {
 			preferencesDtoSchema.parse(
 				(await t.client.get("/api/me/preferences", t.owner)).json,
 			),
-		).toEqual({ locale: null, theme: null, toursSeen: [] });
+		).toEqual({
+			locale: null,
+			theme: null,
+			toursSeen: [],
+			emailOnAssign: true,
+		});
 
 		await t.client.patch("/api/me/preferences", { locale: "es" }, t.owner);
 		await t.client.patch("/api/me/preferences", { theme: "dark" }, t.owner);
 		const both = preferencesDtoSchema.parse(
 			(await t.client.get("/api/me/preferences", t.owner)).json,
 		);
-		expect(both).toEqual({ locale: "es", theme: "dark", toursSeen: [] });
+		expect(both).toEqual({
+			locale: "es",
+			theme: "dark",
+			toursSeen: [],
+			emailOnAssign: true,
+		});
 
 		const tours = await t.client.patch(
 			"/api/me/preferences",
@@ -421,6 +431,7 @@ describe("preferencias", () => {
 			locale: "es",
 			theme: "dark",
 			toursSeen: ["welcome", "issues"],
+			emailOnAssign: true,
 		});
 		const reset = await t.client.patch(
 			"/api/me/preferences",

@@ -48,11 +48,13 @@ export function mockHappyPath() {
 		locale: "en",
 		theme: "system",
 		toursSeen: [],
+		emailOnAssign: true,
 	});
 	vi.mocked(preferencesService.update).mockImplementation(async (input) => ({
 		locale: "en",
 		theme: "system",
 		toursSeen: [],
+		emailOnAssign: true,
 		...input,
 	}));
 	vi.mocked(projectsService.list).mockResolvedValue([fx.project]);

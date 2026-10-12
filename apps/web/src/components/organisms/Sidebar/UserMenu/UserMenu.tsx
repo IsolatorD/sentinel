@@ -1,5 +1,5 @@
 import { useNavigate } from "@tanstack/react-router";
-import { CircleHelp, LogOut } from "lucide-react";
+import { CircleHelp, LogOut, Mail, MailX } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { Avatar } from "@/components/atoms/Avatar/Avatar";
 import { LanguageSelect } from "@/components/molecules/LanguageSelect/LanguageSelect";
@@ -10,7 +10,10 @@ import { MenuLabel } from "@/components/molecules/MenuLabel/MenuLabel";
 import { MenuSeparator } from "@/components/molecules/MenuSeparator/MenuSeparator";
 import { MenuTrigger } from "@/components/molecules/MenuTrigger/MenuTrigger";
 import { ThemeSelect } from "@/components/molecules/ThemeSelect/ThemeSelect";
-import { useUpdatePreferences } from "@/hooks/usePreferences/usePreferences";
+import {
+	usePreferences,
+	useUpdatePreferences,
+} from "@/hooks/usePreferences/usePreferences";
 import { useSession, useSignOut } from "@/hooks/useSession/useSession";
 import { useTheme } from "@/hooks/useTheme/useTheme";
 
@@ -26,6 +29,7 @@ export function UserMenu({
 	const signOut = useSignOut();
 	const { theme, setTheme } = useTheme();
 	const savePreferences = useUpdatePreferences();
+	const emailOnAssign = usePreferences().data?.emailOnAssign ?? true;
 	const user = session.data?.user;
 	if (!user) return null;
 
@@ -66,6 +70,18 @@ export function UserMenu({
 					/>
 				</div>
 				<MenuSeparator />
+				<MenuItem
+					onSelect={() =>
+						savePreferences.mutate({ emailOnAssign: !emailOnAssign })
+					}
+				>
+					{emailOnAssign ? (
+						<Mail aria-hidden className="size-4" />
+					) : (
+						<MailX aria-hidden className="size-4" />
+					)}
+					{emailOnAssign ? t("nav.assignEmailOn") : t("nav.assignEmailOff")}
+				</MenuItem>
 				{onStartTour && (
 					<MenuItem onSelect={onStartTour}>
 						<CircleHelp aria-hidden className="size-4" />

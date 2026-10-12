@@ -14,6 +14,7 @@ import {
 	type Session,
 	type Tenant,
 } from "../support/factories.js";
+import { mails } from "../support/mailbox.js";
 
 async function userId(t: Tenant, session: Session): Promise<string> {
 	const res = await t.client.get("/api/auth/get-session", session);
@@ -48,6 +49,47 @@ async function setup() {
 		path: `${t.projectPath}/issues/${issue.id}`,
 	};
 }
+
+// Solo los avisos de asignación (quien entra por invitación también recibe ese correo).
+const mailsTo = (email: string) =>
+	mails().filter(
+		(m) => m.to.includes(email) && /asignó|assigned you/.test(m.subject),
+	);
+
+describe("correo al asignar", () => {
+	it("avisa a quien recibe el issue, en su idioma, con el enlace al issue", async () => {
+		const { t, member, memberId, issue, path } = await setup();
+		await t.client.patch("/api/me/preferences", { locale: "es" }, member);
+		await t.client.patch(path, { assigneeId: memberId }, t.owner);
+
+		await eventually(async () => expect(mailsTo(member.email)).toHaveLength(1));
+		const [mail] = mailsTo(member.email);
+		expect(mail.subject).toMatch(/te asignó un issue en/);
+		expect(mail.text).toContain(`/issues/${issue.id}`);
+		expect(mail.text).toContain("BoomError");
+	});
+
+	it("no escribe a quien se asigna a sí mismo ni al quitar la asignación", async () => {
+		const { t, member, memberId, path } = await setup();
+		await t.client.patch(path, { assigneeId: memberId }, member); // se lo asigna él mismo
+		await t.client.patch(path, { assigneeId: null }, t.owner);
+		await new Promise((r) => setTimeout(r, 600));
+		expect(mailsTo(member.email)).toHaveLength(0);
+	});
+
+	it("respeta la preferencia de no recibir estos correos", async () => {
+		const { t, member, memberId, path } = await setup();
+		const off = await t.client.patch(
+			"/api/me/preferences",
+			{ emailOnAssign: false },
+			member,
+		);
+		expect(off.json.emailOnAssign).toBe(false);
+		await t.client.patch(path, { assigneeId: memberId }, t.owner);
+		await new Promise((r) => setTimeout(r, 600));
+		expect(mailsTo(member.email)).toHaveLength(0);
+	});
+});
 
 describe("asignación", () => {
 	it("un issue nuevo no tiene responsable, y se puede asignar y desasignar", async () => {

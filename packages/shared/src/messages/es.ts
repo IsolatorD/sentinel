@@ -136,4 +136,10 @@ export const es: Record<MessageCode, string> = {
 	EMAIL_INVITE_ACCEPT: "Aceptar la invitación",
 	EMAIL_INVITE_HINT:
 		"Si todavía no tienes cuenta, crea una con esta dirección de correo y luego abre el enlace otra vez. Si no esperabas esta invitación, puedes ignorar este correo.",
+	EMAIL_ASSIGN_SUBJECT: "{{assigner}} te asignó un issue en {{project}}",
+	EMAIL_ASSIGN_TITLE: "Te asignaron un issue",
+	EMAIL_ASSIGN_BODY: "{{assigner}} te asignó este issue en {{project}}.",
+	EMAIL_ASSIGN_VIEW: "Ver el issue",
+	EMAIL_ASSIGN_HINT:
+		"Recibes este correo porque alguien te asignó un issue. Puedes desactivarlo en tus preferencias.",
 };

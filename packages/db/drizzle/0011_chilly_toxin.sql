@@ -1,0 +1,1 @@
+ALTER TABLE "user_preference" ADD COLUMN "email_on_assign" boolean DEFAULT true NOT NULL;

@@ -4,11 +4,17 @@ import {
 	isLocale,
 	type Locale,
 	type PreferencesDto,
+	TOUR_IDS,
 	type UpdatePreferencesInput,
 } from "@sentinel/shared";
 import { DB } from "../database/database.module.js";
 
-const EMPTY: PreferencesDto = { locale: null, theme: null, toursSeen: [] };
+const EMPTY: PreferencesDto = {
+	locale: null,
+	theme: null,
+	toursSeen: [],
+	emailOnAssign: true,
+};
 
 // Única capa que conoce Drizzle para las preferencias.
 @Injectable()
@@ -31,6 +37,9 @@ export class PreferencesRepository {
 		const values = {
 			...(input.locale !== undefined && { locale: input.locale }),
 			...(input.theme !== undefined && { theme: input.theme }),
+			...(input.emailOnAssign !== undefined && {
+				emailOnAssign: input.emailOnAssign,
+			}),
 			...(input.toursSeen !== undefined && {
 				toursSeen: [...new Set(input.toursSeen)],
 			}),
@@ -55,8 +64,9 @@ function toDto(row: typeof userPreference.$inferSelect): PreferencesDto {
 			null,
 		toursSeen: row.toursSeen.filter(
 			(t): t is PreferencesDto["toursSeen"][number] =>
-				["welcome", "issues", "issueDetail"].includes(t),
+				(TOUR_IDS as readonly string[]).includes(t),
 		),
+		emailOnAssign: row.emailOnAssign,
 	};
 }
 

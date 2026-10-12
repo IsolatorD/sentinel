@@ -108,6 +108,8 @@ export const en = {
 		project: "Project",
 		allProjects: "All projects",
 		account: "Account",
+		assignEmailOn: "Assignment emails: on",
+		assignEmailOff: "Assignment emails: off",
 		main: "Main navigation",
 	},
 	platforms: {

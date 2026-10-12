@@ -19,6 +19,7 @@ import { OrgAccessService } from "../organizations/org-access.service.js";
 import { ProjectsService } from "../projects/projects.service.js";
 import { ReleasesService } from "../releases/releases.service.js";
 import { ActivityService } from "./activity/activity.service.js";
+import { AssignmentNotifier } from "./assignment-notifier.js";
 import {
 	type EventRow,
 	IssueEventsRepository,
@@ -82,6 +83,7 @@ export class IssuesService {
 		private readonly releases: ReleasesService,
 		private readonly activity: ActivityService,
 		private readonly stats: StatsService,
+		private readonly assignments: AssignmentNotifier,
 	) {}
 
 	async list(
@@ -224,6 +226,7 @@ export class IssuesService {
 			const people = await this.issues.assignees([
 				before.assigneeId,
 				input.assigneeId,
+				userId,
 			]);
 			const ref = (id: string | null) => {
 				const person = id ? people.get(id) : undefined;
@@ -233,6 +236,17 @@ export class IssuesService {
 				from: ref(before.assigneeId),
 				to: ref(input.assigneeId),
 			});
+			const assignee = input.assigneeId ? people.get(input.assigneeId) : null;
+			const assigner = people.get(userId);
+			if (assignee && assigner) {
+				await this.assignments.notify({
+					projectId,
+					issueId,
+					issueTitle: row.title,
+					assignee,
+					assigner: { id: assigner.id, name: assigner.name },
+				});
+			}
 		}
 
 		const [users, people] = await Promise.all([

@@ -138,6 +138,12 @@ export const en = {
 	EMAIL_INVITE_ACCEPT: "Accept the invitation",
 	EMAIL_INVITE_HINT:
 		"If you do not have an account yet, create one with this email address and then open the link again. If you were not expecting this invitation, you can ignore this email.",
+	EMAIL_ASSIGN_SUBJECT: "{{assigner}} assigned you an issue in {{project}}",
+	EMAIL_ASSIGN_TITLE: "An issue was assigned to you",
+	EMAIL_ASSIGN_BODY: "{{assigner}} assigned you this issue in {{project}}.",
+	EMAIL_ASSIGN_VIEW: "View the issue",
+	EMAIL_ASSIGN_HINT:
+		"You get this email because someone assigned an issue to you. You can turn it off in your preferences.",
 } as const;
 
 export type MessageCode = keyof typeof en;

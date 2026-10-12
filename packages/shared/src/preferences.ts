@@ -15,6 +15,8 @@ export const preferencesDtoSchema = z.object({
 	theme: z.enum(THEME_PREFERENCES).nullable(),
 	/** Recorridos guiados que ya vio. */
 	toursSeen: z.array(z.enum(TOUR_IDS)),
+	/** Recibir un correo cuando le asignan un issue (activado por defecto). */
+	emailOnAssign: z.boolean(),
 });
 export type PreferencesDto = z.infer<typeof preferencesDtoSchema>;
 
@@ -24,6 +26,7 @@ export const updatePreferencesSchema = z
 		theme: z.enum(THEME_PREFERENCES).optional(),
 		/** Reemplaza la lista completa (vacía = volver a ver todos los recorridos). */
 		toursSeen: z.array(z.enum(TOUR_IDS)).max(TOUR_IDS.length).optional(),
+		emailOnAssign: z.boolean().optional(),
 	})
 	.refine((v) => Object.keys(v).length > 0, { message: "NOTHING_TO_UPDATE" });
 export type UpdatePreferencesInput = z.infer<typeof updatePreferencesSchema>;
