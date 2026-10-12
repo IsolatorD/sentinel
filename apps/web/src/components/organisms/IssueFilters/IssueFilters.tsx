@@ -48,133 +48,144 @@ export function IssueFilters() {
 
 	return (
 		<div
-			className="flex flex-wrap items-center gap-3"
+			className="space-y-3"
 			data-testid="issue-filters"
 			data-tour="issue-filters"
 		>
-			<div
-				role="tablist"
-				aria-label={t("issues.title")}
-				className="flex rounded-md border border-border-strong bg-surface p-0.5 shadow-sm"
-			>
-				{TABS.map((tab) => (
-					<button
-						key={tab}
-						type="button"
-						role="tab"
-						aria-selected={search.status === tab}
-						onClick={() => update({ status: tab }, { resetPage: true })}
-						className={cn(
-							"rounded px-3 py-1 text-xs font-medium transition-colors",
-							search.status === tab
-								? "bg-primary text-white"
-								: "text-muted hover:bg-subtle hover:text-foreground",
-						)}
-					>
-						{t(`issues.tabs.${tab}`)}
-					</button>
-				))}
+			<div className="flex flex-wrap items-center gap-3">
+				<div
+					role="tablist"
+					aria-label={t("issues.title")}
+					className="flex rounded-md border border-border-strong bg-surface p-0.5 shadow-sm"
+				>
+					{TABS.map((tab) => (
+						<button
+							key={tab}
+							type="button"
+							role="tab"
+							aria-selected={search.status === tab}
+							onClick={() => update({ status: tab }, { resetPage: true })}
+							className={cn(
+								"rounded px-3 py-1 text-xs font-medium transition-colors",
+								search.status === tab
+									? "bg-primary text-white"
+									: "text-muted hover:bg-subtle hover:text-foreground",
+							)}
+						>
+							{t(`issues.tabs.${tab}`)}
+						</button>
+					))}
+				</div>
+				<SearchInput
+					value={text}
+					onChange={onSearchChange}
+					placeholder={t("issues.searchPlaceholder")}
+					aria-label={t("issues.searchPlaceholder")}
+					clearLabel={t("common.close")}
+					className="min-w-56 flex-1 sm:max-w-sm"
+				/>
 			</div>
-			<SearchInput
-				value={text}
-				onChange={onSearchChange}
-				placeholder={t("issues.searchPlaceholder")}
-				aria-label={t("issues.searchPlaceholder")}
-				clearLabel={t("common.close")}
-				className="min-w-56 flex-1 sm:max-w-sm"
-			/>
-			{/* Si el filtro de la URL ya no existe en las listas (p. ej. release borrada), se conserva como opción. */}
-			<Select
-				aria-label={t("issues.filters.environment")}
-				value={search.environment ?? ""}
-				onChange={(e) =>
-					update(
-						{ environment: e.target.value || undefined },
-						{ resetPage: true },
-					)
-				}
-				className="w-44"
-			>
-				<option value="">{t("issues.filters.allEnvironments")}</option>
-				{withCurrent(environments.data, search.environment).map((env) => (
-					<option key={env} value={env}>
-						{env}
-					</option>
-				))}
-			</Select>
-			<Select
-				aria-label={t("issues.filters.release")}
-				value={search.release ?? ""}
-				onChange={(e) =>
-					update({ release: e.target.value || undefined }, { resetPage: true })
-				}
-				className="w-44"
-			>
-				<option value="">{t("issues.filters.allReleases")}</option>
-				{withCurrent(
-					releases.data?.map((r) => r.version),
-					search.release,
-				).map((version) => (
-					<option key={version} value={version}>
-						{version}
-					</option>
-				))}
-			</Select>
-			<Select
-				aria-label={t("issues.filters.assignee")}
-				value={search.assignee ?? ""}
-				onChange={(e) =>
-					update({ assignee: e.target.value || undefined }, { resetPage: true })
-				}
-				className="w-44"
-			>
-				<option value="">{t("issues.filters.allAssignees")}</option>
-				<option value="me">{t("issues.filters.assignedToMe")}</option>
-				<option value="unassigned">{t("issues.filters.unassigned")}</option>
-				{(members.data ?? []).map((m) => (
-					<option key={m.userId} value={m.userId}>
-						{m.user.name}
-					</option>
-				))}
-			</Select>
-			<div className="ml-auto flex items-center gap-2">
+			{/* Los cuatro filtros comparten rejilla: mismo ancho y alineados, tanto en móvil (2 por fila) como en escritorio (1 fila). */}
+			<div className="grid grid-cols-2 gap-3 lg:grid-cols-[repeat(3,minmax(0,1fr))_minmax(0,1.5fr)]">
+				{/* Si el filtro de la URL ya no existe en las listas (p. ej. release borrada), se conserva como opción. */}
 				<Select
-					aria-label={t("issues.sort.label")}
-					value={search.sort}
+					aria-label={t("issues.filters.environment")}
+					value={search.environment ?? ""}
 					onChange={(e) =>
 						update(
-							{ sort: e.target.value as (typeof ISSUE_SORTS)[number] },
+							{ environment: e.target.value || undefined },
 							{ resetPage: true },
 						)
 					}
-					className="w-44"
+					className="w-full"
 				>
-					{ISSUE_SORTS.map((sort) => (
-						<option key={sort} value={sort}>
-							{t(`issues.sort.${sort}`)}
+					<option value="">{t("issues.filters.allEnvironments")}</option>
+					{withCurrent(environments.data, search.environment).map((env) => (
+						<option key={env} value={env}>
+							{env}
 						</option>
 					))}
 				</Select>
-				<Button
-					size="icon"
-					aria-label={
-						search.order === "desc"
-							? t("issues.sort.desc")
-							: t("issues.sort.asc")
-					}
-					onClick={() =>
+				<Select
+					aria-label={t("issues.filters.release")}
+					value={search.release ?? ""}
+					onChange={(e) =>
 						update(
-							{ order: search.order === "desc" ? "asc" : "desc" },
+							{ release: e.target.value || undefined },
 							{ resetPage: true },
 						)
 					}
+					className="w-full"
 				>
-					{search.order === "desc" ? (
-						<ArrowDownWideNarrow className="size-4" />
-					) : (
-						<ArrowUpNarrowWide className="size-4" />
-					)}
-				</Button>
+					<option value="">{t("issues.filters.allReleases")}</option>
+					{withCurrent(
+						releases.data?.map((r) => r.version),
+						search.release,
+					).map((version) => (
+						<option key={version} value={version}>
+							{version}
+						</option>
+					))}
+				</Select>
+				<Select
+					aria-label={t("issues.filters.assignee")}
+					value={search.assignee ?? ""}
+					onChange={(e) =>
+						update(
+							{ assignee: e.target.value || undefined },
+							{ resetPage: true },
+						)
+					}
+					className="w-full"
+				>
+					<option value="">{t("issues.filters.allAssignees")}</option>
+					<option value="me">{t("issues.filters.assignedToMe")}</option>
+					<option value="unassigned">{t("issues.filters.unassigned")}</option>
+					{(members.data ?? []).map((m) => (
+						<option key={m.userId} value={m.userId}>
+							{m.user.name}
+						</option>
+					))}
+				</Select>
+				<div className="flex items-center gap-2">
+					<Select
+						aria-label={t("issues.sort.label")}
+						value={search.sort}
+						onChange={(e) =>
+							update(
+								{ sort: e.target.value as (typeof ISSUE_SORTS)[number] },
+								{ resetPage: true },
+							)
+						}
+						className="min-w-0 flex-1"
+					>
+						{ISSUE_SORTS.map((sort) => (
+							<option key={sort} value={sort}>
+								{t(`issues.sort.${sort}`)}
+							</option>
+						))}
+					</Select>
+					<Button
+						size="icon"
+						aria-label={
+							search.order === "desc"
+								? t("issues.sort.desc")
+								: t("issues.sort.asc")
+						}
+						onClick={() =>
+							update(
+								{ order: search.order === "desc" ? "asc" : "desc" },
+								{ resetPage: true },
+							)
+						}
+					>
+						{search.order === "desc" ? (
+							<ArrowDownWideNarrow className="size-4" />
+						) : (
+							<ArrowUpNarrowWide className="size-4" />
+						)}
+					</Button>
+				</div>
 			</div>
 		</div>
 	);

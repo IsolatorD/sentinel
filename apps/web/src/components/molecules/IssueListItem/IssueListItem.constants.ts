@@ -7,8 +7,8 @@ export const LEVEL_BAR: Record<string, string> = {
 };
 
 /**
- * Columnas compartidas con la cabecera de la lista. Solo desde `md`: en pantallas estrechas cada
+ * Columnas compartidas con la cabecera de la lista. Solo desde `@2xl` (ancho de la tarjeta de la lista, no de la ventana): en pantallas estrechas cada
  * issue es una tarjeta (ver `IssueListItem`) y la cabecera de columnas no se muestra.
  */
 export const ISSUE_GRID =
-	"md:grid md:grid-cols-[minmax(0,1fr)_6rem_4.5rem_4.5rem_7rem] md:items-center md:gap-4";
+	"@2xl:grid @2xl:grid-cols-[minmax(0,1fr)_5rem_4rem_4rem_6rem] @2xl:items-center @2xl:gap-3";

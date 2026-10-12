@@ -59,7 +59,7 @@ export function IssueList() {
 
 	return (
 		<div className="space-y-3">
-			<Card className="overflow-hidden" data-tour="issue-list">
+			<Card className="@container overflow-hidden" data-tour="issue-list">
 				<div
 					className={cn(
 						ISSUE_GRID,
