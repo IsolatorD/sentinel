@@ -26,7 +26,8 @@ call() { # método ruta [cuerpo-json] -> imprime el cuerpo; falla si no es 2xx
 	printf '%s' "${out%$'\n'*}"
 }
 
-json() { node -e 'const v=JSON.parse(require("fs").readFileSync(0,"utf8")); console.log(eval("v"+process.argv[1]))' "$1"; }
+# Lee un valor de un JSON por stdin (python3 viene con Ubuntu; el servidor no necesita Node).
+json() { python3 -c 'import json,sys; v=json.load(sys.stdin); print(eval("v"+sys.argv[1]))' "$1"; }
 
 step "salud de la API"
 call GET /api/health >/dev/null && ok
@@ -42,10 +43,10 @@ call POST /api/auth/sign-up/email "{\"name\":\"Smoke\",\"email\":\"$email\",\"pa
 
 step "organización y proyecto"
 slug="smoke-$(date +%s)"
-org="$(call POST /api/auth/organization/create "{\"name\":\"Smoke\",\"slug\":\"$slug\"}" | json .id)"
+org="$(call POST /api/auth/organization/create "{\"name\":\"Smoke\",\"slug\":\"$slug\"}" | json "['id']")"
 project="$(call POST "/api/organizations/$org/projects" '{"name":"Smoke app"}')"
-project_id="$(printf '%s' "$project" | json .id)"
-key="$(printf '%s' "$project" | json '.keys[0].publicKey')"
+project_id="$(printf '%s' "$project" | json "['id']")"
+key="$(printf '%s' "$project" | json "['keys'][0]['publicKey']")"
 ok
 
 step "ingesta de un error"
@@ -57,7 +58,7 @@ ok
 
 step "el worker lo convierte en issue"
 for _ in $(seq 1 30); do
-	total="$(call GET "/api/organizations/$org/projects/$project_id/issues?status=all" | json .total)"
+	total="$(call GET "/api/organizations/$org/projects/$project_id/issues?status=all" | json "['total']")"
 	[ "$total" = "1" ] && break
 	sleep 1
 done
