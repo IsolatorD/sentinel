@@ -69,39 +69,50 @@ describe("install snippets", () => {
 		expect(httpSnippet({ dsn: "" })).toContain("<projectId>");
 	});
 
-	describe("instalación desde la propia instancia", () => {
+	describe("instalación", () => {
 		const remote = "https://abc123@3-19-1-21.sslip.io/proj-1";
 		const base = "https://3-19-1-21.sslip.io/sdk";
 
-		it("deduce el origen de las SDK de la DSN, salvo en local", () => {
+		it("deduce el origen de la instancia de la DSN, salvo en local", () => {
 			expect(sdkOrigin(remote)).toBe("https://3-19-1-21.sslip.io");
 			expect(sdkOrigin("http://key@localhost:3000/abc")).toBeNull();
 			expect(sdkOrigin("http://key@127.0.0.1:3000/abc")).toBeNull();
 			expect(sdkOrigin("no-es-una-url")).toBeNull();
 		});
 
-		it("cada plataforma instala desde /sdk/ de esa instancia", () => {
-			const dsn = remote;
-			expect(npmSnippet({ dsn }).install).toBe(
-				`npm install ${base}/sentinel-browser.tgz`,
-			);
-			expect(nodeSnippet({ dsn }).install).toBe(
-				`npm install ${base}/sentinel-node.tgz`,
-			);
-			expect(reactNativeSnippet({ dsn }).install).toBe(
-				`npm install ${base}/sentinel-react-native.tgz`,
-			);
-			expect(pythonSnippet({ dsn }).install).toBe(
-				`pip install ${base}/sentinel-sdk.tar.gz`,
-			);
-			expect(scriptTagSnippet({ dsn })).toContain(
-				`<script src="${base}/sentinel.min.js"></script>`,
-			);
+		it("las SDK de JavaScript se instalan desde npm, con o sin instancia remota", () => {
+			for (const dsn of [remote, "http://key@localhost:3000/abc"]) {
+				expect(npmSnippet({ dsn }).install).toBe(
+					"npm install @argus-isolator/browser",
+				);
+				expect(nodeSnippet({ dsn }).install).toBe(
+					"npm install @argus-isolator/node",
+				);
+				expect(reactNativeSnippet({ dsn }).install).toBe(
+					"npm install @argus-isolator/react-native",
+				);
+				expect(reactSnippet({ dsn }).install).toBe(
+					"npm install @argus-isolator/browser @argus-isolator/react",
+				);
+			}
 		});
 
-		it("React instala el SDK del navegador junto al suyo (es su dependencia de pares)", () => {
-			expect(reactSnippet({ dsn: remote }).install).toBe(
-				`npm install ${base}/sentinel-browser.tgz ${base}/sentinel-react.tgz`,
+		it("Python y la etiqueta <script> salen de la propia instancia", () => {
+			expect(pythonSnippet({ dsn: remote }).install).toBe(
+				`pip install ${base}/sentinel-sdk.tar.gz`,
+			);
+			expect(scriptTagSnippet({ dsn: remote })).toContain(
+				`<script src="${base}/sentinel.min.js"></script>`,
+			);
+			// En local no hay quien sirva el archivo: se usa el nombre del paquete.
+			expect(
+				pythonSnippet({ dsn: "http://key@localhost:3000/a" }).install,
+			).toBe("pip install sentinel-sdk");
+		});
+
+		it("la CLI de source maps también se instala desde npm", () => {
+			expect(reactNativeSnippet({ dsn: remote }).code).toContain(
+				"npm install -g @argus-isolator/cli",
 			);
 		});
 	});

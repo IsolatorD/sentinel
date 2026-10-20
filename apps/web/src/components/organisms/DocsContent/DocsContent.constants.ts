@@ -25,7 +25,7 @@ export const QUICKSTART_STEPS = [
 ] as const;
 
 export const SOURCEMAPS_COMMAND = [
-	"npm install -g https://sentinel.example.com/sdk/sentinel-cli.tgz",
+	"npm install -g @argus-isolator/cli",
 	"sentinel-cli sourcemaps upload ./dist --release 1.4.2",
 ].join("\n");
 

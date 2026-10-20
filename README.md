@@ -223,22 +223,28 @@ Es una red de seguridad, no un sustituto de no enviar datos sensibles: el SDK ya
 
 ## Instalar las SDK
 
-Las SDK **no están en npm** (podrán estarlo más adelante). Se instalan desde archivos que se construyen de este mismo repositorio, de tres formas equivalentes:
+Las SDK de JavaScript y la CLI están en **npm**, bajo la organización `argus-isolator` (sirve igual con `npm`, `pnpm` o `yarn`):
 
-1. **Desde tu instancia de Sentinel** (lo más cómodo): cada instancia sirve las SDK en `https://TU-DOMINIO/sdk/`, ya a la versión que ella ejecuta. La pantalla de configuración del proyecto y el asistente de bienvenida muestran los comandos con tu dominio y tu DSN.
-   ```bash
-   npm install https://TU-DOMINIO/sdk/sentinel-browser.tgz                       # navegador
-   npm install https://TU-DOMINIO/sdk/sentinel-browser.tgz https://TU-DOMINIO/sdk/sentinel-react.tgz   # React
-   npm install https://TU-DOMINIO/sdk/sentinel-node.tgz                          # Node.js
-   npm install https://TU-DOMINIO/sdk/sentinel-react-native.tgz                  # React Native
-   npm install -g https://TU-DOMINIO/sdk/sentinel-cli.tgz                        # CLI de source maps
-   pip install https://TU-DOMINIO/sdk/sentinel-sdk.tar.gz                        # Python
-   ```
-   Para una etiqueta `<script>`: `<script src="https://TU-DOMINIO/sdk/sentinel.min.js"></script>`.
-2. **Desde una Release de GitHub:** al subir una etiqueta (`git tag v0.2.0 && git push origin v0.2.0`) el workflow `release.yml` publica los mismos archivos. Como no llevan versión en el nombre, `https://github.com/IsolatorD/sentinel/releases/latest/download/sentinel-browser.tgz` apunta siempre a la última.
-3. **Python directamente desde git:** `pip install "git+https://github.com/IsolatorD/sentinel#subdirectory=packages/sdk-python"`.
+```bash
+npm install @argus-isolator/browser                                # navegador
+npm install @argus-isolator/browser @argus-isolator/react          # React
+npm install @argus-isolator/node                                   # Node.js
+npm install @argus-isolator/react-native                           # React Native
+npm install -g @argus-isolator/cli                                 # CLI de source maps
+```
 
-Cada paquete de JavaScript es autosuficiente: lleva dentro `@sentinel/core` y `@sentinel/shared`, también sus tipos de TypeScript. La excepción es `@argus-isolator/react`, que necesita el SDK del navegador (se instalan juntos, como arriba). Los archivos se generan con `pnpm build && ./scripts/pack-sdks.sh`.
+El SDK de **Python** aún no está en PyPI (el nombre `sentinel-sdk` es de otra persona y hay que elegir otro). Mientras tanto se instala desde tu instancia o desde git:
+
+```bash
+pip install https://TU-DOMINIO/sdk/sentinel-sdk.tar.gz
+pip install "git+https://github.com/IsolatorD/sentinel#subdirectory=packages/sdk-python"
+```
+
+**Alternativas, sin npm:**
+- **Desde tu instancia:** cada una sirve todo en `https://TU-DOMINIO/sdk/` (`sentinel-browser.tgz`, `sentinel-react.tgz`, `sentinel-node.tgz`, `sentinel-react-native.tgz`, `sentinel-cli.tgz`, `sentinel-sdk.tar.gz`), ya en la versión que ejecuta esa instancia, y `sentinel.min.js` para una etiqueta `<script src="https://TU-DOMINIO/sdk/sentinel.min.js">` sin bundler. La pantalla de configuración del proyecto muestra los comandos con tu dominio y tu DSN.
+- **Desde una Release de GitHub:** `workflows/release.yml` adjunta los mismos archivos a cada Release con nombres sin versión, así que `https://github.com/IsolatorD/sentinel/releases/latest/download/sentinel-browser.tgz` apunta siempre a la última.
+
+Cada paquete de JavaScript es autosuficiente: lleva dentro el núcleo común (`core`, `shared`) y sus tipos de TypeScript. La excepción es `@argus-isolator/react`, que necesita el SDK del navegador (se instalan juntos, como arriba). Los archivos de `/sdk/` se generan con `pnpm build && ./scripts/pack-sdks.sh`.
 
 ### Publicar en npm (mantenedor)
 

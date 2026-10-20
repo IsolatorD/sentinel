@@ -1,6 +1,6 @@
 # @argus-isolator/react
 
-> Instalación (las SDK aún no están en npm): ver [Instalar las SDK](../../README.md#instalar-las-sdk).
+> Instalación: `npm install @argus-isolator/browser @argus-isolator/react`. Alternativas en [Instalar las SDK](../../README.md#instalar-las-sdk).
 
 SDK de Sentinel para React: un `ErrorBoundary` que envía los errores de render con su **pila de componentes**, y las opciones de React 19 para no perder ninguno. Reexporta todo `@argus-isolator/browser`, así que con un solo import tienes `init`, `captureException`, etc.
 

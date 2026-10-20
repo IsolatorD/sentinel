@@ -88,20 +88,18 @@ describe("landing (/)", () => {
 		const { user } = renderApp("/");
 		const snippet = async () =>
 			(await screen.findByTestId("sdk-snippet")).textContent ?? "";
-		// La muestra instala desde la propia instancia (la DSN de ejemplo apunta a sentinel.example.com).
-		const sdk = "https://sentinel.example.com/sdk";
-		expect(await snippet()).toContain(
-			`npm install ${sdk}/sentinel-browser.tgz`,
-		);
+		expect(await snippet()).toContain("npm install @argus-isolator/browser");
 
 		const tabs = await screen.findByRole("tablist", {
 			name: "One SDK for each place your code runs",
 		});
 		const expected: Record<string, string> = {
-			React: `npm install ${sdk}/sentinel-browser.tgz ${sdk}/sentinel-react.tgz`,
-			"Node.js": `npm install ${sdk}/sentinel-node.tgz`,
-			Python: `pip install ${sdk}/sentinel-sdk.tar.gz`,
-			"React Native": `npm install ${sdk}/sentinel-react-native.tgz`,
+			React: "npm install @argus-isolator/browser @argus-isolator/react",
+			"Node.js": "npm install @argus-isolator/node",
+			// Python aún no está en PyPI: se instala desde la propia instancia (la DSN de la muestra).
+			Python:
+				"pip install https://sentinel.example.com/sdk/sentinel-sdk.tar.gz",
+			"React Native": "npm install @argus-isolator/react-native",
 		};
 		for (const [tab, command] of Object.entries(expected)) {
 			await user.click(within(tabs).getByRole("tab", { name: tab }));

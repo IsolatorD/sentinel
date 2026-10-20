@@ -1,6 +1,6 @@
 # @argus-isolator/browser
 
-> Instalación (las SDK aún no están en npm): ver [Instalar las SDK](../../README.md#instalar-las-sdk).
+> Instalación: `npm install @argus-isolator/browser`. Alternativas en [Instalar las SDK](../../README.md#instalar-las-sdk).
 
 SDK de Sentinel para navegadores. Captura errores y los envía a un servidor Sentinel.
 

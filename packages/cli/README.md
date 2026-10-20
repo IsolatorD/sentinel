@@ -1,6 +1,6 @@
 # @argus-isolator/cli
 
-> Instalación (las SDK aún no están en npm): ver [Instalar las SDK](../../README.md#instalar-las-sdk).
+> Instalación: `npm install -g @argus-isolator/cli`. Alternativas en [Instalar las SDK](../../README.md#instalar-las-sdk).
 
 Sube los source maps de tu build a Sentinel para que los errores muestren el código original.
 

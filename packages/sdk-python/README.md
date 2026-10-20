@@ -1,6 +1,6 @@
 # sentinel-sdk (Python)
 
-> Instalación (las SDK aún no están en npm): ver [Instalar las SDK](../../README.md#instalar-las-sdk).
+> Instalación: ver [Instalar las SDK](../../README.md#instalar-las-sdk) (aún no está en PyPI).
 
 SDK de Sentinel para Python 3.9 o superior. Captura los errores, mide cada petición que atiende tu aplicación y **continúa las trazas que empiezan en el navegador**.
 
