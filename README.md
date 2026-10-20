@@ -74,7 +74,7 @@ flowchart LR
     DB[("PostgreSQL")]
     WEB["Web · React"]
   end
-  B & N & RN & PY -- "events and transactions (DSN)" --> API
+  apps -- "events and transactions (DSN)" --> API
   API --> Q --> W --> DB
   API <--> DB
   WEB -- "session" --> API
