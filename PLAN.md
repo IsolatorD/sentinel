@@ -144,7 +144,7 @@ Reglas de alerta (nuevo issue, regresión, umbral de frecuencia), canales email 
 6. ✅ **Verificación de cuenta por correo**: obligatoria para registros con email y contraseña cuando hay SMTP (Google ya llega verificado), con reenvío del correo.
 7. ✅ **Gráficos de tendencia** por issue y por proyecto (agregación de eventos por intervalo en la API). Gráficos de barras en SVG propio (sin librería): panel en la lista y en el detalle, y un mini gráfico por fila.
 
-*Pendientes sueltos*: avisar por correo al asignar un issue, tests unitarios por archivo (cuando se indique), módulo de integraciones (Slack, Jira...).
+*Pendiente suelto*: tests unitarios por archivo (cuando se indique). El aviso por correo al asignar y las integraciones (Jira; Slack como canal de alertas) se hicieron en la Fase 5.
 
 **Fase 4 — Performance / tracing** ✅
 - A. ✅ Ingesta: `POST /api/:projectId/transactions` (misma clave, límite y CORS que los eventos, con scrubbing), cola `transactions`, tablas `perf_transaction` y `perf_span`.
