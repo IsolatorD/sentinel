@@ -12,6 +12,7 @@ import type { ApiEnv } from "../config/env.js";
 import { OrgAccessService } from "../organizations/org-access.service.js";
 import { QuotaService } from "../quota/quota.service.js";
 import { buildDsn } from "./domain/dsn.js";
+import { newProjectDefaults } from "./domain/new-project-defaults.js";
 import { generatePublicKey } from "./domain/public-key.js";
 import { slugify, withSuffix } from "./domain/slug.js";
 import {
@@ -26,6 +27,8 @@ const MAX_SLUG_ATTEMPTS = 4;
 @Injectable()
 export class ProjectsService {
 	private readonly publicApiUrl: string;
+	/** Con lo que nace cada proyecto nuevo (retención y cuotas configuradas por el operador). */
+	private readonly defaults: ReturnType<typeof newProjectDefaults>;
 
 	constructor(
 		private readonly projects: ProjectsRepository,
@@ -34,6 +37,15 @@ export class ProjectsService {
 		config: ConfigService<ApiEnv, true>,
 	) {
 		this.publicApiUrl = config.get("PUBLIC_API_URL", { infer: true });
+		this.defaults = newProjectDefaults({
+			retentionDays: config.get("DEFAULT_RETENTION_DAYS", { infer: true }),
+			monthlyEventQuota: config.get("DEFAULT_MONTHLY_EVENT_QUOTA", {
+				infer: true,
+			}),
+			monthlyTransactionQuota: config.get("DEFAULT_MONTHLY_TRANSACTION_QUOTA", {
+				infer: true,
+			}),
+		});
 	}
 
 	// ---------- Proyectos ----------
@@ -61,6 +73,7 @@ export class ProjectsService {
 						name: input.name,
 						slug,
 						platform: input.platform,
+						...this.defaults,
 					},
 					generatePublicKey(),
 				);

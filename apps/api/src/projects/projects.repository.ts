@@ -60,6 +60,9 @@ export class ProjectsRepository {
 			name: string;
 			slug: string;
 			platform: string;
+			retentionDays?: number;
+			monthlyEventQuota?: number;
+			monthlyTransactionQuota?: number;
 		},
 		publicKey: string,
 	): Promise<{ project: ProjectRow; key: KeyRow }> {

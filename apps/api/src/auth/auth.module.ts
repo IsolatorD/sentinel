@@ -40,6 +40,7 @@ import { localeForEmail, localeForInvitee } from "./locale-lookup.js";
 				return createAuth({
 					db,
 					requireEmailVerification,
+					signUpEnabled: config.get("SIGNUP_ENABLED", { infer: true }),
 					sendVerification: async (input) =>
 						mail.send({
 							to: input.email,

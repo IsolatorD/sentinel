@@ -10,5 +10,7 @@ export const publicConfigSchema = z.object({
 	emailEnabled: z.boolean(),
 	/** Quien se registra con email y contraseña debe verificar su correo antes de entrar. */
 	emailVerification: z.boolean(),
+	/** Se puede crear una cuenta nueva (el servidor no cerró el registro). */
+	signUpEnabled: z.boolean(),
 });
 export type PublicConfig = z.infer<typeof publicConfigSchema>;

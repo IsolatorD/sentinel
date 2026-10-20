@@ -66,3 +66,4 @@ done
 ok
 
 echo "Todo bien: $base"
+echo "(Crea datos de prueba; en el servidor, ./deploy/cleanup-smoke.sh los borra.)"

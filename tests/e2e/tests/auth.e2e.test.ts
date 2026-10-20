@@ -156,6 +156,7 @@ describe("configuración pública", () => {
 			authProviders: { google: false },
 			emailEnabled: true,
 			emailVerification: false,
+			signUpEnabled: true,
 		});
 		expect(res.text).not.toMatch(/secret|client/i);
 	});

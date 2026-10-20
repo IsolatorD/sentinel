@@ -2,6 +2,7 @@ import {
 	baseEnvShape,
 	emptyToUndefined,
 	parseEnv,
+	RETENTION_OPTIONS,
 	smtpEnvShape,
 	webhookEnvShape,
 } from "@sentinel/shared";
@@ -30,6 +31,26 @@ const apiEnvSchema = z
 		REQUIRE_EMAIL_VERIFICATION: emptyToUndefined(booleanString.default(true)),
 		TRUST_PROXY: emptyToUndefined(booleanString.default(false)),
 		ENABLE_DOCS: emptyToUndefined(booleanString.optional()),
+		/** `false` cierra el registro (email y Google): solo entra quien ya tiene cuenta. */
+		SIGNUP_ENABLED: emptyToUndefined(booleanString.default(true)),
+		/** Límites con los que nacen los proyectos nuevos (los existentes no cambian). Sin valor, no hay límite. */
+		DEFAULT_MONTHLY_EVENT_QUOTA: emptyToUndefined(
+			z.coerce.number().int().positive().optional(),
+		),
+		DEFAULT_MONTHLY_TRANSACTION_QUOTA: emptyToUndefined(
+			z.coerce.number().int().positive().optional(),
+		),
+		/** Retención con la que nacen los proyectos nuevos; sin valor, la de la base de datos (90 días). */
+		DEFAULT_RETENTION_DAYS: emptyToUndefined(
+			z.coerce
+				.number()
+				.int()
+				.refine(
+					(v) => (RETENTION_OPTIONS as readonly number[]).includes(v),
+					`must be one of ${RETENTION_OPTIONS.join(", ")}`,
+				)
+				.optional(),
+		),
 	})
 	.refine(
 		(e) => Boolean(e.GOOGLE_CLIENT_ID) === Boolean(e.GOOGLE_CLIENT_SECRET),

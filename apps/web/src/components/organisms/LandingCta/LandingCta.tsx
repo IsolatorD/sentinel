@@ -2,11 +2,13 @@ import { Link } from "@tanstack/react-router";
 import { useTranslation } from "react-i18next";
 import { buttonVariants } from "@/components/atoms/Button/Button.constants";
 import { useSession } from "@/hooks/useSession/useSession";
+import { useSignUpEnabled } from "@/hooks/useSignUpEnabled/useSignUpEnabled";
 import { API_DOCS_URL } from "@/utils/publicLinks/publicLinks.constants";
 
 export function LandingCta() {
 	const { t } = useTranslation();
 	const signedIn = Boolean(useSession().data);
+	const signUpEnabled = useSignUpEnabled();
 	return (
 		<section className="py-20">
 			<div className="mx-auto w-full max-w-4xl px-6">
@@ -23,10 +25,14 @@ export function LandingCta() {
 					</p>
 					<div className="relative mt-8 flex flex-wrap items-center justify-center gap-3">
 						<Link
-							to={signedIn ? "/" : "/register"}
+							to={signedIn ? "/" : signUpEnabled ? "/register" : "/login"}
 							className={buttonVariants({ variant: "primary", size: "lg" })}
 						>
-							{signedIn ? t("public.openApp") : t("landing.hero.cta")}
+							{signedIn
+								? t("public.openApp")
+								: signUpEnabled
+									? t("landing.hero.cta")
+									: t("public.signIn")}
 						</Link>
 						<Link
 							to="/docs"

@@ -96,6 +96,23 @@ export default async function setup(project: TestProject) {
 		},
 		"api-verify",
 	);
+	// Misma base de datos y mismo secreto: las sesiones de la API principal valen aquí.
+	const lockedPort = await freePort();
+	const lockedBaseUrl = `http://localhost:${lockedPort}`;
+	const lockedApi = startApp(
+		"api",
+		{
+			...apiEnv,
+			API_PORT: String(lockedPort),
+			BETTER_AUTH_URL: lockedBaseUrl,
+			REQUIRE_EMAIL_VERIFICATION: "false",
+			SIGNUP_ENABLED: "false",
+			DEFAULT_RETENTION_DAYS: "30",
+			DEFAULT_MONTHLY_EVENT_QUOTA: "1234",
+			DEFAULT_MONTHLY_TRANSACTION_QUOTA: "567",
+		},
+		"api-locked",
+	);
 	const worker = startApp("worker", {
 		...shared,
 		WEB_ORIGIN: "http://localhost:5173",
@@ -103,7 +120,7 @@ export default async function setup(project: TestProject) {
 		// Las pruebas de rendimiento lanzan la evaluación a mano: así no se cruza con una repetición programada.
 		PERFORMANCE_ALERTS_ENABLED: "false",
 	});
-	processes.push(api, verifyApi, worker);
+	processes.push(api, verifyApi, lockedApi, worker);
 
 	await waitFor(async () => (await fetch(`${baseUrl}/api/health`)).ok, {
 		timeoutMs: 60_000,
@@ -117,9 +134,16 @@ export default async function setup(project: TestProject) {
 		processes,
 	});
 
+	await waitFor(async () => (await fetch(`${lockedBaseUrl}/api/health`)).ok, {
+		timeoutMs: 60_000,
+		label: "la API con el registro cerrado responde en /api/health",
+		processes,
+	});
+
 	const context: E2EContext = {
 		baseUrl,
 		verifyBaseUrl,
+		lockedBaseUrl,
 		databaseUrl: dbUrl,
 		redis: { host: cfg.redisHost, port: cfg.redisPort, db: cfg.redisDb },
 		ingestRateLimitPerMinute: cfg.ingestRateLimitPerMinute,

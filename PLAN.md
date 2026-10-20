@@ -179,7 +179,7 @@ Reglas de alerta (nuevo issue, regresión, umbral de frecuencia), canales email 
 - ✅ **A. Imágenes** (`Dockerfile`: `api`, `worker`, `web`) y servicio `migrate`.
 - ✅ **B. `docker-compose.prod.yml`** y `deploy/Caddyfile`.
 - ✅ **C. Configuración de producción**: `deploy/.env.production.example`, `deploy/gen-env.sh`, `deploy/smoke-test.sh`. Ensayo local completo (HTTPS, migraciones, registro, ingesta y worker) superado.
-- **D. Modo demo abierto:** cuotas y retención por defecto para proyectos nuevos, interruptor de registro, cuenta de demo.
+- ✅ **D. Modo demo abierto:** `DEFAULT_MONTHLY_EVENT_QUOTA`, `DEFAULT_MONTHLY_TRANSACTION_QUOTA` y `DEFAULT_RETENTION_DAYS` para los proyectos nuevos, `SIGNUP_ENABLED` (la web oculta el registro cuando está cerrado), cuenta de demo con el seed existente y `deploy/cleanup-smoke.sh`. Verificado en el stack de producción local.
 - **E. Operación:** copias de seguridad de Postgres y su restauración, script de despliegue, chequeo externo de salud, Sentinel monitorizándose a sí mismo.
 - **F. CI/CD y publicación:** GitHub Actions (lint, tests, e2e), imágenes en GHCR, `.tgz` de las SDK en cada Release (con `@sentinel/core` empaquetado dentro), bundle del navegador servido desde la instancia, `LICENSE`.
 - **G. Documentación:** el README ya incluye la sección «Despliegue en producción»; faltan backups, actualización por versiones y cambio de dominio.

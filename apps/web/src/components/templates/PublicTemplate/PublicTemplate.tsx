@@ -7,6 +7,7 @@ import { ThemeSelect } from "@/components/molecules/ThemeSelect/ThemeSelect";
 import { SECTIONS } from "@/components/templates/PublicTemplate/PublicTemplate.constants";
 import type { PublicTemplateProps } from "@/components/templates/PublicTemplate/PublicTemplateInterface";
 import { useSession } from "@/hooks/useSession/useSession";
+import { useSignUpEnabled } from "@/hooks/useSignUpEnabled/useSignUpEnabled";
 import { useTheme } from "@/hooks/useTheme/useTheme";
 import { cn } from "@/utils/cn/cn";
 import { API_DOCS_URL } from "@/utils/publicLinks/publicLinks.constants";
@@ -17,6 +18,7 @@ export function PublicTemplate({ children, active }: PublicTemplateProps) {
 	const { theme, setTheme } = useTheme();
 	const session = useSession();
 	const signedIn = Boolean(session.data);
+	const signUpEnabled = useSignUpEnabled();
 
 	return (
 		<div className="flex min-h-full flex-col bg-background text-foreground">
@@ -67,18 +69,22 @@ export function PublicTemplate({ children, active }: PublicTemplateProps) {
 								<Link
 									to="/login"
 									className={cn(
-										buttonVariants({ variant: "ghost" }),
-										"hidden sm:inline-flex",
+										buttonVariants({
+											variant: signUpEnabled ? "ghost" : "primary",
+										}),
+										signUpEnabled && "hidden sm:inline-flex",
 									)}
 								>
 									{t("public.signIn")}
 								</Link>
-								<Link
-									to="/register"
-									className={buttonVariants({ variant: "primary" })}
-								>
-									{t("public.signUp")}
-								</Link>
+								{signUpEnabled && (
+									<Link
+										to="/register"
+										className={buttonVariants({ variant: "primary" })}
+									>
+										{t("public.signUp")}
+									</Link>
+								)}
 							</>
 						)}
 					</div>

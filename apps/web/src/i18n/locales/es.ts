@@ -45,6 +45,8 @@ export const es: Deep<Translations> = {
 			invalidCredentials: "Correo o contraseña incorrectos.",
 		},
 		register: {
+			closed:
+				"El registro está cerrado en esta instancia. Si ya tienes una cuenta, inicia sesión; si no, pide una invitación a quien la administra.",
 			title: "Crea tu cuenta",
 			subtitle: "Empieza a seguir errores en minutos.",
 			name: "Nombre completo",

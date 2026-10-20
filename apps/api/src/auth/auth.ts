@@ -12,6 +12,8 @@ export interface AuthOptions {
 	google?: { clientId: string; clientSecret: string };
 	/** Quien se registra con email y contraseña debe verificar su correo antes de entrar. */
 	requireEmailVerification?: boolean;
+	/** `false` cierra el registro, también el de Google: solo entra quien ya tiene cuenta. Por defecto, abierto. */
+	signUpEnabled?: boolean;
 	/** Envía el correo con el enlace de verificación (lo arma y encola quien la implemente). */
 	sendVerification?: (input: {
 		email: string;
@@ -47,6 +49,7 @@ export function createAuth(opts: AuthOptions) {
 		database: drizzleAdapter(opts.db, { provider: "pg", schema }),
 		emailAndPassword: {
 			enabled: true,
+			disableSignUp: opts.signUpEnabled === false,
 			minPasswordLength: 8,
 			requireEmailVerification: opts.requireEmailVerification ?? false,
 		},
@@ -68,7 +71,14 @@ export function createAuth(opts: AuthOptions) {
 				}
 			: undefined,
 		// Google solo se activa si hay credenciales configuradas.
-		socialProviders: opts.google ? { google: opts.google } : {},
+		socialProviders: opts.google
+			? {
+					google: {
+						...opts.google,
+						disableSignUp: opts.signUpEnabled === false,
+					},
+				}
+			: {},
 		plugins: [
 			openAPI(),
 			organization({

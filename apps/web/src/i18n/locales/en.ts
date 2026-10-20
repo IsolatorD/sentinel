@@ -41,6 +41,8 @@ export const en = {
 			invalidCredentials: "Incorrect email or password.",
 		},
 		register: {
+			closed:
+				"Registration is closed on this instance. If you already have an account, sign in; otherwise ask the owner for an invitation.",
 			title: "Create your account",
 			subtitle: "Start tracking errors in minutes.",
 			name: "Full name",

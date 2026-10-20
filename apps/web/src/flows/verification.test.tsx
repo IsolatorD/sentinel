@@ -22,6 +22,7 @@ beforeEach(() => {
 		authProviders: { google: false },
 		emailEnabled: true,
 		emailVerification: true,
+		signUpEnabled: true,
 	});
 });
 
@@ -84,6 +85,7 @@ describe("registro con verificación", () => {
 			authProviders: { google: false },
 			emailEnabled: false,
 			emailVerification: false,
+			signUpEnabled: true,
 		});
 		vi.mocked(authService.signUpEmail).mockResolvedValue({
 			needsVerification: false,

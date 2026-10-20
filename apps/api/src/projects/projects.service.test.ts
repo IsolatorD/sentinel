@@ -39,12 +39,17 @@ const keyRow = (over: Partial<KeyRow> = {}): KeyRow => ({
 function setup(
 	role: string | undefined,
 	repo: Partial<ProjectsRepository> = {},
+	env: Record<string, unknown> = {},
 ) {
 	const access = new OrgAccessService({
 		findMemberRole: async () => role,
 	} as unknown as OrganizationsRepository);
+	const values: Record<string, unknown> = {
+		PUBLIC_API_URL: "http://localhost:3000",
+		...env,
+	};
 	const config = {
-		get: () => "http://localhost:3000",
+		get: (key: string) => values[key],
 	} as unknown as ConfigService<ApiEnv, true>;
 	const quota = { invalidate: vi.fn() } as unknown as QuotaService;
 	return new ProjectsService(repo as ProjectsRepository, access, quota, config);
@@ -76,6 +81,23 @@ describe("ProjectsService", () => {
 			setup(undefined, repo).list("u", "org-1"),
 		).rejects.toBeInstanceOf(NotFoundException);
 		expect(repo.listByOrganization).not.toHaveBeenCalled();
+	});
+
+	it("los proyectos nuevos nacen con la retención y las cuotas configuradas por el operador", async () => {
+		const createWithKey = vi.fn(async (_input: Record<string, unknown>) => ({
+			project: projectRow(),
+			key: keyRow(),
+		}));
+		await setup("owner", { createWithKey } as Partial<ProjectsRepository>, {
+			DEFAULT_RETENTION_DAYS: 30,
+			DEFAULT_MONTHLY_EVENT_QUOTA: 10_000,
+			DEFAULT_MONTHLY_TRANSACTION_QUOTA: 5_000,
+		}).create("u", "org-1", { name: "Mi App", platform: "javascript" });
+		expect(createWithKey.mock.calls[0][0]).toMatchObject({
+			retentionDays: 30,
+			monthlyEventQuota: 10_000,
+			monthlyTransactionQuota: 5_000,
+		});
 	});
 
 	it("crea el proyecto con la DSN de su primera clave", async () => {

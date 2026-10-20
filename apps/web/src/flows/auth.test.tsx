@@ -109,6 +109,7 @@ describe("acceso", () => {
 			authProviders: { google: true },
 			emailEnabled: true,
 			emailVerification: false,
+			signUpEnabled: true,
 		});
 		const second = renderApp("/login");
 		const google = await screen.findByRole("button", {
@@ -166,6 +167,54 @@ describe("registro", () => {
 			await screen.findByRole("heading", { name: "Welcome to Sentinel" }),
 		).toBeInTheDocument();
 		expect(router.state.location.pathname).toBe("/onboarding");
+	});
+});
+
+describe("registro cerrado en el servidor", () => {
+	const closed = () =>
+		vi.mocked(configService.getPublicConfig).mockResolvedValue({
+			authProviders: { google: false },
+			emailEnabled: true,
+			emailVerification: false,
+			signUpEnabled: false,
+		});
+
+	it("el login no ofrece crear una cuenta", async () => {
+		signedOut();
+		closed();
+		renderApp("/login");
+		await screen.findByRole("button", { name: "Sign in" });
+		await waitFor(() =>
+			expect(
+				screen.queryByRole("link", { name: "Sign up" }),
+			).not.toBeInTheDocument(),
+		);
+		expect(screen.queryByText(/Don.t have an account/)).not.toBeInTheDocument();
+	});
+
+	it("la pantalla de registro explica que está cerrado, sin formulario", async () => {
+		signedOut();
+		closed();
+		renderApp("/register");
+		expect(
+			await screen.findByText(/Registration is closed/),
+		).toBeInTheDocument();
+		expect(screen.queryByLabelText("Password")).not.toBeInTheDocument();
+	});
+
+	it("la landing lleva a iniciar sesión en vez de a crear una cuenta", async () => {
+		signedOut();
+		closed();
+		renderApp("/");
+		await screen.findAllByRole("link", { name: "Sign in" });
+		await waitFor(() =>
+			expect(
+				screen.queryByRole("link", { name: "Create a free account" }),
+			).not.toBeInTheDocument(),
+		);
+		expect(
+			screen.queryByRole("link", { name: "Create account" }),
+		).not.toBeInTheDocument();
 	});
 });
 

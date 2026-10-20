@@ -3,6 +3,8 @@ export interface E2EContext {
 	baseUrl: string;
 	/** Segunda API, idéntica pero que exige verificar el correo para entrar. */
 	verifyBaseUrl: string;
+	/** Tercera API (misma base de datos y secreto): registro cerrado y límites por defecto para proyectos nuevos. */
+	lockedBaseUrl: string;
 	databaseUrl: string;
 	redis: { host: string; port: number; db: number };
 	ingestRateLimitPerMinute: number;

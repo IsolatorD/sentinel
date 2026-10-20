@@ -4,10 +4,12 @@ import { useTranslation } from "react-i18next";
 import { buttonVariants } from "@/components/atoms/Button/Button.constants";
 import { ProductPreview } from "@/components/organisms/ProductPreview/ProductPreview";
 import { useSession } from "@/hooks/useSession/useSession";
+import { useSignUpEnabled } from "@/hooks/useSignUpEnabled/useSignUpEnabled";
 
 export function LandingHero() {
 	const { t } = useTranslation();
 	const signedIn = Boolean(useSession().data);
+	const signUpEnabled = useSignUpEnabled();
 	return (
 		<section className="relative overflow-hidden border-b border-border">
 			<div
@@ -27,10 +29,14 @@ export function LandingHero() {
 					</p>
 					<div className="mt-8 flex flex-wrap items-center justify-center gap-3">
 						<Link
-							to={signedIn ? "/" : "/register"}
+							to={signedIn ? "/" : signUpEnabled ? "/register" : "/login"}
 							className={buttonVariants({ variant: "primary", size: "lg" })}
 						>
-							{signedIn ? t("public.openApp") : t("landing.hero.cta")}
+							{signedIn
+								? t("public.openApp")
+								: signUpEnabled
+									? t("landing.hero.cta")
+									: t("public.signIn")}
 							<ArrowRight aria-hidden className="size-4" />
 						</Link>
 						<Link
