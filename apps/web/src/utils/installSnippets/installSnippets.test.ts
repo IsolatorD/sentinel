@@ -7,6 +7,7 @@ import {
 	reactNativeSnippet,
 	reactSnippet,
 	scriptTagSnippet,
+	sdkOrigin,
 } from "./installSnippets";
 
 describe("install snippets", () => {
@@ -22,7 +23,9 @@ describe("install snippets", () => {
 
 	it("React usa @sentinel/react con el ErrorBoundary", () => {
 		const snippet = reactSnippet({ dsn });
-		expect(snippet.install).toBe("npm install @sentinel/react");
+		expect(snippet.install).toBe(
+			"npm install @sentinel/browser @sentinel/react",
+		);
 		expect(snippet.code).toContain(`dsn: "${dsn}"`);
 		expect(snippet.code).toContain("Sentinel.ErrorBoundary");
 	});
@@ -62,5 +65,42 @@ describe("install snippets", () => {
 
 	it("con una DSN vacía deja una plantilla", () => {
 		expect(httpSnippet({ dsn: "" })).toContain("<projectId>");
+	});
+
+	describe("instalación desde la propia instancia", () => {
+		const remote = "https://abc123@3-19-1-21.sslip.io/proj-1";
+		const base = "https://3-19-1-21.sslip.io/sdk";
+
+		it("deduce el origen de las SDK de la DSN, salvo en local", () => {
+			expect(sdkOrigin(remote)).toBe("https://3-19-1-21.sslip.io");
+			expect(sdkOrigin("http://key@localhost:3000/abc")).toBeNull();
+			expect(sdkOrigin("http://key@127.0.0.1:3000/abc")).toBeNull();
+			expect(sdkOrigin("no-es-una-url")).toBeNull();
+		});
+
+		it("cada plataforma instala desde /sdk/ de esa instancia", () => {
+			const dsn = remote;
+			expect(npmSnippet({ dsn }).install).toBe(
+				`npm install ${base}/sentinel-browser.tgz`,
+			);
+			expect(nodeSnippet({ dsn }).install).toBe(
+				`npm install ${base}/sentinel-node.tgz`,
+			);
+			expect(reactNativeSnippet({ dsn }).install).toBe(
+				`npm install ${base}/sentinel-react-native.tgz`,
+			);
+			expect(pythonSnippet({ dsn }).install).toBe(
+				`pip install ${base}/sentinel-sdk.tar.gz`,
+			);
+			expect(scriptTagSnippet({ dsn })).toContain(
+				`<script src="${base}/sentinel.min.js"></script>`,
+			);
+		});
+
+		it("React instala el SDK del navegador junto al suyo (es su dependencia de pares)", () => {
+			expect(reactSnippet({ dsn: remote }).install).toBe(
+				`npm install ${base}/sentinel-browser.tgz ${base}/sentinel-react.tgz`,
+			);
+		});
 	});
 });

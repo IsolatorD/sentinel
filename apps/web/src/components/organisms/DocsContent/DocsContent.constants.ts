@@ -24,8 +24,10 @@ export const QUICKSTART_STEPS = [
 	"verify",
 ] as const;
 
-export const SOURCEMAPS_COMMAND =
-	"sentinel-cli sourcemaps upload ./dist --release 1.4.2";
+export const SOURCEMAPS_COMMAND = [
+	"npm install -g https://sentinel.example.com/sdk/sentinel-cli.tgz",
+	"sentinel-cli sourcemaps upload ./dist --release 1.4.2",
+].join("\n");
 
 export const TRACING_BROWSER = `Sentinel.init({
   dsn: "https://<key>@sentinel.example.com/<projectId>",

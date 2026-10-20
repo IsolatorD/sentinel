@@ -1,6 +1,7 @@
 {
 	"name": "@sentinel/node",
 	"version": "0.1.0",
+	"license": "MIT",
 	"description": "Sentinel SDK for Node.js: captures errors, measures requests and continues traces started in the browser.",
 	"private": true,
 	"type": "module",

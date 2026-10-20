@@ -88,16 +88,20 @@ describe("landing (/)", () => {
 		const { user } = renderApp("/");
 		const snippet = async () =>
 			(await screen.findByTestId("sdk-snippet")).textContent ?? "";
-		expect(await snippet()).toContain("npm install @sentinel/browser");
+		// La muestra instala desde la propia instancia (la DSN de ejemplo apunta a sentinel.example.com).
+		const sdk = "https://sentinel.example.com/sdk";
+		expect(await snippet()).toContain(
+			`npm install ${sdk}/sentinel-browser.tgz`,
+		);
 
 		const tabs = await screen.findByRole("tablist", {
 			name: "One SDK for each place your code runs",
 		});
 		const expected: Record<string, string> = {
-			React: "npm install @sentinel/react",
-			"Node.js": "npm install @sentinel/node",
-			Python: "pip install sentinel-sdk",
-			"React Native": "npm install @sentinel/react-native",
+			React: `npm install ${sdk}/sentinel-browser.tgz ${sdk}/sentinel-react.tgz`,
+			"Node.js": `npm install ${sdk}/sentinel-node.tgz`,
+			Python: `pip install ${sdk}/sentinel-sdk.tar.gz`,
+			"React Native": `npm install ${sdk}/sentinel-react-native.tgz`,
 		};
 		for (const [tab, command] of Object.entries(expected)) {
 			await user.click(within(tabs).getByRole("tab", { name: tab }));

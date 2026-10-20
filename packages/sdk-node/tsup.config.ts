@@ -3,7 +3,8 @@ import { defineConfig } from "tsup";
 export default defineConfig({
 	entry: ["src/index.ts"],
 	format: ["esm", "cjs"],
-	dts: true,
+	// Los tipos de `@sentinel/core` van dentro: el paquete se instala solo, sin `core` publicado.
+	dts: { resolve: [/^@sentinel\//] },
 	platform: "node",
 	target: "node20",
 	sourcemap: true,

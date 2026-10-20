@@ -1,6 +1,7 @@
 {
 	"name": "@sentinel/react",
 	"version": "0.1.0",
+	"license": "MIT",
 	"description": "Sentinel SDK for React: error boundary and React 19 error handlers.",
 	"private": true,
 	"type": "module",

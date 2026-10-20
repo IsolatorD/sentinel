@@ -5,7 +5,8 @@ export default defineConfig([
 	{
 		entry: ["src/index.ts"],
 		format: ["esm", "cjs"],
-		dts: true,
+		// Los tipos de `@sentinel/core` van dentro: el paquete se instala solo, sin `core` publicado.
+		dts: { resolve: [/^@sentinel\//] },
 		target: "es2018",
 		sourcemap: true,
 		outExtension: ({ format }) => ({ js: format === "cjs" ? ".cjs" : ".js" }),

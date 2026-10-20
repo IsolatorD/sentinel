@@ -1,6 +1,7 @@
 {
 	"name": "@sentinel/db",
 	"version": "0.0.0",
+	"license": "MIT",
 	"private": true,
 	"type": "module",
 	"main": "./dist/index.js",

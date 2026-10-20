@@ -1,6 +1,7 @@
 {
 	"name": "@sentinel/python",
 	"version": "0.1.0",
+	"license": "MIT",
 	"private": true,
 	"description": "Sentinel SDK for Python (sentinel-sdk). Esta cápsula solo enchufa sus scripts al monorepo; el código es Python.",
 	"scripts": {

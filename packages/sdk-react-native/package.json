@@ -1,6 +1,7 @@
 {
 	"name": "@sentinel/react-native",
 	"version": "0.1.0",
+	"license": "MIT",
 	"description": "Sentinel SDK for React Native: captures JS errors, measures app start, navigation and requests.",
 	"private": true,
 	"type": "module",

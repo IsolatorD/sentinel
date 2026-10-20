@@ -1,5 +1,7 @@
 # @sentinel/node
 
+> Instalación (las SDK aún no están en npm): ver [Instalar las SDK](../../README.md#instalar-las-sdk).
+
 SDK de Sentinel para Node.js (20 o superior). Captura los errores, mide cada petición que atiende tu servidor y **continúa las trazas que empiezan en el navegador**.
 
 - Sin dependencias en tiempo de ejecución. ESM y CommonJS.

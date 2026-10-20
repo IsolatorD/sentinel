@@ -30,10 +30,16 @@ COPY tests/e2e/package.json tests/e2e/
 # ---------- Compilación del monorepo ----------
 FROM manifests AS build
 RUN pnpm install --frozen-lockfile \
-	--filter "@sentinel/api..." --filter "@sentinel/worker..." --filter "@sentinel/web..."
+	--filter "@sentinel/api..." --filter "@sentinel/worker..." --filter "@sentinel/web..." \
+	--filter "@sentinel/browser..." --filter "@sentinel/react..." --filter "@sentinel/node..." \
+	--filter "@sentinel/react-native..." --filter "@sentinel/cli..."
 COPY . .
 RUN pnpm exec turbo run build \
-	--filter=@sentinel/api --filter=@sentinel/worker --filter=@sentinel/web
+	--filter=@sentinel/api --filter=@sentinel/worker --filter=@sentinel/web \
+	--filter=@sentinel/browser --filter=@sentinel/react --filter=@sentinel/node \
+	--filter=@sentinel/react-native --filter=@sentinel/cli
+# Las SDK instalables que la propia instancia ofrece en /sdk/ (ver scripts/pack-sdks.sh).
+RUN ./scripts/pack-sdks.sh /repo/sdk-dist
 
 # ---------- Dependencias de producción de la API y el worker ----------
 # (`pnpm deploy` no sirve aquí: intenta resolver también las dependencias de pares de las SDK.)
@@ -77,4 +83,5 @@ CMD ["node", "dist/main.js"]
 # ---------- Web estática + Caddy (HTTPS y proxy hacia la API) ----------
 FROM caddy:2-alpine AS web
 COPY --from=build /repo/apps/web/dist /srv
+COPY --from=build /repo/sdk-dist /srv/sdk
 COPY deploy/Caddyfile /etc/caddy/Caddyfile

@@ -181,7 +181,7 @@ Reglas de alerta (nuevo issue, regresión, umbral de frecuencia), canales email 
 - ✅ **C. Configuración de producción**: `deploy/.env.production.example`, `deploy/gen-env.sh`, `deploy/smoke-test.sh`. Ensayo local completo (HTTPS, migraciones, registro, ingesta y worker) superado.
 - ✅ **D. Modo demo abierto:** `DEFAULT_MONTHLY_EVENT_QUOTA`, `DEFAULT_MONTHLY_TRANSACTION_QUOTA` y `DEFAULT_RETENTION_DAYS` para los proyectos nuevos, `SIGNUP_ENABLED` (la web oculta el registro cuando está cerrado), cuenta de demo con el seed existente y `deploy/cleanup-smoke.sh`. Verificado en el stack de producción local.
 - **E. Operación:** copias de seguridad de Postgres y su restauración, script de despliegue, chequeo externo de salud, Sentinel monitorizándose a sí mismo.
-- **F. CI/CD y publicación:** GitHub Actions (lint, tests, e2e), imágenes en GHCR, `.tgz` de las SDK en cada Release (con `@sentinel/core` empaquetado dentro), bundle del navegador servido desde la instancia, `LICENSE`.
+- ✅ **F. Publicación de las SDK y licencia:** cada instancia sirve las SDK y la CLI en `/sdk/` (empaquetadas con `scripts/pack-sdks.sh`, con `@sentinel/core` y sus tipos dentro), el workflow `release.yml` las adjunta a cada Release de GitHub con nombres estables, `LICENSE` (MIT) y campo `license` en todos los paquetes. Los comandos de instalación de la web apuntan a la instancia. El CI (lint, tests, e2e) ya existía; las imágenes de Docker se construyen en la propia VM, no en un registro.
 - **G. Documentación:** el README ya incluye la sección «Despliegue en producción»; faltan backups, actualización por versiones y cambio de dominio.
 
 ## 8. Riesgos y mitigaciones

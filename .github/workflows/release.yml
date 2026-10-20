@@ -1,0 +1,32 @@
+name: Release
+
+# Al crear una etiqueta `v*` (p. ej. `git tag v0.2.0 && git push origin v0.2.0`) se publica una Release
+# de GitHub con las SDK y la CLI listas para instalar. Los nombres no llevan versión, así que
+# `.../releases/latest/download/sentinel-browser.tgz` apunta siempre a la última.
+on:
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm build
+      - run: ./scripts/pack-sdks.sh sdk-dist
+      - name: Publicar la Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "$GITHUB_REF_NAME" sdk-dist/* \
+            --title "$GITHUB_REF_NAME" \
+            --generate-notes

@@ -1,5 +1,7 @@
 # @sentinel/browser
 
+> Instalación (las SDK aún no están en npm): ver [Instalar las SDK](../../README.md#instalar-las-sdk).
+
 SDK de Sentinel para navegadores. Captura errores y los envía a un servidor Sentinel.
 
 - Sin dependencias en tiempo de ejecución. ~11 KB comprimido (bundle para `<script>`).

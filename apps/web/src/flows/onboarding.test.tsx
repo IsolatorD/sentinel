@@ -57,7 +57,7 @@ describe("onboarding", () => {
 			await screen.findByRole("heading", { name: "Install the SDK" }),
 		).toBeInTheDocument();
 		expect(
-			screen.getByText(/npm install @sentinel\/react/),
+			screen.getByText(/npm install @sentinel\/browser @sentinel\/react/),
 		).toBeInTheDocument();
 		expect(
 			screen.getByText(

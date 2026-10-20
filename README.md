@@ -221,6 +221,25 @@ Los eventos pueden arrastrar secretos sin que nadie lo note (una contraseña en 
 
 Es una red de seguridad, no un sustituto de no enviar datos sensibles: el SDK ya omite el texto de los clicks y la query de las URLs.
 
+## Instalar las SDK
+
+Las SDK **no están en npm** (podrán estarlo más adelante). Se instalan desde archivos que se construyen de este mismo repositorio, de tres formas equivalentes:
+
+1. **Desde tu instancia de Sentinel** (lo más cómodo): cada instancia sirve las SDK en `https://TU-DOMINIO/sdk/`, ya a la versión que ella ejecuta. La pantalla de configuración del proyecto y el asistente de bienvenida muestran los comandos con tu dominio y tu DSN.
+   ```bash
+   npm install https://TU-DOMINIO/sdk/sentinel-browser.tgz                       # navegador
+   npm install https://TU-DOMINIO/sdk/sentinel-browser.tgz https://TU-DOMINIO/sdk/sentinel-react.tgz   # React
+   npm install https://TU-DOMINIO/sdk/sentinel-node.tgz                          # Node.js
+   npm install https://TU-DOMINIO/sdk/sentinel-react-native.tgz                  # React Native
+   npm install -g https://TU-DOMINIO/sdk/sentinel-cli.tgz                        # CLI de source maps
+   pip install https://TU-DOMINIO/sdk/sentinel-sdk.tar.gz                        # Python
+   ```
+   Para una etiqueta `<script>`: `<script src="https://TU-DOMINIO/sdk/sentinel.min.js"></script>`.
+2. **Desde una Release de GitHub:** al subir una etiqueta (`git tag v0.2.0 && git push origin v0.2.0`) el workflow `release.yml` publica los mismos archivos. Como no llevan versión en el nombre, `https://github.com/IsolatorD/sentinel/releases/latest/download/sentinel-browser.tgz` apunta siempre a la última.
+3. **Python directamente desde git:** `pip install "git+https://github.com/IsolatorD/sentinel#subdirectory=packages/sdk-python"`.
+
+Cada paquete de JavaScript es autosuficiente: lleva dentro `@sentinel/core` y `@sentinel/shared`, también sus tipos de TypeScript. La excepción es `@sentinel/react`, que necesita el SDK del navegador (se instalan juntos, como arriba). Los archivos se generan con `pnpm build && ./scripts/pack-sdks.sh`.
+
 ## SDK de React
 
 `packages/sdk-react` (`@sentinel/react`) añade un `ErrorBoundary` que envía los errores de render con la pila de componentes, `withErrorBoundary` y `reactRootOptions()` para los handlers de React 19 (`onUncaughtError`, `onCaughtError`, `onRecoverableError`). Cada error se envía una sola vez aunque llegue por varios caminos. Ver su [README](packages/sdk-react/README.md).

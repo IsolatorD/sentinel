@@ -1,5 +1,6 @@
 {
 	"name": "sentinel",
+	"license": "MIT",
 	"private": true,
 	"packageManager": "pnpm@10.11.0",
 	"engines": {

@@ -50,7 +50,9 @@ describe("configuración del proyecto", () => {
 
 		const install = screen.getByTestId("install-instructions");
 		expect(
-			within(install).getByText(/npm install @sentinel\/react/),
+			within(install).getByText(
+				/npm install @sentinel\/browser @sentinel\/react/,
+			),
 		).toBeInTheDocument();
 		expect(install).toHaveTextContent("Sentinel.ErrorBoundary");
 		expect(install).toHaveTextContent(fx.key.dsn);

@@ -1,6 +1,7 @@
 {
 	"name": "@sentinel/cli",
 	"version": "0.1.0",
+	"license": "MIT",
 	"description": "Sentinel command line: uploads source maps from your CI.",
 	"private": true,
 	"type": "module",

@@ -1,5 +1,7 @@
 # sentinel-sdk (Python)
 
+> Instalación (las SDK aún no están en npm): ver [Instalar las SDK](../../README.md#instalar-las-sdk).
+
 SDK de Sentinel para Python 3.9 o superior. Captura los errores, mide cada petición que atiende tu aplicación y **continúa las trazas que empiezan en el navegador**.
 
 - **Sin dependencias**: solo la biblioteca estándar. Nada que instalar ni que choque con tu app.
@@ -9,7 +11,7 @@ SDK de Sentinel para Python 3.9 o superior. Captura los errores, mide cada petic
 ## Instalación y uso
 
 ```bash
-pip install sentinel-sdk
+pip install https://TU-DOMINIO/sdk/sentinel-sdk.tar.gz
 ```
 
 ```python

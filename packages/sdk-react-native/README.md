@@ -1,5 +1,7 @@
 # @sentinel/react-native
 
+> Instalación (las SDK aún no están en npm): ver [Instalar las SDK](../../README.md#instalar-las-sdk).
+
 SDK de Sentinel para React Native (0.72 o superior, Hermes o JavaScriptCore). Captura los errores de JavaScript, mide el arranque de la app, las pantallas y las peticiones de red, y simboliza los stacks con los source maps de tu build.
 
 - Sin dependencias en tiempo de ejecución (`react` y `react-native` los pone tu app).
