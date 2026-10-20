@@ -1,15 +1,15 @@
-# @sentinel/react
+# @argus-isolator/react
 
 > Instalación (las SDK aún no están en npm): ver [Instalar las SDK](../../README.md#instalar-las-sdk).
 
-SDK de Sentinel para React: un `ErrorBoundary` que envía los errores de render con su **pila de componentes**, y las opciones de React 19 para no perder ninguno. Reexporta todo `@sentinel/browser`, así que con un solo import tienes `init`, `captureException`, etc.
+SDK de Sentinel para React: un `ErrorBoundary` que envía los errores de render con su **pila de componentes**, y las opciones de React 19 para no perder ninguno. Reexporta todo `@argus-isolator/browser`, así que con un solo import tienes `init`, `captureException`, etc.
 
 Requiere React 18 o superior (los handlers de la raíz, React 19).
 
 ## Uso
 
 ```tsx
-import * as Sentinel from "@sentinel/react";
+import * as Sentinel from "@argus-isolator/react";
 import { createRoot } from "react-dom/client";
 
 Sentinel.init({ dsn: "https://<clave>@sentinel.example.com/<projectId>", release: "1.4.2" });
@@ -88,8 +88,8 @@ Sin transacción en curso no hace nada. Solo mide el montaje, no cada actualizac
 ## Desarrollo
 
 ```bash
-pnpm --filter @sentinel/react build
-pnpm --filter @sentinel/react test
+pnpm --filter @argus-isolator/react build
+pnpm --filter @argus-isolator/react test
 ```
 
 Los tests usan el SDK real y validan cada evento contra el `ingestEventSchema` del backend.

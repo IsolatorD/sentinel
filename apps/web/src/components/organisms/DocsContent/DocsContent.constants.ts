@@ -9,11 +9,11 @@ export const DOC_SECTIONS = [
 ] as const;
 
 export const PACKAGES = [
-	{ id: "javascript", name: "@sentinel/browser" },
-	{ id: "react", name: "@sentinel/react" },
-	{ id: "node", name: "@sentinel/node" },
+	{ id: "javascript", name: "@argus-isolator/browser" },
+	{ id: "react", name: "@argus-isolator/react" },
+	{ id: "node", name: "@argus-isolator/node" },
 	{ id: "python", name: "sentinel-sdk" },
-	{ id: "react-native", name: "@sentinel/react-native" },
+	{ id: "react-native", name: "@argus-isolator/react-native" },
 ] as const;
 
 export const QUICKSTART_STEPS = [

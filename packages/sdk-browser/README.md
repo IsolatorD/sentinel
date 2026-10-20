@@ -1,4 +1,4 @@
-# @sentinel/browser
+# @argus-isolator/browser
 
 > Instalación (las SDK aún no están en npm): ver [Instalar las SDK](../../README.md#instalar-las-sdk).
 
@@ -11,7 +11,7 @@ SDK de Sentinel para navegadores. Captura errores y los envía a un servidor Sen
 ## Uso
 
 ```ts
-import * as Sentinel from "@sentinel/browser";
+import * as Sentinel from "@argus-isolator/browser";
 
 Sentinel.init({
 	dsn: "https://<clave>@sentinel.example.com/<projectId>",
@@ -103,8 +103,8 @@ Los eventos se ajustan a los límites del servidor (tamaño de campos, 100 bread
 ## Desarrollo
 
 ```bash
-pnpm --filter @sentinel/browser build   # dist/index.js, dist/index.cjs, dist/sentinel.min.js
-pnpm --filter @sentinel/browser test
+pnpm --filter @argus-isolator/browser build   # dist/index.js, dist/index.cjs, dist/sentinel.min.js
+pnpm --filter @argus-isolator/browser test
 ```
 
 Los tests validan los eventos del SDK contra el `ingestEventSchema` real del backend (`packages/shared`), de modo que ambos no pueden divergir sin que falle un test.

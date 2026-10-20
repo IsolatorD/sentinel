@@ -14,25 +14,27 @@ describe("install snippets", () => {
 	const dsn = "http://key@localhost:3000/abc";
 	it("incluyen la DSN en el código de configuración", () => {
 		expect(npmSnippet({ dsn }).code).toContain(`dsn: "${dsn}"`);
-		expect(npmSnippet({ dsn }).install).toBe("npm install @sentinel/browser");
+		expect(npmSnippet({ dsn }).install).toBe(
+			"npm install @argus-isolator/browser",
+		);
 		expect(scriptTagSnippet({ dsn })).toContain(`dsn: "${dsn}"`);
 		expect(
 			scriptTagSnippet({ dsn, release: "9.9.9", environment: "staging" }),
 		).toContain('release: "9.9.9"');
 	});
 
-	it("React usa @sentinel/react con el ErrorBoundary", () => {
+	it("React usa @argus-isolator/react con el ErrorBoundary", () => {
 		const snippet = reactSnippet({ dsn });
 		expect(snippet.install).toBe(
-			"npm install @sentinel/browser @sentinel/react",
+			"npm install @argus-isolator/browser @argus-isolator/react",
 		);
 		expect(snippet.code).toContain(`dsn: "${dsn}"`);
 		expect(snippet.code).toContain("Sentinel.ErrorBoundary");
 	});
 
-	it("Node usa @sentinel/node con tracesSampleRate y cierra al apagar", () => {
+	it("Node usa @argus-isolator/node con tracesSampleRate y cierra al apagar", () => {
 		const snippet = nodeSnippet({ dsn });
-		expect(snippet.install).toBe("npm install @sentinel/node");
+		expect(snippet.install).toBe("npm install @argus-isolator/node");
 		expect(snippet.code).toContain(`dsn: "${dsn}"`);
 		expect(snippet.code).toContain("tracesSampleRate");
 		expect(snippet.code).toContain("Sentinel.close()");
@@ -47,9 +49,9 @@ describe("install snippets", () => {
 		expect(snippet.code).toContain("traces_sample_rate");
 	});
 
-	it("React Native usa @sentinel/react-native e indica cómo subir los source maps", () => {
+	it("React Native usa @argus-isolator/react-native e indica cómo subir los source maps", () => {
 		const snippet = reactNativeSnippet({ dsn, release: "2.1.0" });
-		expect(snippet.install).toBe("npm install @sentinel/react-native");
+		expect(snippet.install).toBe("npm install @argus-isolator/react-native");
 		expect(snippet.code).toContain(`dsn: "${dsn}"`);
 		expect(snippet.code).toContain("instrumentNavigation");
 		expect(snippet.code).toContain(

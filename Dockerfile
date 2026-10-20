@@ -31,13 +31,13 @@ COPY tests/e2e/package.json tests/e2e/
 FROM manifests AS build
 RUN pnpm install --frozen-lockfile \
 	--filter "@sentinel/api..." --filter "@sentinel/worker..." --filter "@sentinel/web..." \
-	--filter "@sentinel/browser..." --filter "@sentinel/react..." --filter "@sentinel/node..." \
-	--filter "@sentinel/react-native..." --filter "@sentinel/cli..."
+	--filter "@argus-isolator/browser..." --filter "@argus-isolator/react..." --filter "@argus-isolator/node..." \
+	--filter "@argus-isolator/react-native..." --filter "@argus-isolator/cli..."
 COPY . .
 RUN pnpm exec turbo run build \
 	--filter=@sentinel/api --filter=@sentinel/worker --filter=@sentinel/web \
-	--filter=@sentinel/browser --filter=@sentinel/react --filter=@sentinel/node \
-	--filter=@sentinel/react-native --filter=@sentinel/cli
+	--filter=@argus-isolator/browser --filter=@argus-isolator/react --filter=@argus-isolator/node \
+	--filter=@argus-isolator/react-native --filter=@argus-isolator/cli
 # Las SDK instalables que la propia instancia ofrece en /sdk/ (ver scripts/pack-sdks.sh).
 RUN ./scripts/pack-sdks.sh /repo/sdk-dist
 

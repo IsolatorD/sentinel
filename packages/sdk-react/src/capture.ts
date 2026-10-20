@@ -1,4 +1,4 @@
-import { type CaptureHint, captureException } from "@sentinel/browser";
+import { type CaptureHint, captureException } from "@argus-isolator/browser";
 
 /**
  * Errores ya enviados. React puede avisar del mismo error por dos caminos (el `ErrorBoundary` y

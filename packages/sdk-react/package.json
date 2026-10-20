@@ -1,9 +1,22 @@
 {
-	"name": "@sentinel/react",
-	"version": "0.1.0",
+	"name": "@argus-isolator/react",
+	"version": "0.2.0",
+	"description": "Sentinel SDK for React: ErrorBoundary, Profiler and root error hooks on top of @argus-isolator/browser.",
 	"license": "MIT",
-	"description": "Sentinel SDK for React: error boundary and React 19 error handlers.",
-	"private": true,
+	"keywords": [
+		"error-tracking",
+		"react",
+		"error-boundary"
+	],
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/IsolatorD/sentinel.git",
+		"directory": "packages/sdk-react"
+	},
+	"homepage": "https://github.com/IsolatorD/sentinel#readme",
+	"bugs": {
+		"url": "https://github.com/IsolatorD/sentinel/issues"
+	},
 	"type": "module",
 	"sideEffects": false,
 	"main": "./dist/index.cjs",
@@ -26,11 +39,11 @@
 		"test": "vitest run"
 	},
 	"peerDependencies": {
-		"@sentinel/browser": "^0.1.0",
+		"@argus-isolator/browser": "^0.2.0",
 		"react": ">=18"
 	},
 	"devDependencies": {
-		"@sentinel/browser": "workspace:*",
+		"@argus-isolator/browser": "workspace:*",
 		"@sentinel/shared": "workspace:*",
 		"@testing-library/jest-dom": "^7.0.1",
 		"@testing-library/react": "^16.3.3",
@@ -43,5 +56,9 @@
 		"typescript": "~5.9.3",
 		"vitest": "^5.0.3",
 		"zod": "^4.6.5"
+	},
+	"publishConfig": {
+		"access": "public",
+		"provenance": true
 	}
 }

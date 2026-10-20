@@ -22,10 +22,10 @@ pnpm dev          # api (3000), worker y web (5173)
 - `apps/worker` — NestJS standalone (BullMQ)
 - `apps/web` — React + Vite
 - `packages/sdk-core` — núcleo común de los SDK (`@sentinel/core`): cliente, transporte, filtros y rendimiento
-- `packages/sdk-browser` — SDK de navegador (`@sentinel/browser`)
-- `packages/sdk-react` — SDK de React (`@sentinel/react`)
-- `packages/sdk-node` — SDK de Node.js (`@sentinel/node`)
-- `packages/sdk-react-native` — SDK de React Native (`@sentinel/react-native`)
+- `packages/sdk-browser` — SDK de navegador (`@argus-isolator/browser`)
+- `packages/sdk-react` — SDK de React (`@argus-isolator/react`)
+- `packages/sdk-node` — SDK de Node.js (`@argus-isolator/node`)
+- `packages/sdk-react-native` — SDK de React Native (`@argus-isolator/react-native`)
 - `packages/sdk-python` — SDK de Python (`sentinel-sdk`), con su propio entorno y tests en pytest
 - `examples/browser-demo`, `examples/node-demo`, `examples/python-demo` — página y servidores para probar los SDK; juntos muestran una traza que cruza del navegador al backend
 - `packages/db` — esquema Drizzle y migraciones (Postgres)
@@ -73,7 +73,7 @@ Tests: `pnpm test` (hoy cubre el fingerprint).
 
 - **Formato:** esquema Zod en `packages/shared/src/transactions.ts`. Una transacción lleva `trace_id` (32 hex), `span_id` (16 hex), `name`, `op`, `duration_ms`, `status`, `release`, `environment`, `user`, `measurements` (los Web Vitals: `lcp`, `cls`, `inp`, `fcp`, `ttfb`, u otras medidas) y hasta 200 `spans` (`span_id`, `parent_span_id`, `op`, `description`, `start_timestamp`, `duration_ms`).
 - **Datos sensibles:** pasan por el mismo filtro que los eventos antes de encolarse (tokens en URLs, cabeceras `authorization`...).
-- **SDK:** `@sentinel/browser` las genera con `tracesSampleRate > 0` (ver su README); cualquier otro lenguaje puede enviarlas con una petición HTTP.
+- **SDK:** `@argus-isolator/browser` las genera con `tracesSampleRate > 0` (ver su README); cualquier otro lenguaje puede enviarlas con una petición HTTP.
 - **Consulta:** ver [API de rendimiento](#api-de-rendimiento).
 
 ## Arquitectura del backend
@@ -238,15 +238,25 @@ Las SDK **no están en npm** (podrán estarlo más adelante). Se instalan desde 
 2. **Desde una Release de GitHub:** al subir una etiqueta (`git tag v0.2.0 && git push origin v0.2.0`) el workflow `release.yml` publica los mismos archivos. Como no llevan versión en el nombre, `https://github.com/IsolatorD/sentinel/releases/latest/download/sentinel-browser.tgz` apunta siempre a la última.
 3. **Python directamente desde git:** `pip install "git+https://github.com/IsolatorD/sentinel#subdirectory=packages/sdk-python"`.
 
-Cada paquete de JavaScript es autosuficiente: lleva dentro `@sentinel/core` y `@sentinel/shared`, también sus tipos de TypeScript. La excepción es `@sentinel/react`, que necesita el SDK del navegador (se instalan juntos, como arriba). Los archivos se generan con `pnpm build && ./scripts/pack-sdks.sh`.
+Cada paquete de JavaScript es autosuficiente: lleva dentro `@sentinel/core` y `@sentinel/shared`, también sus tipos de TypeScript. La excepción es `@argus-isolator/react`, que necesita el SDK del navegador (se instalan juntos, como arriba). Los archivos se generan con `pnpm build && ./scripts/pack-sdks.sh`.
+
+### Publicar en npm (mantenedor)
+
+Los paquetes `@argus-isolator/browser`, `react`, `node`, `react-native` y `cli` están preparados para npm (la organización `argus-isolator` es gratuita para paquetes públicos). El workflow `release.yml` los publica al subir una etiqueta, con *provenance* (npm muestra que salieron de este repositorio):
+
+1. En npmjs.com: *Access Tokens → Generate New Token → Granular*, con permiso de lectura y escritura sobre el scope `@argus-isolator` (y que **no** pida el código de verificación al publicar, o el workflow no podrá hacerlo).
+2. Guardarlo como secreto del repositorio, sin pegarlo en ningún sitio: `gh secret set NPM_TOKEN --repo IsolatorD/sentinel`.
+3. Subir la versión de los paquetes (`version` en cada `package.json` y `SDK_VERSION`), `git tag vX.Y.Z && git push origin vX.Y.Z`.
+
+Una versión ya publicada no se puede reutilizar ni sustituir: cada cambio es una versión nueva. Ensayo sin publicar: `pnpm -r publish --dry-run --access public --no-git-checks`.
 
 ## SDK de React
 
-`packages/sdk-react` (`@sentinel/react`) añade un `ErrorBoundary` que envía los errores de render con la pila de componentes, `withErrorBoundary` y `reactRootOptions()` para los handlers de React 19 (`onUncaughtError`, `onCaughtError`, `onRecoverableError`). Cada error se envía una sola vez aunque llegue por varios caminos. Ver su [README](packages/sdk-react/README.md).
+`packages/sdk-react` (`@argus-isolator/react`) añade un `ErrorBoundary` que envía los errores de render con la pila de componentes, `withErrorBoundary` y `reactRootOptions()` para los handlers de React 19 (`onUncaughtError`, `onCaughtError`, `onRecoverableError`). Cada error se envía una sola vez aunque llegue por varios caminos. Ver su [README](packages/sdk-react/README.md).
 
 ## SDK de Node.js
 
-`packages/sdk-node` (`@sentinel/node`) captura los errores del proceso (`uncaughtException`, `unhandledRejection`), mide cada petición que atiende un servidor `http`/`https` (y con él Express, Fastify o Nest) y las peticiones salientes (`http`, `https`, `fetch`), y **continúa la traza que llega del navegador** en la cabecera `traceparent`: la transacción del frontend y la del backend comparten `trace_id`. Un error capturado durante una petición lleva el `trace_id` de su transacción. Ver su [README](packages/sdk-node/README.md).
+`packages/sdk-node` (`@argus-isolator/node`) captura los errores del proceso (`uncaughtException`, `unhandledRejection`), mide cada petición que atiende un servidor `http`/`https` (y con él Express, Fastify o Nest) y las peticiones salientes (`http`, `https`, `fetch`), y **continúa la traza que llega del navegador** en la cabecera `traceparent`: la transacción del frontend y la del backend comparten `trace_id`. Un error capturado durante una petición lleva el `trace_id` de su transacción. Ver su [README](packages/sdk-node/README.md).
 
 Los tres SDK comparten `packages/sdk-core`: el cliente (alcance, filtros, muestreo, deduplicación), el transporte con reintentos, la normalización de eventos y el tracing. Cada plataforma aporta lo suyo: el navegador, la carga de página, Web Vitals y la navegación; Node, `AsyncLocalStorage` para tener una transacción por petición y la instrumentación de `http`.
 
@@ -258,7 +268,7 @@ Es un paquete aparte (Python, con su `pyproject.toml` y su entorno virtual: `pnp
 
 ## SDK de React Native
 
-`packages/sdk-react-native` (`@sentinel/react-native`) captura los errores de JavaScript (un error **fatal** retiene el cierre de la app hasta enviarse), las promesas rechazadas (Hermes), mide el arranque de la app, cada pantalla (`instrumentNavigation`, para React Navigation y Expo Router) y las peticiones de red (instrumenta `XMLHttpRequest`, que cubre `fetch` y axios), y envía lo pendiente al pasar a segundo plano. Los frames del bundle se envían como `app:///index.android.bundle` para que el servidor los simbolice con los source maps de la release (subidos con `sentinel-cli`). Ver su [README](packages/sdk-react-native/README.md).
+`packages/sdk-react-native` (`@argus-isolator/react-native`) captura los errores de JavaScript (un error **fatal** retiene el cierre de la app hasta enviarse), las promesas rechazadas (Hermes), mide el arranque de la app, cada pantalla (`instrumentNavigation`, para React Navigation y Expo Router) y las peticiones de red (instrumenta `XMLHttpRequest`, que cubre `fetch` y axios), y envía lo pendiente al pasar a segundo plano. Los frames del bundle se envían como `app:///index.android.bundle` para que el servidor los simbolice con los source maps de la release (subidos con `sentinel-cli`). Ver su [README](packages/sdk-react-native/README.md).
 
 ## Alertas
 

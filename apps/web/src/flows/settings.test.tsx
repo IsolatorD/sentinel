@@ -51,7 +51,7 @@ describe("configuración del proyecto", () => {
 		const install = screen.getByTestId("install-instructions");
 		expect(
 			within(install).getByText(
-				/npm install @sentinel\/browser @sentinel\/react/,
+				/npm install @argus-isolator\/browser @argus-isolator\/react/,
 			),
 		).toBeInTheDocument();
 		expect(install).toHaveTextContent("Sentinel.ErrorBoundary");
@@ -105,7 +105,7 @@ describe("configuración del proyecto", () => {
 			expect(install).toHaveAttribute("data-platform", "node"),
 		);
 		expect(
-			within(install).getByText(/npm install @sentinel\/node/),
+			within(install).getByText(/npm install @argus-isolator\/node/),
 		).toBeInTheDocument();
 		expect(install).toHaveTextContent("tracesSampleRate");
 		expect(install).toHaveTextContent(fx.key.dsn);
@@ -151,7 +151,7 @@ describe("configuración del proyecto", () => {
 			expect(install).toHaveAttribute("data-platform", "react-native"),
 		);
 		expect(
-			within(install).getByText(/npm install @sentinel\/react-native/),
+			within(install).getByText(/npm install @argus-isolator\/react-native/),
 		).toBeInTheDocument();
 		expect(install).toHaveTextContent("instrumentNavigation");
 	});

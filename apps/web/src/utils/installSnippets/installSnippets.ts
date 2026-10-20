@@ -27,9 +27,9 @@ export function npmSnippet({
 	environment = "production",
 }: SnippetOptions) {
 	return {
-		install: `npm install ${sdkFile(dsn, "sentinel-browser.tgz", "@sentinel/browser")}`,
+		install: `npm install ${sdkFile(dsn, "sentinel-browser.tgz", "@argus-isolator/browser")}`,
 		code: [
-			'import * as Sentinel from "@sentinel/browser";',
+			'import * as Sentinel from "@argus-isolator/browser";',
 			"",
 			"Sentinel.init({",
 			`  dsn: "${dsn}",`,
@@ -65,9 +65,9 @@ export function reactNativeSnippet({
 	environment = "production",
 }: SnippetOptions) {
 	return {
-		install: `npm install ${sdkFile(dsn, "sentinel-react-native.tgz", "@sentinel/react-native")}`,
+		install: `npm install ${sdkFile(dsn, "sentinel-react-native.tgz", "@argus-isolator/react-native")}`,
 		code: [
-			'import * as Sentinel from "@sentinel/react-native";',
+			'import * as Sentinel from "@argus-isolator/react-native";',
 			"",
 			"// Lo primero de index.js, antes de registrar la app.",
 			"Sentinel.init({",
@@ -84,7 +84,7 @@ export function reactNativeSnippet({
 			"// Errores de render: Sentinel.withErrorBoundary(App, { fallback: <Oops /> })",
 			"",
 			"// Para ver el código original en cada error, sube los source maps de tu build:",
-			`//   npm install -g ${sdkFile(dsn, "sentinel-cli.tgz", "@sentinel/cli")}`,
+			`//   npm install -g ${sdkFile(dsn, "sentinel-cli.tgz", "@argus-isolator/cli")}`,
 			`//   sentinel-cli sourcemaps upload ./build --release ${release}`,
 		].join("\n"),
 	};
@@ -126,9 +126,9 @@ export function nodeSnippet({
 	environment = "production",
 }: SnippetOptions) {
 	return {
-		install: `npm install ${sdkFile(dsn, "sentinel-node.tgz", "@sentinel/node")}`,
+		install: `npm install ${sdkFile(dsn, "sentinel-node.tgz", "@argus-isolator/node")}`,
 		code: [
-			'import * as Sentinel from "@sentinel/node";',
+			'import * as Sentinel from "@argus-isolator/node";',
 			"",
 			"// Antes de crear el servidor: así se miden también sus peticiones.",
 			"Sentinel.init({",
@@ -147,17 +147,17 @@ export function nodeSnippet({
 	};
 }
 
-/** Instalación en React: `@sentinel/react` reexporta el SDK del navegador y añade el ErrorBoundary. */
+/** Instalación en React: `@argus-isolator/react` reexporta el SDK del navegador y añade el ErrorBoundary. */
 export function reactSnippet({
 	dsn,
 	release = "1.0.0",
 	environment = "production",
 }: SnippetOptions) {
 	return {
-		// `@sentinel/react` necesita el SDK del navegador (dependencia de pares): se instalan juntos.
-		install: `npm install ${sdkFile(dsn, "sentinel-browser.tgz", "@sentinel/browser")} ${sdkFile(dsn, "sentinel-react.tgz", "@sentinel/react")}`,
+		// `@argus-isolator/react` necesita el SDK del navegador (dependencia de pares): se instalan juntos.
+		install: `npm install ${sdkFile(dsn, "sentinel-browser.tgz", "@argus-isolator/browser")} ${sdkFile(dsn, "sentinel-react.tgz", "@argus-isolator/react")}`,
 		code: [
-			'import * as Sentinel from "@sentinel/react";',
+			'import * as Sentinel from "@argus-isolator/react";',
 			'import { createRoot } from "react-dom/client";',
 			"",
 			"Sentinel.init({",

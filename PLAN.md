@@ -158,9 +158,9 @@ Reglas de alerta (nuevo issue, regresión, umbral de frecuencia), canales email 
 **Fase 5 — Más plataformas y pulido**
 
 *Hecho: SDK para más plataformas*
-- ✅ **SDK de Node** (`@sentinel/node`, sobre el núcleo común `@sentinel/core`): errores del proceso, transacciones por petición con `AsyncLocalStorage`, spans de `http`/`https`/`fetch`, continuación de la traza vía `traceparent`, integraciones de Express y Fastify.
+- ✅ **SDK de Node** (`@argus-isolator/node`, sobre el núcleo común `@sentinel/core`): errores del proceso, transacciones por petición con `AsyncLocalStorage`, spans de `http`/`https`/`fetch`, continuación de la traza vía `traceparent`, integraciones de Express y Fastify.
 - ✅ **SDK de Python** (`sentinel-sdk`): ASGI, WSGI, Flask, Django, `requests`/`httpx`; validado contra el JSON Schema generado de los esquemas Zod.
-- ✅ **SDK de React Native** (`@sentinel/react-native`): `ErrorUtils`, Hermes, arranque, navegación, XHR, simbolización con los source maps del bundle.
+- ✅ **SDK de React Native** (`@argus-isolator/react-native`): `ErrorUtils`, Hermes, arranque, navegación, XHR, simbolización con los source maps del bundle.
 
 *Pendiente*
 - ✅ **Landing del proyecto** (dentro de `apps/web`, ruta pública `/`; con sesión, `/` lleva a la organización como antes): la página pública de Sentinel y punto de entrada a todo lo demás: qué es, qué resuelve, capturas, las funciones (errores, rendimiento, trazas, alertas, source maps, colaboración), los SDK con su instalación, cómo está construido (arquitectura), y los enlaces a la API (`/api/docs`) y a la aplicación (iniciar sesión / crear cuenta). Es la landing *de Sentinel*; la web personal con todos los proyectos del autor es otro proyecto y queda fuera de este.

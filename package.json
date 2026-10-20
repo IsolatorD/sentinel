@@ -20,7 +20,7 @@
 		"db:studio": "pnpm --filter @sentinel/db db:studio",
 		"test:e2e": "pnpm build && pnpm --filter @sentinel/e2e e2e",
 		"seed:demo": "node examples/seed/seed.mjs",
-		"demo:sourcemaps": "pnpm --filter @sentinel/cli build && node examples/sourcemaps-demo/run.mjs"
+		"demo:sourcemaps": "pnpm --filter @argus-isolator/cli build && node examples/sourcemaps-demo/run.mjs"
 	},
 	"devDependencies": {
 		"@biomejs/biome": "^2.5.15",

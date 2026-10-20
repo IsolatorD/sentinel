@@ -26,11 +26,11 @@ pack() { # nombre-del-paquete archivo-de-salida
 }
 
 echo "Empaquetando en $out"
-pack @sentinel/browser sentinel-browser.tgz
-pack @sentinel/react sentinel-react.tgz
-pack @sentinel/node sentinel-node.tgz
-pack @sentinel/react-native sentinel-react-native.tgz
-pack @sentinel/cli sentinel-cli.tgz
+pack @argus-isolator/browser sentinel-browser.tgz
+pack @argus-isolator/react sentinel-react.tgz
+pack @argus-isolator/node sentinel-node.tgz
+pack @argus-isolator/react-native sentinel-react-native.tgz
+pack @argus-isolator/cli sentinel-cli.tgz
 
 # <script src>: el bundle minificado del navegador.
 cp packages/sdk-browser/dist/sentinel.min.js "$out/sentinel.min.js"

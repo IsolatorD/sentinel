@@ -1,4 +1,4 @@
-# @sentinel/cli
+# @argus-isolator/cli
 
 > Instalación (las SDK aún no están en npm): ver [Instalar las SDK](../../README.md#instalar-las-sdk).
 

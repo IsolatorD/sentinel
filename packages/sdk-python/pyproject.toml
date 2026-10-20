@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "sentinel-sdk"
-version = "0.1.0"
+version = "0.2.0"
 description = "Sentinel SDK for Python: captures errors, measures requests and continues traces started in the browser."
 readme = "README.md"
 requires-python = ">=3.9"

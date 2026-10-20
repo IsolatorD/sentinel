@@ -1,4 +1,4 @@
-import type { CaptureHint } from "@sentinel/browser";
+import type { CaptureHint } from "@argus-isolator/browser";
 import { Component, type ErrorInfo, type ReactNode } from "react";
 import { captureReactError } from "./capture";
 

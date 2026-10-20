@@ -1,9 +1,23 @@
 {
-	"name": "@sentinel/browser",
-	"version": "0.1.0",
+	"name": "@argus-isolator/browser",
+	"version": "0.2.0",
+	"description": "Sentinel SDK for browsers: captures errors, breadcrumbs, page loads and Web Vitals and sends them to a Sentinel server.",
 	"license": "MIT",
-	"description": "Sentinel SDK for browsers: captures errors and sends them to a Sentinel server.",
-	"private": true,
+	"keywords": [
+		"error-tracking",
+		"monitoring",
+		"browser",
+		"sentry-alternative"
+	],
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/IsolatorD/sentinel.git",
+		"directory": "packages/sdk-browser"
+	},
+	"homepage": "https://github.com/IsolatorD/sentinel#readme",
+	"bugs": {
+		"url": "https://github.com/IsolatorD/sentinel/issues"
+	},
 	"type": "module",
 	"sideEffects": false,
 	"main": "./dist/index.cjs",
@@ -33,5 +47,9 @@
 		"typescript": "~5.9.3",
 		"vitest": "^5.0.3",
 		"zod": "^4.6.5"
+	},
+	"publishConfig": {
+		"access": "public",
+		"provenance": true
 	}
 }

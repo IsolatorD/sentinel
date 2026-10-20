@@ -1,4 +1,4 @@
-import { startSpan } from "@sentinel/browser";
+import { startSpan } from "@argus-isolator/browser";
 import { type ComponentType, type ReactNode, useEffect, useRef } from "react";
 
 export interface ProfilerProps {

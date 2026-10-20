@@ -1,4 +1,4 @@
-# @sentinel/node
+# @argus-isolator/node
 
 > Instalación (las SDK aún no están en npm): ver [Instalar las SDK](../../README.md#instalar-las-sdk).
 
@@ -11,7 +11,7 @@ SDK de Sentinel para Node.js (20 o superior). Captura los errores, mide cada pet
 ## Uso
 
 ```ts
-import * as Sentinel from "@sentinel/node";
+import * as Sentinel from "@argus-isolator/node";
 
 // Antes de crear el servidor: así se miden también sus peticiones.
 Sentinel.init({
@@ -107,8 +107,8 @@ await Sentinel.runTransaction({ name: "enviar-resumen-diario", op: "task" }, asy
 ## Desarrollo
 
 ```bash
-pnpm --filter @sentinel/node build
-pnpm --filter @sentinel/node test
+pnpm --filter @argus-isolator/node build
+pnpm --filter @argus-isolator/node test
 ```
 
 Los tests levantan servidores `http` reales en `localhost` (incluidos dos que se llaman entre sí para comprobar la continuación de la traza) y validan cada evento y transacción contra los esquemas reales del backend.

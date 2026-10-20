@@ -25,7 +25,7 @@ La demo inicia el SDK con `tracesSampleRate: 1`, así que además de errores mid
 
 ### Una traza que cruza al backend
 
-Con `examples/node-demo` (un servidor con `@sentinel/node`) la traza empieza en el navegador y continúa en el servidor:
+Con `examples/node-demo` (un servidor con `@argus-isolator/node`) la traza empieza en el navegador y continúa en el servidor:
 
 ```bash
 pnpm build                                          # compila los SDK

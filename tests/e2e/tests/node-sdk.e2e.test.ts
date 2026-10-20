@@ -1,6 +1,6 @@
 import http from "node:http";
 import type { AddressInfo } from "node:net";
-import { SentinelClient } from "@sentinel/node";
+import { SentinelClient } from "@argus-isolator/node";
 import { afterEach, describe, expect, it } from "vitest";
 import { scalar } from "../support/db.js";
 import { eventually } from "../support/eventually.js";

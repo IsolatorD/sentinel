@@ -222,7 +222,7 @@ describe("withErrorBoundary", () => {
 describe("sin el SDK inicializado", () => {
 	it("el fallback se muestra igual y no lanza", async () => {
 		quiet();
-		const Sentinel = await import("@sentinel/browser");
+		const Sentinel = await import("@argus-isolator/browser");
 		await Sentinel.close();
 		render(
 			<ErrorBoundary fallback={<p>fallo</p>}>

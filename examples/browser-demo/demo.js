@@ -145,7 +145,7 @@ $("perf-slow-fetch").addEventListener("click", async () => {
 });
 
 $("perf-backend").addEventListener("click", async () => {
-	// Una traza que cruza del navegador a un backend con @sentinel/node (examples/node-demo).
+	// Una traza que cruza del navegador a un backend con @argus-isolator/node (examples/node-demo).
 	const tx = Sentinel.startTransaction({ name: "/pedido", op: "navigation" });
 	try {
 		const res = await fetch("http://localhost:5601/api/orders/42");

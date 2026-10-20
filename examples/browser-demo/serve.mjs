@@ -46,7 +46,7 @@ createServer((req, res) => {
 		res
 			.writeHead(404)
 			.end(
-				"not found (¿compilaste el SDK? pnpm --filter @sentinel/browser build)",
+				"not found (¿compilaste el SDK? pnpm --filter @argus-isolator/browser build)",
 			);
 		return;
 	}

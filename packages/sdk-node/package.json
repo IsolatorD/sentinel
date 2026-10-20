@@ -1,9 +1,24 @@
 {
-	"name": "@sentinel/node",
-	"version": "0.1.0",
+	"name": "@argus-isolator/node",
+	"version": "0.2.0",
+	"description": "Sentinel SDK for Node.js: uncaught errors, HTTP server and client tracing (Express, Fastify) and trace continuation.",
 	"license": "MIT",
-	"description": "Sentinel SDK for Node.js: captures errors, measures requests and continues traces started in the browser.",
-	"private": true,
+	"keywords": [
+		"error-tracking",
+		"node",
+		"tracing",
+		"express",
+		"fastify"
+	],
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/IsolatorD/sentinel.git",
+		"directory": "packages/sdk-node"
+	},
+	"homepage": "https://github.com/IsolatorD/sentinel#readme",
+	"bugs": {
+		"url": "https://github.com/IsolatorD/sentinel/issues"
+	},
 	"type": "module",
 	"sideEffects": false,
 	"main": "./dist/index.cjs",
@@ -37,5 +52,9 @@
 		"typescript": "~5.9.3",
 		"vitest": "^5.0.3",
 		"zod": "^4.6.5"
+	},
+	"publishConfig": {
+		"access": "public",
+		"provenance": true
 	}
 }

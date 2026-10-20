@@ -1,18 +1,24 @@
 name: Release
 
 # Al crear una etiqueta `v*` (p. ej. `git tag v0.2.0 && git push origin v0.2.0`) se publica una Release
-# de GitHub con las SDK y la CLI listas para instalar. Los nombres no llevan versión, así que
-# `.../releases/latest/download/sentinel-browser.tgz` apunta siempre a la última.
+# de GitHub con las SDK y la CLI listas para instalar (los nombres no llevan versión, así que
+# `.../releases/latest/download/sentinel-browser.tgz` apunta siempre a la última) y, si el repositorio
+# tiene el secreto `NPM_TOKEN`, los paquetes `@argus-isolator/*` en npm.
 on:
   push:
     tags: ["v*"]
 
 permissions:
   contents: write
+  # Para que npm registre el origen del paquete (provenance): quién lo construyó y desde qué commit.
+  id-token: write
 
 jobs:
   release:
     runs-on: ubuntu-latest
+    env:
+      # Sin este secreto en el repositorio, el workflow publica la Release de GitHub y se salta npm.
+      NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
     steps:
       - uses: actions/checkout@v4
       - uses: pnpm/action-setup@v4
@@ -20,6 +26,7 @@ jobs:
         with:
           node-version-file: .nvmrc
           cache: pnpm
+          registry-url: https://registry.npmjs.org
       - run: pnpm install --frozen-lockfile
       - run: pnpm build
       - run: ./scripts/pack-sdks.sh sdk-dist
@@ -30,3 +37,10 @@ jobs:
           gh release create "$GITHUB_REF_NAME" sdk-dist/* \
             --title "$GITHUB_REF_NAME" \
             --generate-notes
+      # Los paquetes `@argus-isolator/*` que no sean privados. Una versión ya publicada se omite, así que
+      # repetir la etiqueta no falla. Hay que subir la versión de cada paquete antes de etiquetar.
+      - name: Publicar en npm
+        if: env.NPM_TOKEN != ''
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: pnpm -r publish --access public --no-git-checks

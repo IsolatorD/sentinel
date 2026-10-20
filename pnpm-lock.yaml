@@ -377,7 +377,7 @@ importers:
 
   packages/sdk-react:
     devDependencies:
-      '@sentinel/browser':
+      '@argus-isolator/browser':
         specifier: workspace:*
         version: link:../sdk-browser
       '@sentinel/shared':
@@ -484,18 +484,18 @@ importers:
 
   tests/e2e:
     devDependencies:
-      '@sentinel/browser':
+      '@argus-isolator/browser':
         specifier: workspace:*
         version: link:../../packages/sdk-browser
+      '@argus-isolator/node':
+        specifier: workspace:*
+        version: link:../../packages/sdk-node
+      '@argus-isolator/react-native':
+        specifier: workspace:*
+        version: link:../../packages/sdk-react-native
       '@sentinel/db':
         specifier: workspace:*
         version: link:../../packages/db
-      '@sentinel/node':
-        specifier: workspace:*
-        version: link:../../packages/sdk-node
-      '@sentinel/react-native':
-        specifier: workspace:*
-        version: link:../../packages/sdk-react-native
       '@sentinel/shared':
         specifier: workspace:*
         version: link:../../packages/shared

@@ -1,4 +1,4 @@
-import * as Sentinel from "@sentinel/browser";
+import * as Sentinel from "@argus-isolator/browser";
 import { ingestTransactionSchema } from "@sentinel/shared";
 import { render, screen } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";

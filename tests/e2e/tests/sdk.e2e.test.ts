@@ -1,5 +1,5 @@
 // @vitest-environment jsdom
-import { SentinelClient } from "@sentinel/browser";
+import { SentinelClient } from "@argus-isolator/browser";
 import { eventDetailDtoSchema } from "@sentinel/shared";
 import { afterEach, describe, expect, it } from "vitest";
 import { scalar } from "../support/db.js";

@@ -1,6 +1,6 @@
 {
 	"name": "@sentinel/core",
-	"version": "0.1.0",
+	"version": "0.2.0",
 	"license": "MIT",
 	"description": "Sentinel SDK core: the platform-independent client, transport and tracing shared by the browser and Node SDKs.",
 	"private": true,

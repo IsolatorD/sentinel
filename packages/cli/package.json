@@ -1,9 +1,22 @@
 {
-	"name": "@sentinel/cli",
-	"version": "0.1.0",
+	"name": "@argus-isolator/cli",
+	"version": "0.2.0",
+	"description": "Sentinel CLI: upload source maps from your CI so errors show your original code.",
 	"license": "MIT",
-	"description": "Sentinel command line: uploads source maps from your CI.",
-	"private": true,
+	"keywords": [
+		"sourcemaps",
+		"cli",
+		"error-tracking"
+	],
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/IsolatorD/sentinel.git",
+		"directory": "packages/cli"
+	},
+	"homepage": "https://github.com/IsolatorD/sentinel#readme",
+	"bugs": {
+		"url": "https://github.com/IsolatorD/sentinel/issues"
+	},
 	"type": "module",
 	"bin": {
 		"sentinel-cli": "./dist/bin.js"
@@ -23,5 +36,9 @@
 		"tsup": "^8.5.1",
 		"typescript": "~5.9.3",
 		"vitest": "^5.0.3"
+	},
+	"publishConfig": {
+		"access": "public",
+		"provenance": true
 	}
 }

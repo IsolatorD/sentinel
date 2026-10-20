@@ -1,4 +1,4 @@
-import { SentinelClient } from "@sentinel/react-native";
+import { SentinelClient } from "@argus-isolator/react-native";
 import {
 	createdApiTokenDtoSchema,
 	eventDetailDtoSchema,

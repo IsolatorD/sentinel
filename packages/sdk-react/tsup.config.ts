@@ -6,6 +6,6 @@ export default defineConfig({
 	dts: true,
 	target: "es2018",
 	sourcemap: true,
-	external: ["react", "@sentinel/browser"],
+	external: ["react", "@argus-isolator/browser"],
 	outExtension: ({ format }) => ({ js: format === "cjs" ? ".cjs" : ".js" }),
 });

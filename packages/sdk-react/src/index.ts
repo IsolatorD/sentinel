@@ -1,5 +1,5 @@
 // Todo el SDK del navegador se reexporta, para necesitar un solo import en una app React.
-export * from "@sentinel/browser";
+export * from "@argus-isolator/browser";
 export {
 	ErrorBoundary,
 	type ErrorBoundaryProps,

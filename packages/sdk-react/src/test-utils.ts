@@ -1,4 +1,4 @@
-import * as Sentinel from "@sentinel/browser";
+import * as Sentinel from "@argus-isolator/browser";
 import { ingestEventSchema } from "@sentinel/shared";
 import { afterEach, beforeEach, vi } from "vitest";
 

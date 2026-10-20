@@ -1,4 +1,4 @@
-# @sentinel/react-native
+# @argus-isolator/react-native
 
 > Instalación (las SDK aún no están en npm): ver [Instalar las SDK](../../README.md#instalar-las-sdk).
 
@@ -12,7 +12,7 @@ SDK de Sentinel para React Native (0.72 o superior, Hermes o JavaScriptCore). Ca
 
 ```ts
 // index.js: lo primero, antes de registrar la app
-import * as Sentinel from "@sentinel/react-native";
+import * as Sentinel from "@argus-isolator/react-native";
 
 Sentinel.init({
 	dsn: "https://<clave>@sentinel.example.com/<projectId>",
@@ -88,8 +88,8 @@ sentinel-cli sourcemaps upload ./build --release 1.4.2
 ## Desarrollo
 
 ```bash
-pnpm --filter @sentinel/react-native build
-pnpm --filter @sentinel/react-native test
+pnpm --filter @argus-isolator/react-native build
+pnpm --filter @argus-isolator/react-native test
 ```
 
 Los tests simulan lo que React Native pone en el entorno (`ErrorUtils`, `HermesInternal`, `AppState`) y validan cada evento y transacción contra los esquemas reales del backend. Hay además una prueba de extremo a extremo (`tests/e2e/tests/react-native-sdk.e2e.test.ts`) que envía un stack de Hermes a la API real y comprueba que el worker lo simboliza con el source map del bundle.
