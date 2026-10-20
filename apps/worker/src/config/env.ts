@@ -1,5 +1,6 @@
 import {
 	baseEnvShape,
+	emptyToUndefined,
 	parseEnv,
 	smtpEnvShape,
 	webhookEnvShape,
@@ -15,6 +16,8 @@ const workerEnvSchema = z.object({
 	/** Espera base entre reintentos de un aviso fallido (crece al doble en cada intento). */
 	NOTIFICATION_RETRY_DELAY_MS: z.coerce.number().int().min(0).default(10_000),
 	/** Borra cada día los eventos y transacciones más antiguos que la retención de su proyecto. */
+	/** DSN de un proyecto de esta misma instancia al que el worker reporta sus errores. Sin valor, nada. */
+	SELF_MONITOR_DSN: emptyToUndefined(z.string().url().optional()),
 	RETENTION_ENABLED: z
 		.enum(["true", "false"])
 		.default("true")

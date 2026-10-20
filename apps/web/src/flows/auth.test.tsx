@@ -110,6 +110,7 @@ describe("acceso", () => {
 			emailEnabled: true,
 			emailVerification: false,
 			signUpEnabled: true,
+			monitoringDsn: null,
 		});
 		const second = renderApp("/login");
 		const google = await screen.findByRole("button", {
@@ -177,6 +178,7 @@ describe("registro cerrado en el servidor", () => {
 			emailEnabled: true,
 			emailVerification: false,
 			signUpEnabled: false,
+			monitoringDsn: null,
 		});
 
 	it("el login no ofrece crear una cuenta", async () => {

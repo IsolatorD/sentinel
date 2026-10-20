@@ -11,6 +11,7 @@ import { MAX_SOURCE_MAP_BYTES } from "@sentinel/shared";
 import { Logger } from "nestjs-pino";
 import { AppModule } from "./app.module.js";
 import { resolveRequestId } from "./common/logging.js";
+import { startSelfMonitor } from "./common/self-monitor.js";
 import { validateApiEnv } from "./config/env.js";
 import { setupOpenApi } from "./openapi/openapi.setup.js";
 
@@ -23,6 +24,8 @@ async function bootstrap() {
 		// En producción las variables vienen del entorno.
 	}
 	const env = validateApiEnv(process.env);
+	// Antes de crear la app: así también se captura un fallo al arrancar.
+	startSelfMonitor({ dsn: env.SELF_MONITOR_DSN, environment: env.NODE_ENV });
 
 	const app = await NestFactory.create<NestFastifyApplication>(
 		AppModule,

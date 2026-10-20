@@ -31,6 +31,16 @@ const apiEnvSchema = z
 		REQUIRE_EMAIL_VERIFICATION: emptyToUndefined(booleanString.default(true)),
 		TRUST_PROXY: emptyToUndefined(booleanString.default(false)),
 		ENABLE_DOCS: emptyToUndefined(booleanString.optional()),
+		/**
+		 * DSN de un proyecto de esta misma instancia al que la propia instancia reporta sus errores
+		 * (API, worker y web). Sin valor, no se reporta nada.
+		 */
+		SELF_MONITOR_DSN: emptyToUndefined(z.string().url().optional()),
+		/**
+		 * Lo mismo para la web de la instancia, con su propio proyecto. Si falta, la web usa `SELF_MONITOR_DSN`.
+		 * (La DSN de un navegador es pública: se entrega a quien abre la web.)
+		 */
+		SELF_MONITOR_WEB_DSN: emptyToUndefined(z.string().url().optional()),
 		/** `false` cierra el registro (email y Google): solo entra quien ya tiene cuenta. */
 		SIGNUP_ENABLED: emptyToUndefined(booleanString.default(true)),
 		/** Límites con los que nacen los proyectos nuevos (los existentes no cambian). Sin valor, no hay límite. */

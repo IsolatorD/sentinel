@@ -27,6 +27,11 @@ export class PublicConfigController {
 				Boolean(this.config.get("SMTP_URL", { infer: true })) &&
 				this.config.get("REQUIRE_EMAIL_VERIFICATION", { infer: true }),
 			signUpEnabled: this.config.get("SIGNUP_ENABLED", { infer: true }),
+			// La web reporta a su propio proyecto; si no hay, al mismo que el servidor.
+			monitoringDsn:
+				this.config.get("SELF_MONITOR_WEB_DSN", { infer: true }) ??
+				this.config.get("SELF_MONITOR_DSN", { infer: true }) ??
+				null,
 		};
 	}
 }

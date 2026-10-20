@@ -3,6 +3,7 @@ import { NestFactory } from "@nestjs/core";
 import { Logger } from "nestjs-pino";
 import { AppModule } from "./app.module.js";
 import { validateWorkerEnv } from "./config/env.js";
+import { startSelfMonitor } from "./self-monitor.js";
 
 async function bootstrap() {
 	try {
@@ -11,7 +12,8 @@ async function bootstrap() {
 		// En producción las variables vienen del entorno.
 	}
 	// Falla rápido y con un mensaje claro si falta configuración.
-	validateWorkerEnv(process.env);
+	const env = validateWorkerEnv(process.env);
+	startSelfMonitor({ dsn: env.SELF_MONITOR_DSN, environment: env.NODE_ENV });
 
 	// Aplicación standalone: sin servidor HTTP, solo procesa colas.
 	const app = await NestFactory.createApplicationContext(AppModule, {

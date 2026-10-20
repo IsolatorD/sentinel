@@ -157,6 +157,7 @@ describe("configuración pública", () => {
 			emailEnabled: true,
 			emailVerification: false,
 			signUpEnabled: true,
+			monitoringDsn: null,
 		});
 		expect(res.text).not.toMatch(/secret|client/i);
 	});

@@ -12,5 +12,7 @@ export const publicConfigSchema = z.object({
 	emailVerification: z.boolean(),
 	/** Se puede crear una cuenta nueva (el servidor no cerró el registro). */
 	signUpEnabled: z.boolean(),
+	/** DSN con la que la web de esta instancia reporta sus propios errores (`null` = no lo hace). */
+	monitoringDsn: z.string().nullable(),
 });
 export type PublicConfig = z.infer<typeof publicConfigSchema>;

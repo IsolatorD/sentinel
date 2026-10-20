@@ -14,6 +14,8 @@ x-app-env: &app-env
   WEB_ORIGIN: https://${DOMAIN}
   SMTP_URL: ${SMTP_URL:-}
   SMTP_FROM: ${SMTP_FROM:-}
+  # La instancia reporta sus propios errores (API, worker y web) a un proyecto suyo; vacío = no.
+  SELF_MONITOR_DSN: ${SELF_MONITOR_DSN:-}
 
 services:
   postgres:
@@ -75,6 +77,7 @@ services:
       # Detrás de Caddy: la IP real del cliente viene en X-Forwarded-For.
       TRUST_PROXY: "true"
       ENABLE_DOCS: ${ENABLE_DOCS:-true}
+      SELF_MONITOR_WEB_DSN: ${SELF_MONITOR_WEB_DSN:-}
       REQUIRE_EMAIL_VERIFICATION: ${REQUIRE_EMAIL_VERIFICATION:-true}
       INGEST_RATE_LIMIT_PER_MINUTE: ${INGEST_RATE_LIMIT_PER_MINUTE:-600}
       # Instancia abierta al público: registro y límites con los que nacen los proyectos nuevos.

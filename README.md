@@ -387,6 +387,22 @@ docker compose --env-file .env.production -f docker-compose.prod.yml up -d --bui
 - **Limpiar la prueba de humo:** en el servidor, `./deploy/cleanup-smoke.sh` borra las cuentas, organizaciones y proyectos que crea `deploy/smoke-test.sh`.
 - **Secretos:** `.env.production` está en `.gitignore`. Si cambias `BETTER_AUTH_SECRET` se cierran las sesiones y el token de Jira guardado deja de poder leerse.
 
+## Operación
+
+Los scripts viven en `deploy/` y se ejecutan en el servidor, dentro de la carpeta del repositorio.
+
+- **Actualizar:** `./deploy/deploy.sh` descarga la última versión (`git pull --ff-only`), hace una copia de seguridad, reconstruye de una imagen en una (en 2 GB de RAM compilar todo a la vez agota la memoria), aplica las migraciones, reinicia y espera a que la API esté sana. Opciones: `--no-pull`, `--no-backup`. Si hay poca RAM y no hay swap avisa antes de empezar.
+- **Swap** (recomendado con 2 GB de RAM): `sudo fallocate -l 2G /swapfile && sudo chmod 600 /swapfile && sudo mkswap /swapfile && sudo swapon /swapfile && echo '/swapfile none swap sw 0 0' | sudo tee -a /etc/fstab`.
+- **Copias de seguridad:** `./deploy/backup.sh` guarda un volcado comprimido de Postgres en `backups/` (carpeta privada, fuera de git), comprueba que se puede leer y conserva las 7 últimas más una por semana de las 4 semanas anteriores. `./deploy/install-backup-cron.sh` las programa cada día a las 03:17 (`--remove` las quita). Con `BACKUP_RCLONE_REMOTE=remoto:bucket/ruta` y `rclone` instalado, cada copia se sube también a otro sitio: una copia que vive en la misma máquina no te protege si la máquina desaparece. Redis no se copia (solo guarda colas en tránsito).
+- **Restaurar:** `./deploy/restore.sh --latest` (o `./deploy/restore.sh backups/ARCHIVO.dump`) **sustituye** los datos actuales: pide confirmación, hace antes una copia de lo que hay, para la API y el worker mientras restaura y los vuelve a arrancar. Probado: tras borrar todo, la restauración devuelve los datos y la API arranca sana.
+- **Aviso de caída:** una máquina caída no puede avisar de que está caída, así que el chequeo tiene que ser externo. Con [UptimeRobot](https://uptimerobot.com) (plan gratuito): *Add New Monitor → HTTP(s)*, URL `https://TU-DOMINIO/api/health`, intervalo de 5 minutos y tu correo como contacto de alerta.
+- **Que la instancia reporte sus propios errores a tu cuenta:** entra a tu instancia, crea dos proyectos (por ejemplo «Sentinel backend», plataforma Node, y «Sentinel web», plataforma JavaScript), copia la DSN de cada uno (Configuración → Claves e instalación) y ponlas en `.env.production`:
+  ```
+  SELF_MONITOR_DSN=https://CLAVE@TU-DOMINIO/ID-DEL-PROYECTO-BACKEND
+  SELF_MONITOR_WEB_DSN=https://CLAVE@TU-DOMINIO/ID-DEL-PROYECTO-WEB
+  ```
+  y aplica con `docker compose --env-file .env.production -f docker-compose.prod.yml up -d`. La API (errores 5xx y fallos del proceso) y el worker reportan al primero; la web, al segundo (si falta `SELF_MONITOR_WEB_DSN`, usa el del backend). Solo se reportan errores, nunca trazas de rendimiento: cada envío sería a su vez una petición medida y la instancia se enviaría datos a sí misma sin fin. La DSN de la web es pública, como la de cualquier navegador. Si la instancia se cae del todo no puede reportarlo: para eso está el chequeo externo.
+
 ## Integración con Jira
 
 Cada proyecto puede conectarse con **Jira Cloud** (Configuración → Jira) para crear un ticket a partir de un issue con un clic. Slack no necesita integración aparte: ya es un canal de alertas (webhook entrante).

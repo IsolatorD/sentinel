@@ -43,6 +43,7 @@ export function mockHappyPath() {
 		emailEnabled: true,
 		emailVerification: false,
 		signUpEnabled: true,
+		monitoringDsn: null,
 	});
 	vi.mocked(organizationsService.list).mockResolvedValue([fx.org]);
 	// Sin preferencias guardadas que cambien el idioma, el tema o los recorridos de la prueba.
