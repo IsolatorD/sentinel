@@ -172,13 +172,17 @@ Reglas de alerta (nuevo issue, regresión, umbral de frecuencia), canales email 
 - ✅ **Alertas de rendimiento**: reglas `p95_above` y `error_rate_above` (proyecto o transacción, entorno opcional), evaluadas cada minuto por un job del worker; mismos canales, espera e historial que las de issues.
 - ✅ **Integración con Jira Cloud**: conexión por proyecto (API token cifrado, solo `*.atlassian.net`), crear/desvincular un ticket desde el issue, con su rastro en la actividad. Slack queda cubierto por el canal de alertas existente. Fuera de alcance: sincronización de vuelta (webhooks de Jira) y OAuth.
 
-## 7. Despliegue (recomendación)
+## 7. Despliegue
 
-- **Desarrollo:** `docker compose up` (Postgres + Redis + api + worker + web). Esto es también el self-hosting.
-- **Producción barata/gratis para portfolio:**
-  - *Opción A (recomendada):* una VM gratuita (Oracle Cloud "Always Free") con Docker Compose y Caddy para HTTPS. Es la única que da recursos reales sin costo, pero requiere más configuración.
-  - *Opción B (más fácil):* web en Cloudflare Pages/Vercel + API y worker en Render/Railway/Fly + Postgres en Neon o Supabase. Los planes gratuitos cambian a menudo y suelen tener límites (suspensión por inactividad, expiración de DB); hay que verificarlos al momento de desplegar.
-- Se decide recién al terminar la Fase 1; no condiciona el desarrollo.
+**Decidido:** una VM gratuita (Oracle Cloud Always Free, Ampere ARM) con Docker Compose y Caddy para HTTPS; demo pública de portafolio; dominio de `sslip.io` hasta tener uno propio (después, un subdominio); correo por SMTP gratuito (Brevo); repo sin publicar en npm (las SDK se instalan desde las Releases de GitHub). Licencia propuesta: MIT.
+
+- ✅ **A. Imágenes** (`Dockerfile`: `api`, `worker`, `web`) y servicio `migrate`.
+- ✅ **B. `docker-compose.prod.yml`** y `deploy/Caddyfile`.
+- ✅ **C. Configuración de producción**: `deploy/.env.production.example`, `deploy/gen-env.sh`, `deploy/smoke-test.sh`. Ensayo local completo (HTTPS, migraciones, registro, ingesta y worker) superado.
+- **D. Modo demo abierto:** cuotas y retención por defecto para proyectos nuevos, interruptor de registro, cuenta de demo.
+- **E. Operación:** copias de seguridad de Postgres y su restauración, script de despliegue, chequeo externo de salud, Sentinel monitorizándose a sí mismo.
+- **F. CI/CD y publicación:** GitHub Actions (lint, tests, e2e), imágenes en GHCR, `.tgz` de las SDK en cada Release (con `@sentinel/core` empaquetado dentro), bundle del navegador servido desde la instancia, `LICENSE`.
+- **G. Documentación:** el README ya incluye la sección «Despliegue en producción»; faltan backups, actualización por versiones y cambio de dominio.
 
 ## 8. Riesgos y mitigaciones
 

@@ -329,6 +329,26 @@ Otras cabeceras: `X-Sentinel-Event`, `X-Sentinel-Delivery` (id del envío, útil
 
 El correo no lo envía la API sino el worker, a través de una cola (`emails`): así hay un único lugar con acceso al SMTP y los fallos se reintentan sin bloquear la petición.
 
+## Despliegue en producción
+
+Todo corre en una sola máquina con Docker Compose: **Caddy** (HTTPS automático + la web estática + proxy hacia la API), la API, el worker, Postgres y Redis. Solo Caddy publica puertos (80 y 443). Con la web y la API bajo el mismo dominio las cookies de sesión no necesitan CORS, y la DSN de las SDK usa ese mismo dominio. El ensayo local usó unos 340 MB de RAM en total.
+
+```bash
+git clone <este-repo> sentinel && cd sentinel
+./deploy/gen-env.sh 203-0-113-10.sslip.io     # crea .env.production con secretos aleatorios
+$EDITOR .env.production                        # SMTP_URL y SMTP_FROM (y REQUIRE_EMAIL_VERIFICATION)
+docker compose --env-file .env.production -f docker-compose.prod.yml up -d --build
+./deploy/smoke-test.sh https://203-0-113-10.sslip.io
+```
+
+- **Dominio:** sin dominio propio sirve `<ip-con-guiones>.sslip.io` (para la IP `203.0.113.10`, `203-0-113-10.sslip.io`); Let's Encrypt emite certificado válido para esos nombres. Con un dominio propio, un registro A hacia la IP y `DOMAIN=sentinel.tudominio.com`. Cambiar de dominio exige actualizar `DOMAIN` y las DSN de las apps.
+- **Arquitectura:** las imágenes se construyen igual en amd64 y arm64 (`Dockerfile`, destinos `api`, `worker` y `web`). Las VM gratuitas de Oracle (Ampere A1) son ARM.
+- **Migraciones:** el servicio `migrate` las aplica en cada arranque y la API y el worker esperan a que termine bien.
+- **Actualizar:** `git pull && docker compose --env-file .env.production -f docker-compose.prod.yml up -d --build` (los datos viven en volúmenes de Docker).
+- **Correo:** cualquier SMTP vale (`smtp://USUARIO:CLAVE@host:587`); Brevo ofrece un plan gratuito de unos 300 correos al día. El remitente tiene que estar verificado en el proveedor. Sin `SMTP_URL`, nadie puede verificar su correo: pon `REQUIRE_EMAIL_VERIFICATION=false`.
+- **Oracle Cloud (Always Free):** además de abrir los puertos 80 y 443 en la lista de seguridad de la red de la instancia, las imágenes de Ubuntu de Oracle traen reglas de `iptables` que los bloquean: hay que permitirlos también dentro de la VM.
+- **Secretos:** `.env.production` está en `.gitignore`. Si cambias `BETTER_AUTH_SECRET` se cierran las sesiones y el token de Jira guardado deja de poder leerse.
+
 ## Integración con Jira
 
 Cada proyecto puede conectarse con **Jira Cloud** (Configuración → Jira) para crear un ticket a partir de un issue con un clic. Slack no necesita integración aparte: ya es un canal de alertas (webhook entrante).

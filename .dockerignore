@@ -1,0 +1,13 @@
+.git
+.turbo
+**/node_modules
+**/dist
+**/coverage
+**/.venv
+**/__pycache__
+.env
+.env.*
+tests/e2e/.logs
+examples
+*.log
+.DS_Store

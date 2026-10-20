@@ -1,0 +1,29 @@
+# Un solo dominio para todo: la web estática y la API (`/api/*`). Así las cookies de sesión no
+# necesitan CORS y la DSN de las SDK usa el mismo dominio. Caddy obtiene y renueva el HTTPS solo.
+{$DOMAIN} {
+	encode zstd gzip
+
+	header {
+		Strict-Transport-Security "max-age=31536000"
+		X-Content-Type-Options "nosniff"
+		X-Frame-Options "DENY"
+		Referrer-Policy "strict-origin-when-cross-origin"
+		Permissions-Policy "camera=(), microphone=(), geolocation=()"
+		-Server
+	}
+
+	handle /api/* {
+		reverse_proxy api:3000
+	}
+
+	handle {
+		root * /srv
+		# Los archivos con hash en el nombre no cambian nunca; el HTML sí, y debe revalidarse.
+		@assets path /assets/*
+		header @assets Cache-Control "public, max-age=31536000, immutable"
+		@html not path /assets/*
+		header @html Cache-Control "no-cache"
+		try_files {path} /index.html
+		file_server
+	}
+}

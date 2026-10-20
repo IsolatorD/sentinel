@@ -1,0 +1,122 @@
+# Sentinel en producción: Caddy (HTTPS + web) + API + worker + Postgres + Redis en una sola máquina.
+#
+#   cp deploy/.env.production.example .env.production   # y rellenarlo (ver deploy/gen-env.sh)
+#   docker compose --env-file .env.production -f docker-compose.prod.yml up -d --build
+#
+# Solo Caddy publica puertos (80 y 443); Postgres y Redis quedan en la red interna.
+
+x-app-env: &app-env
+  NODE_ENV: production
+  LOG_LEVEL: ${LOG_LEVEL:-info}
+  DATABASE_URL: postgresql://sentinel:${POSTGRES_PASSWORD}@postgres:5432/sentinel
+  REDIS_HOST: redis
+  REDIS_PORT: "6379"
+  WEB_ORIGIN: https://${DOMAIN}
+  SMTP_URL: ${SMTP_URL:-}
+  SMTP_FROM: ${SMTP_FROM:-}
+
+services:
+  postgres:
+    image: postgres:17-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: sentinel
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: sentinel
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U sentinel"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+    logging: &logging
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+    # BullMQ exige `noeviction`: si Redis descartara claves, se perderían trabajos de la cola.
+    command: ["redis-server", "--appendonly", "yes", "--maxmemory-policy", "noeviction"]
+    volumes:
+      - redisdata:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+    logging: *logging
+
+  # Aplica las migraciones y termina; la API y el worker esperan a que acabe bien.
+  migrate:
+    build: { context: ., target: api }
+    image: sentinel-api:${TAG:-local}
+    restart: "no"
+    command: ["node", "../../packages/db/dist/migrate-cli.js"]
+    environment:
+      <<: *app-env
+    depends_on:
+      postgres: { condition: service_healthy }
+    logging: *logging
+
+  api:
+    build: { context: ., target: api }
+    image: sentinel-api:${TAG:-local}
+    restart: unless-stopped
+    environment:
+      <<: *app-env
+      API_PORT: "3000"
+      BETTER_AUTH_SECRET: ${BETTER_AUTH_SECRET}
+      BETTER_AUTH_URL: https://${DOMAIN}
+      PUBLIC_API_URL: https://${DOMAIN}
+      # Detrás de Caddy: la IP real del cliente viene en X-Forwarded-For.
+      TRUST_PROXY: "true"
+      ENABLE_DOCS: ${ENABLE_DOCS:-true}
+      REQUIRE_EMAIL_VERIFICATION: ${REQUIRE_EMAIL_VERIFICATION:-true}
+      INGEST_RATE_LIMIT_PER_MINUTE: ${INGEST_RATE_LIMIT_PER_MINUTE:-600}
+      GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID:-}
+      GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET:-}
+    depends_on:
+      migrate: { condition: service_completed_successfully }
+      redis: { condition: service_healthy }
+    logging: *logging
+
+  worker:
+    build: { context: ., target: worker }
+    image: sentinel-worker:${TAG:-local}
+    restart: unless-stopped
+    environment:
+      <<: *app-env
+      RETENTION_ENABLED: ${RETENTION_ENABLED:-true}
+      PERFORMANCE_ALERTS_ENABLED: ${PERFORMANCE_ALERTS_ENABLED:-true}
+    depends_on:
+      migrate: { condition: service_completed_successfully }
+      redis: { condition: service_healthy }
+    logging: *logging
+
+  caddy:
+    build: { context: ., target: web }
+    image: sentinel-web:${TAG:-local}
+    restart: unless-stopped
+    environment:
+      DOMAIN: ${DOMAIN}
+    ports:
+      - "80:80"
+      - "443:443"
+      - "443:443/udp"
+    volumes:
+      # Certificados y estado de Caddy: sin esto se pedirían de nuevo en cada arranque.
+      - caddy_data:/data
+      - caddy_config:/config
+    depends_on:
+      api: { condition: service_healthy }
+    logging: *logging
+
+volumes:
+  pgdata:
+  redisdata:
+  caddy_data:
+  caddy_config:
