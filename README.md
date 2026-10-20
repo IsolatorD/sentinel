@@ -1,6 +1,119 @@
+<div align="center">
+
 # Sentinel
 
-Sistema de tracking de errores y performance estilo Sentry. Ver [PLAN.md](PLAN.md).
+**Self-hosted error tracking and performance monitoring, in the spirit of Sentry.**
+Catch what breaks, see what is slow, and follow a single request from the browser to your servers.
+
+[![CI](https://github.com/IsolatorD/sentinel/actions/workflows/ci.yml/badge.svg)](https://github.com/IsolatorD/sentinel/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/github/license/IsolatorD/sentinel)](LICENSE)
+[![npm](https://img.shields.io/npm/v/@argus-isolator/browser?label=%40argus-isolator%2Fbrowser)](https://www.npmjs.com/package/@argus-isolator/browser)
+
+**[Live demo](https://3-19-1-21.sslip.io)** · [Install an SDK](#sdks) · [Self-host it](#run-it-yourself) · [Documentación técnica (español)](#documentación-técnica)
+
+</div>
+
+![Sentinel overview dashboard](docs/screenshots/overview.png)
+
+> The live demo is open: create your own account, make a project and send it an event. It runs on a small free-tier VM with per-project limits (10,000 events and 10,000 transactions a month, 30 days of retention), under a temporary `sslip.io` address.
+
+## What it does
+
+| | |
+|---|---|
+| ![Issues list](docs/screenshots/issues.png) | ![Issue detail with stack trace](docs/screenshots/issue-detail.png) |
+| **Issues.** Errors are grouped by fingerprint, with trends, filters, assignees and a regression check across releases. | **Issue detail.** Stack trace with source code, breadcrumbs, context, comments and activity. Linked Jira tickets. |
+| ![Trace across browser and server](docs/screenshots/trace.png) | ![Performance](docs/screenshots/performance.png) |
+| **Distributed traces.** One request followed from the browser to the Node server, with the errors it caused on each side. | **Performance.** p50/p95/p99 per transaction, error rate, throughput and Web Vitals. |
+| ![Alert rules](docs/screenshots/alerts.png) | ![Mobile issue list](docs/screenshots/issues-mobile.png) |
+| **Alerts.** New issue, regression, frequency spikes, slow or failing transactions, sent by email, signed webhook or Slack. | **Responsive.** The same app on a phone, plus dark mode, English and Spanish. |
+
+**Highlights**
+
+- **Errors:** grouping by fingerprint, regressions detected per release ("fixed in 2.4.0, back in 2.5.0"), source-map symbolication (also Hermes bundles), PII scrubbing before anything is stored, assignment with an email to the assignee, comments and an activity log.
+- **Performance:** transactions and spans from the browser, Node, React Native and Python; percentiles computed in Postgres; Web Vitals rated against Google's thresholds; a project dashboard comparing each period with the previous one.
+- **Alerts:** rules for new issues, regressions, event frequency, p95 latency and error rate, with cooldowns and a delivery history; retries with exponential backoff; webhooks signed with HMAC-SHA256 and protected against SSRF.
+- **Integrations:** create and link Jira Cloud tickets from an issue (API token stored encrypted); Slack through its incoming webhooks.
+- **Operating it:** per-project retention and monthly quotas, a closable sign-up, Postgres backups with rotation and tested restores, a deploy script, and the instance can report its own errors to your account.
+
+## SDKs
+
+One SDK for each place your code runs. They are small, have no runtime dependencies, never throw into your app, and the JavaScript ones ship their own TypeScript types.
+
+| Platform | Install |
+|---|---|
+| Browser | `npm install @argus-isolator/browser` |
+| React | `npm install @argus-isolator/browser @argus-isolator/react` |
+| Node.js (Express, Fastify, Nest…) | `npm install @argus-isolator/node` |
+| React Native | `npm install @argus-isolator/react-native` |
+| Source maps CLI | `npm install -g @argus-isolator/cli` |
+| Python (ASGI/WSGI, Flask, Django) | `pip install https://YOUR-INSTANCE/sdk/sentinel-sdk.tar.gz` ([details](#instalar-las-sdk)) |
+
+```ts
+import * as Sentinel from "@argus-isolator/browser";
+
+Sentinel.init({ dsn: "https://<key>@your-instance.example.com/<project-id>", release: "1.4.2" });
+```
+
+Errors, unhandled rejections and breadcrumbs are captured from that point on. Each project's settings page shows its DSN and the exact install steps for its platform.
+
+## Architecture
+
+```mermaid
+flowchart LR
+  subgraph apps["Your apps"]
+    B["Browser · React"]
+    N["Node.js"]
+    RN["React Native"]
+    PY["Python"]
+  end
+  subgraph sentinel["Sentinel"]
+    API["API · NestJS + Fastify<br/>validation, rate limit, quotas"]
+    Q[("Redis<br/>BullMQ queues")]
+    W["Worker<br/>symbolication, grouping,<br/>alerts, retention"]
+    DB[("PostgreSQL")]
+    WEB["Web · React"]
+  end
+  B & N & RN & PY -- "events and transactions (DSN)" --> API
+  API --> Q --> W --> DB
+  API <--> DB
+  WEB -- "session" --> API
+  W --> OUT["Email · Webhook · Slack"]
+  API --> JIRA["Jira Cloud"]
+```
+
+Ingestion answers immediately and does the heavy work in the background, so a traffic spike queues instead of failing. A single set of Zod schemas in `packages/shared` is the contract for the API, the SDKs and the dashboard; the Python SDK is validated against the JSON Schema generated from it.
+
+## Engineering notes
+
+- **Monorepo** with pnpm and Turborepo: API, worker, web, six SDK packages and a CLI, sharing one contract.
+- **Tested for real:** 1,200+ automated tests, including 240+ end-to-end tests that start the compiled API and worker against real Postgres and Redis (webhooks, SMTP, queues, retention and quotas included).
+- **Stack:** TypeScript, NestJS 12 + Fastify, BullMQ, Drizzle + PostgreSQL 17, Better Auth, React 19, Vite, Tailwind 4, TanStack Router and Query; Docker, Caddy and GitHub Actions for delivery. Published to npm with provenance.
+- **Frontend:** atomic design enforced by a test, typed i18n with Spanish/English parity enforced by a test, no charting library (SVG charts of its own), accessible markup (roles and labels, exercised by the tests).
+- **Security:** sessions in `httpOnly` cookies with origin checks, encrypted integration secrets (AES-256-GCM), SSRF guards on webhooks and Jira, and sensitive data scrubbed from events before they are queued.
+
+## Run it yourself
+
+Needs Docker and a machine with about 2 GB of RAM. One command brings up Caddy (HTTPS), the API, the worker, Postgres and Redis:
+
+```bash
+git clone https://github.com/IsolatorD/sentinel.git && cd sentinel
+./deploy/gen-env.sh your-domain.example.com      # creates .env.production with random secrets
+docker compose --env-file .env.production -f docker-compose.prod.yml up -d --build
+./deploy/smoke-test.sh https://your-domain.example.com
+```
+
+Step-by-step notes (free-tier VMs, domains, email, backups, updates) are in [Despliegue en producción](#despliegue-en-producción) and [Operación](#operación). For development: `pnpm install && pnpm infra:up && pnpm db:migrate && pnpm dev`.
+
+## License
+
+[MIT](LICENSE) © Daniel Rodriguez
+
+---
+
+# Documentación técnica
+
+Lo que sigue es la documentación técnica del proyecto, en español. El plan y el estado de cada fase están en [PLAN.md](PLAN.md).
 
 ## Requisitos
 
